@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- See Relax specification: Ghidra/Framework/SoftwareModeling/data/languages/compiler_spec.rxg -->
+
+<compiler_spec>
+  <data_organization>
+	<pointer_size value="4"/>
+    <float_size value="4"/>
+    <double_size value="8"/>
+    <long_double_size value="8"/>
+    <size_alignment_map>
+      <entry size="1" alignment="1"/>
+      <entry size="2" alignment="2"/>
+      <entry size="4" alignment="4"/>
+      <entry size="8" alignment="8"/>
+    </size_alignment_map>
+  </data_organization>
+  <global>
+    <range space="external"/>
+    <range space="ram"/>
+    <range space="io"/>
+  </global>
+  <returnaddress>
+    <register name="ra"/>
+  </returnaddress>
+  <stackpointer register="R15" space="ram"/>
+  <default_proto>
+    <prototype name="fcc911" extrapop="0" stackshift="0" strategy="register">
+      <input>
+        <pentry minsize="1" maxsize="4">
+          <register name="R4"/>
+        </pentry>
+        <pentry minsize="1" maxsize="4">
+          <register name="R5"/>
+        </pentry>
+        <pentry minsize="1" maxsize="4">
+          <register name="R6"/>
+        </pentry>
+        <pentry minsize="1" maxsize="4">
+          <register name="R7"/>
+        </pentry>
+        <pentry minsize="1" maxsize="500" align="4">
+          <addr offset="16" space="ram"/>
+        </pentry>
+      </input>
+      <output>
+        <pentry minsize="1" maxsize="4">
+          <register name="R4"/>
+        </pentry>
+        <pentry minsize="1" maxsize="4">
+          <register name="R5"/>
+        </pentry>
+      </output>
+      <unaffected>
+        <register name="SP"/>
+        <register name="FP"/>
+        <register name="SSP"/>
+        <register name="USP"/>
+        <register name="R8"/>
+        <register name="R9"/>
+        <register name="R10"/>
+        <register name="R11"/>
+      </unaffected>
+    </prototype>
+  </default_proto>
+</compiler_spec>

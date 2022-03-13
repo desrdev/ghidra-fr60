@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- See Relax specification: Ghidra/Framework/SoftwareModeling/data/languages/processor_spec.rxg -->
+
+<processor_spec>
+  <programcounter register="PC"/>
+  <register_data>
+
+  </register_data>
+  <default_symbols>
+    <!-- REMEMBER TO CHANGE 0x to ram: -->
+    <!-- Memory IO setup registers -->
+    <symbol name="ASR0" address="0x640"/>
+    <symbol name="ASR1" address="0x644"/>
+    <symbol name="ASR2" address="0x648"/>
+    <symbol name="ASR3" address="0x64c"/>
+    <symbol name="ASR4" address="0x650"/>
+    <symbol name="ASR5" address="0x654"/>
+    <symbol name="ASR6" address="0x658"/>
+    <symbol name="ASR7" address="0x65c"/>
+
+    <symbol name="ACR0" address="0x642"/>
+    <symbol name="ACR1" address="0x646"/>
+    <symbol name="ACR2" address="0x64a"/>
+    <symbol name="ACR3" address="0x64e"/>
+    <symbol name="ACR4" address="0x652"/>
+    <symbol name="ACR5" address="0x656"/>
+    <symbol name="ACR6" address="0x65a"/>
+    <symbol name="ACR7" address="0x65e"/>
+
+    <symbol name="ARW0" address="0x660"/>
+    <symbol name="ARW1" address="0x662"/>
+    <symbol name="ARW2" address="0x664"/>
+    <symbol name="ARW3" address="0x666"/>
+    <symbol name="ARW4" address="0x668"/>
+    <symbol name="ARW5" address="0x66a"/>
+    <symbol name="ARW6" address="0x66c"/>
+    <symbol name="ARW7" address="0x66e"/>
+
+    <symbol name="MCRA" address="0x670"/>
+    <symbol name="MCRB" address="0x671"/>
+
+    <symbol name="IOWR0" address="0x678"/>
+    <symbol name="IOWR1" address="0x679"/>
+
+    <symbol name="CSER" address="0x680"/>
+    <symbol name="CHER" address="0x681"/>
+
+    <symbol name="TCR" address="0x683"/>
+
+    <symbol name="RCR" address="0x684"/>
+
+    <!-- I/O Port Registers -->
+    <symbol name="PDR0" address="0x0"/>
+    <symbol name="PDR1" address="0x1"/>
+    <symbol name="PDR2" address="0x2"/>
+    <symbol name="PDR6" address="0x6"/>
+    <symbol name="PDR8" address="0x8"/>
+    <symbol name="PDR9" address="0x9"/>
+    <symbol name="PDRA" address="0xa"/>
+    <symbol name="PDRB" address="0xb"/>
+    <symbol name="PDRG" address="0x10"/>
+    <symbol name="PDRH" address="0x11"/>
+    <symbol name="PDRJ" address="0x13"/>
+
+    <symbol name="DDR0" address="0x600"/>
+    <symbol name="DDR1" address="0x601"/>
+    <symbol name="DDR2" address="0x602"/>
+    <symbol name="DDR6" address="0x606"/>
+    <symbol name="DDR8" address="0x608"/>
+    <symbol name="DDR9" address="0x609"/>
+    <symbol name="DDRA" address="0x60a"/>
+    <symbol name="DDRB" address="0x60b"/>
+    <symbol name="DDRG" address="0x400"/>
+    <symbol name="DDRH" address="0x401"/>
+    <symbol name="DDRJ" address="0x403"/>
+
+    <symbol name="PCR0" address="0x620"/>
+    <symbol name="PCR1" address="0x621"/>
+    <symbol name="PCR2" address="0x622"/>
+    <symbol name="PCR6" address="0x626"/>
+    <symbol name="PCR8" address="0x628"/>
+    <symbol name="PCR9" address="0x629"/>
+    <symbol name="PCRA" address="0x62a"/>
+    <symbol name="PCRB" address="0x62b"/>
+    <symbol name="PCRH" address="0x423"/>
+    <!-- No pull-up control register for PDRG & PDRJ -->
+
+    <symbol name="PFR6" address="0x616"/>
+    <symbol name="PFR8" address="0x618"/>
+    <symbol name="PFR9" address="0x619"/>
+    <symbol name="PFRA1" address="0x61a"/>
+    <symbol name="PFRB1" address="0x61b"/>
+    <symbol name="PFRB2" address="0x61c"/>
+    <symbol name="PFRA2" address="0x61e"/>
+    <symbol name="PFRG" address="0x410"/>
+    <symbol name="PFRH" address="0x411"/>
+    <symbol name="PFRJ" address="0x413"/>
+    <symbol name="PFR61" address="0x417"/>
+
+    <!-- 16-bit Reload Timer -->
+    <symbol name="TMCSR0" address="0x4e"/>
+    <symbol name="TMCSR1" address="0x56"/>
+    <symbol name="TMCSR2" address="0x5e"/>
+
+    <symbol name="TMR0" address="0x4a"/>
+    <symbol name="TMR1" address="0x52"/>
+    <symbol name="TMR2" address="0x5A"/>
+
+    <symbol name="TMRLR0" address="0x48"/>
+    <symbol name="TMRLR1" address="0x50"/>
+    <symbol name="TMRLR2" address="0x58"/>
+
+    <!-- PPG PWM Timer -->
+    <symbol name="PCNH0" address="0x126"/>
+    <symbol name="PCNH1" address="0x12e"/>
+    <symbol name="PCNH2" address="0x136"/>
+    <symbol name="PCNH3" address="0x13e"/>
+
+    <symbol name="PCNL0" address="0x127"/>
+    <symbol name="PCNL1" address="0x12f"/>
+    <symbol name="PCNL2" address="0x137"/>
+    <symbol name="PCNL3" address="0x13f"/>
+
+    <symbol name="PCSR0" address="0x122"/>
+    <symbol name="PCSR1" address="0x12a"/>
+    <symbol name="PCSR2" address="0x132"/>
+    <symbol name="PCSR3" address="0x13a"/>
+
+    <symbol name="PDUT0" address="0x124"/>
+    <symbol name="PDUT1" address="0x12c"/>
+    <symbol name="PDUT2" address="0x134"/>
+    <symbol name="PDUT3" address="0x13c"/>
+
+    <symbol name="PTMR0" address="0x120"/>
+    <symbol name="PTMR1" address="0x128"/>
+    <symbol name="PTMR2" address="0x130"/>
+    <symbol name="PTMR3" address="0x138"/>
+
+    <symbol name="GCN10" address="0x118"/>
+    <symbol name="GCN20" address="0x11B"/>
+
+    <!-- U-Timer UART Baud Gen -->
+    <symbol name="UTIM0" address="0x64"/>
+    <symbol name="UTIM1" address="0x6c"/>
+    <symbol name="UTIM2" address="0x74"/>
+
+    <symbol name="UTIMR0" address="0x64"/>
+    <symbol name="UTIMR1" address="0x6c"/>
+    <symbol name="UTIMR2" address="0x74"/>
+
+    <symbol name="UTIMC0" address="0x67"/>
+    <symbol name="UTIMC1" address="0x6f"/>
+    <symbol name="UTIMC2" address="0x77"/>
+
+    <!-- External Interrupt and NMI Controller -->
+    <symbol name="ENIR" address="0x41"/>
+    <symbol name="EIRR" address="0x40"/>
+    <symbol name="ELVR" address="0x42"/>
+
+    <!-- Delayed Interrupt Module -->
+    <symbol name="DICR" address="0x44"/>
+
+    <!-- Interrupt Controller -->
+    <symbol name="ICR00" address="0x440"/>
+    <symbol name="ICR01" address="0x441"/>
+    <symbol name="ICR02" address="0x442"/>
+    <symbol name="ICR03" address="0x443"/>
+    <symbol name="ICR04" address="0x444"/>
+    <symbol name="ICR05" address="0x445"/>
+    <symbol name="ICR06" address="0x446"/>
+    <symbol name="ICR07" address="0x447"/>
+    <symbol name="ICR08" address="0x448"/>
+    <symbol name="ICR09" address="0x449"/>
+    <symbol name="ICR10" address="0x44a"/>
+    <symbol name="ICR11" address="0x44b"/>
+    <symbol name="ICR12" address="0x44c"/>
+    <symbol name="ICR13" address="0x44d"/>
+    <symbol name="ICR14" address="0x44e"/>
+    <symbol name="ICR15" address="0x44f"/>
+    <symbol name="ICR16" address="0x450"/>
+    <symbol name="ICR17" address="0x451"/>
+    <symbol name="ICR18" address="0x452"/>
+    <symbol name="ICR19" address="0x453"/>
+    <symbol name="ICR20" address="0x454"/>
+    <symbol name="ICR21" address="0x455"/>
+    <symbol name="ICR22" address="0x456"/>
+    <symbol name="ICR23" address="0x457"/>
+    <symbol name="ICR24" address="0x458"/>
+    <symbol name="ICR25" address="0x459"/>
+    <symbol name="ICR26" address="0x45a"/>
+    <symbol name="ICR27" address="0x45b"/>
+    <symbol name="ICR28" address="0x45c"/>
+    <symbol name="ICR29" address="0x45d"/>
+    <symbol name="ICR30" address="0x45e"/>
+    <symbol name="ICR31" address="0x45f"/>
+    <symbol name="ICR32" address="0x460"/>
+    <symbol name="ICR33" address="0x461"/>
+    <symbol name="ICR34" address="0x462"/>
+    <symbol name="ICR35" address="0x463"/>
+    <symbol name="ICR36" address="0x464"/>
+    <symbol name="ICR37" address="0x465"/>
+    <symbol name="ICR38" address="0x466"/>
+    <symbol name="ICR39" address="0x467"/>
+    <symbol name="ICR40" address="0x468"/>
+    <symbol name="ICR41" address="0x469"/>
+    <symbol name="ICR42" address="0x46a"/>
+    <symbol name="ICR43" address="0x46b"/>
+    <symbol name="ICR44" address="0x46c"/>
+    <symbol name="ICR45" address="0x46d"/>
+    <symbol name="ICR46" address="0x46e"/>
+    <symbol name="ICR47" address="0x46f"/>
+
+    <symbol name="HRCL" address="0x45"/>
+
+    <!-- Interrupt Vector Table -->
+    <symbol name="Reset" address="0xffffc" entry="true" type="code_ptr"/>
+    <symbol name="Mode vector" address="0xffff8" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffff4" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffff0" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xfffec" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xfffe8" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xfffe4" entry="true" type="code_ptr"/>
+    <symbol name="No-coprocessor trap" address="0xfffe0" entry="true" type="code_ptr"/>
+    <symbol name="Coprocessor error trap" address="0xfffdc" entry="true" type="code_ptr"/>
+    <symbol name="INTE instruction" address="0xfffd8" entry="true" type="code_ptr"/>
+    <symbol name="Instruction break exception" address="0xfffd4" entry="true" type="code_ptr"/>
+    <symbol name="Operand break trap" address="0xfffd0" entry="true" type="code_ptr"/>
+    <symbol name="Step trace trap" address="0xfffcc" entry="true" type="code_ptr"/>
+    <symbol name="NMI request (tool)" address="0xfffc8" entry="true" type="code_ptr"/>
+    <symbol name="Undefined instruction exception" address="0xfffc4" entry="true" type="code_ptr"/>
+    <symbol name="NMI request" address="0xfffc0" entry="true" type="code_ptr"/>
+    <symbol name="External Interrupt 0" address="0xfffbc" entry="true" type="code_ptr"/>
+    <symbol name="External Interrupt 1" address="0xfffb8" entry="true" type="code_ptr"/>
+    <symbol name="External Interrupt 2" address="0xfffb4" entry="true" type="code_ptr"/>
+    <symbol name="External Interrupt 3" address="0xfffb0" entry="true" type="code_ptr"/>
+    <symbol name="External Interrupt 4" address="0xfffac" entry="true" type="code_ptr"/>
+    <symbol name="External Interrupt 5" address="0xfffa8" entry="true" type="code_ptr"/>
+    <symbol name="External Interrupt 6" address="0xfffa4" entry="true" type="code_ptr"/>
+    <symbol name="External Interrupt 7" address="0xfffa0" entry="true" type="code_ptr"/>
+    <symbol name="Reload Timer 0" address="0xfff9c" entry="true" type="code_ptr"/>
+    <symbol name="Reload Timer 1" address="0xfff98" entry="true" type="code_ptr"/>
+    <symbol name="Reload Timer 2" address="0xfff94" entry="true" type="code_ptr"/>
+    <symbol name="UART0 (reception completed)" address="0xfff90" entry="true" type="code_ptr"/>
+    <symbol name="UART1 (reception completed)" address="0xfff8c" entry="true" type="code_ptr"/>
+    <symbol name="UART2 (reception completed)" address="0xfff88" entry="true" type="code_ptr"/>
+    <symbol name="UART0 (transmission completed)" address="0xfff84" entry="true" type="code_ptr"/>
+    <symbol name="UART1 (transmission completed)" address="0xfff80" entry="true" type="code_ptr"/>
+    <symbol name="UART2 (transmission completed)" address="0xfff7c" entry="true" type="code_ptr"/>
+    <symbol name="DMAC0 (end, error)" address="0xfff78" entry="true" type="code_ptr"/>
+    <symbol name="DMAC1 (end, error)" address="0xfff74" entry="true" type="code_ptr"/>
+    <symbol name="DMAC2 (end, error)" address="0xfff70" entry="true" type="code_ptr"/>
+    <symbol name="DMAC3 (end, error)" address="0xfff6c" entry="true" type="code_ptr"/>
+    <symbol name="DMAC4 (end, error)" address="0xfff68" entry="true" type="code_ptr"/>
+    <symbol name="A/D" address="0xfff64" entry="true" type="code_ptr"/>
+    <symbol name="PPG0" address="0xfff60" entry="true" type="code_ptr"/>
+    <symbol name="PPG1" address="0xfff5c" entry="true" type="code_ptr"/>
+    <symbol name="PPG2" address="0xfff58" entry="true" type="code_ptr"/>
+    <symbol name="PPG3" address="0xfff54" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xfff50" entry="true" type="code_ptr"/>
+    <symbol name="U-TIMER0" address="0xfff4c" entry="true" type="code_ptr"/>
+    <symbol name="U-TIMER1" address="0xfff48" entry="true" type="code_ptr"/>
+    <symbol name="U-TIMER2" address="0xfff44" entry="true" type="code_ptr"/>
+    <symbol name="Time-base timer overflow" address="0xfff40" entry="true" type="code_ptr"/>
+    <symbol name="I2C I/F0" address="0xfff3c" entry="true" type="code_ptr"/>
+    <symbol name="I2C I/F1" address="0xfff38" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xfff34" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xfff30" entry="true" type="code_ptr"/>
+    <symbol name="16-bit free run timer" address="0xfff2c" entry="true" type="code_ptr"/>
+    <symbol name="ICU0 (fetch)" address="0xfff28" entry="true" type="code_ptr"/>
+    <symbol name="ICU1 (fetch)" address="0xfff24" entry="true" type="code_ptr"/>
+    <symbol name="ICU2 (fetch)" address="0xfff20" entry="true" type="code_ptr"/>
+    <symbol name="ICU3 (fetch)" address="0xfff1c" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xfff18" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xfff14" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xfff10" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xfff0c" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xfff08" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xfff04" entry="true" type="code_ptr"/>
+    <symbol name="Delayed interrupt source bit" address="0xfff00" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system (used in REALOS)" address="0xffefc" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system (used in REALOS)" address="0xffef8" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffef4" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffef0" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffeec" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffee8" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffee4" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffee0" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffedc" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffed8" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffed4" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffed0" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffecc" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffec8" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffec4" entry="true" type="code_ptr"/>
+    <symbol name="Reserved for system" address="0xffec0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x50" address="0xffebc" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x51" address="0xffeb8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x52" address="0xffeb4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x53" address="0xffeb0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x54" address="0xffeac" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x55" address="0xffea8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x56" address="0xffea4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x57" address="0xffea0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x58" address="0xffe9c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x59" address="0xffe98" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x5a" address="0xffe94" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x5b" address="0xffe90" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x5c" address="0xffe8c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x5d" address="0xffe88" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x5e" address="0xffe84" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x5f" address="0xffe80" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x60" address="0xffe7c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x61" address="0xffe78" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x62" address="0xffe74" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x63" address="0xffe70" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x64" address="0xffe6c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x65" address="0xffe68" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x66" address="0xffe64" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x67" address="0xffe60" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x68" address="0xffe5c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x69" address="0xffe58" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x6a" address="0xffe54" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x6b" address="0xffe50" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x6c" address="0xffe4c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x6d" address="0xffe48" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x6e" address="0xffe44" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x6f" address="0xffe40" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x70" address="0xffe3c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x71" address="0xffe38" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x72" address="0xffe34" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x73" address="0xffe30" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x74" address="0xffe2c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x75" address="0xffe28" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x76" address="0xffe24" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x77" address="0xffe20" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x78" address="0xffe1c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x79" address="0xffe18" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x7a" address="0xffe14" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x7b" address="0xffe10" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x7c" address="0xffe0c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x7d" address="0xffe08" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x7e" address="0xffe04" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x7f" address="0xffe00" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x80" address="0xffdfc" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x81" address="0xffdf8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x82" address="0xffdf4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x83" address="0xffdf0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x84" address="0xffdec" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x85" address="0xffde8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x86" address="0xffde4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x87" address="0xffde0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x88" address="0xffddc" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x89" address="0xffdd8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x8a" address="0xffdd4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x8b" address="0xffdd0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x8c" address="0xffdcc" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x8d" address="0xffdc8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x8e" address="0xffdc4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x8f" address="0xffdc0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x90" address="0xffdbc" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x91" address="0xffdb8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x92" address="0xffdb4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x93" address="0xffdb0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x94" address="0xffdac" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x95" address="0xffda8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x96" address="0xffda4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x97" address="0xffda0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x98" address="0xffd9c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x99" address="0xffd98" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x9a" address="0xffd94" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x9b" address="0xffd90" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x9c" address="0xffd8c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x9d" address="0xffd88" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x9e" address="0xffd84" entry="true" type="code_ptr"/>
+    <symbol name="INT 0x9f" address="0xffd80" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xa0" address="0xffd7c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xa1" address="0xffd78" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xa2" address="0xffd74" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xa3" address="0xffd70" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xa4" address="0xffd6c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xa5" address="0xffd68" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xa6" address="0xffd64" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xa7" address="0xffd60" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xa8" address="0xffd5c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xa9" address="0xffd58" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xaa" address="0xffd54" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xab" address="0xffd50" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xac" address="0xffd4c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xad" address="0xffd48" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xae" address="0xffd44" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xaf" address="0xffd40" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xb0" address="0xffd3c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xb1" address="0xffd38" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xb2" address="0xffd34" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xb3" address="0xffd30" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xb4" address="0xffd2c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xb5" address="0xffd28" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xb6" address="0xffd24" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xb7" address="0xffd20" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xb8" address="0xffd1c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xb9" address="0xffd18" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xba" address="0xffd14" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xbb" address="0xffd10" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xbc" address="0xffd0c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xbd" address="0xffd08" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xbe" address="0xffd04" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xbf" address="0xffd00" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xc0" address="0xffcfc" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xc1" address="0xffcf8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xc2" address="0xffcf4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xc3" address="0xffcf0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xc4" address="0xffcec" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xc5" address="0xffce8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xc6" address="0xffce4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xc7" address="0xffce0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xc8" address="0xffcdc" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xc9" address="0xffcd8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xca" address="0xffcd4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xcb" address="0xffcd0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xcc" address="0xffccc" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xcd" address="0xffcc8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xce" address="0xffcc4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xcf" address="0xffcc0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xd0" address="0xffcbc" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xd1" address="0xffcb8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xd2" address="0xffcb4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xd3" address="0xffcb0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xd4" address="0xffcac" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xd5" address="0xffca8" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xd6" address="0xffca4" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xd7" address="0xffca0" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xd8" address="0xffc9c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xd9" address="0xffc98" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xda" address="0xffc94" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xdb" address="0xffc90" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xdc" address="0xffc8c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xdd" address="0xffc88" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xde" address="0xffc84" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xdf" address="0xffc80" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xe0" address="0xffc7c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xe1" address="0xffc78" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xe2" address="0xffc74" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xe3" address="0xffc70" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xe4" address="0xffc6c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xe5" address="0xffc68" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xe6" address="0xffc64" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xe7" address="0xffc60" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xe8" address="0xffc5c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xe9" address="0xffc58" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xea" address="0xffc54" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xeb" address="0xffc50" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xec" address="0xffc4c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xed" address="0xffc48" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xee" address="0xffc44" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xef" address="0xffc40" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xf0" address="0xffc3c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xf1" address="0xffc38" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xf2" address="0xffc34" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xf3" address="0xffc30" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xf4" address="0xffc2c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xf5" address="0xffc28" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xf6" address="0xffc24" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xf7" address="0xffc20" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xf8" address="0xffc1c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xf9" address="0xffc18" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xfa" address="0xffc14" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xfb" address="0xffc10" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xfc" address="0xffc0c" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xfd" address="0xffc08" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xfe" address="0xffc04" entry="true" type="code_ptr"/>
+    <symbol name="INT 0xff" address="0xffc00" entry="true" type="code_ptr"/>
+
+    <!-- A/D Converter -->
+    <symbol name="ADCS" address="0x7A"/>
+    <symbol name="ADCR" address="0x78"/>
+    <symbol name="ADCR0" address="0x7c"/>
+    <symbol name="ADCR1" address="0x7d"/>
+    <symbol name="ADCR2" address="0x7e"/>
+    <symbol name="ADCR3" address="0x7f"/>
+
+    <!-- UART -->
+    <symbol name="SMR0" address="0x63"/>
+    <symbol name="SMR1" address="0x6b"/>
+    <symbol name="SMR2" address="0x73"/>
+
+    <symbol name="SCR0" address="0x62"/>
+    <symbol name="SCR1" address="0x6a"/>
+    <symbol name="SCR2" address="0x72"/>
+
+    <symbol name="SDIR0" address="0x61"/>
+    <symbol name="SDIR1" address="0x69"/>
+    <symbol name="SDIR2" address="0x71"/>
+
+    <symbol name="SDOR0" address="0x61"/>
+    <symbol name="SDOR1" address="0x69"/>
+    <symbol name="SDOR2" address="0x71"/>
+
+    <symbol name="SSR0" address="0x60"/>
+    <symbol name="SSR1" address="0x68"/>
+    <symbol name="SSR2" address="0x70"/>
+
+    <!-- DMA Controller -->
+    <symbol name="DMACA0" address="0x200"/>
+    <symbol name="DMACA1" address="0x208"/>
+    <symbol name="DMACA2" address="0x210"/>
+    <symbol name="DMACA3" address="0x218"/>
+    <symbol name="DMACA4" address="0x220"/>
+
+    <symbol name="DMACB0" address="0x204"/>
+    <symbol name="DMACB1" address="0x20c"/>
+    <symbol name="DMACB2" address="0x214"/>
+    <symbol name="DMACB3" address="0x21c"/>
+    <symbol name="DMACB4" address="0x224"/>
+
+    <symbol name="DMASA0" address="0x1000"/>
+    <symbol name="DMASA1" address="0x1008"/>
+    <symbol name="DMASA2" address="0x1010"/>
+    <symbol name="DMASA3" address="0x1018"/>
+    <symbol name="DMASA4" address="0x1020"/>
+
+    <symbol name="DMADA0" address="0x1004"/>
+    <symbol name="DMADA1" address="0x100c"/>
+    <symbol name="DMADA2" address="0x1014"/>
+    <symbol name="DMADA3" address="0x101c"/>
+    <symbol name="DMADA4" address="0x1024"/>
+
+    <symbol name="DMACR" address="0x2040"/>
+
+    <!-- Bit search module -->
+    <symbol name="BSD0" address="0x3f0"/>
+    <symbol name="BSD1" address="0x3f4"/>
+    <symbol name="BSCD" address="0x3f8"/>
+    <symbol name="BSRR" address="0x3fc"/>
+
+    <!-- I2C Interface -->
+    <symbol name="IBCR0" address="0x94"/>
+    <symbol name="IBCR1" address="0xb4"/>
+
+    <symbol name="IBSR0" address="0x95"/>
+    <symbol name="IBSR1" address="0xb5"/>
+
+    <symbol name="ITBA0" address="0x96"/>
+    <symbol name="ITBA1" address="0xb6"/>
+
+    <symbol name="ITMK0" address="0x98"/>
+    <symbol name="ITMK1" address="0xb8"/>
+
+    <symbol name="ISBA0" address="0x9b"/>
+    <symbol name="ISBA1" address="0xbb"/>
+
+    <symbol name="ISMK0" address="0x9a"/>
+    <symbol name="ISMK1" address="0xba"/>
+
+    <symbol name="IDAR0" address="0x9d"/>
+    <symbol name="IDAR1" address="0xbd"/>
+
+    <symbol name="ICCR0" address="0x9e"/>
+    <symbol name="ICCR1" address="0xbe"/>
+
+    <symbol name="IDBL0" address="0x9f"/>
+    <symbol name="IDBL1" address="0xbf"/>
+
+    <!-- 16-bit free run timer -->
+    <symbol name="TCDT" address="0xd4"/>
+    <symbol name="TCCS" address="0xd7"/>
+
+    <!-- Input capture -->
+    <symbol name="IPCP0" address="0xda"/>
+    <symbol name="IPCP1" address="0xd8"/>
+    <symbol name="IPCP2" address="0xde"/>
+    <symbol name="IPCP3" address="0xdc"/>
+
+    <symbol name="ICS23" address="0xe1"/>
+    <symbol name="ICS01" address="0xe3"/>
+
+
+  </default_symbols>
+</processor_spec>
