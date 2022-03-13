@@ -23,7 +23,7 @@
   <returnaddress>
     <register name="ra"/>
   </returnaddress>
-  <stackpointer register="R15" space="ram"/>
+  <stackpointer register="SP" space="ram"/>
   <default_proto>
     <prototype name="fcc911" extrapop="0" stackshift="0" strategy="register">
       <input>
