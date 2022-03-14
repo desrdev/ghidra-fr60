@@ -1,6 +1,5 @@
-# sleigh include file for Skeleton language instructions
 
-define token instra (16)
+define token instr (16)
     op12     = (4,15)
     op8      = (8,15)
     op5      = (11,15)
@@ -24,25 +23,41 @@ define token instra (16)
 ;
 
 attach variables [ ri rj ] [ R0 R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12 AC FP SP ];
-attach variables rs [ TBR RP SSP USP MDH MDL ];
+attach variables [ rs ] [ TBR RP SSP USP MDH MDL _ _ _ _ _ _ _ _ _ _ ];
 
 macro resultFlags(result) {
-  $(N_flag) = (result s< 0);
-  $(Z_flag) = (result == 0);
+    $(N_flag) = (result s< 0);
+    $(Z_flag) = (result == 0);
 }
 
 macro addFlags(result, val1, val2) {
-  $(N_flag) = (result s< 0);
-  $(Z_flag) = (result == 0);
-  $(V_flag) = ((val1 s>= 0) & (val2 s>= 0) & (result s< 0)) | ((val1 s< 0) & (val2 s< 0) & (result s>= 0));
-  $(C_flag) = scarry(val1, val2);
+    resultFlags(result);
+    $(V_flag) = ((val1 s>= 0) & (val2 s>= 0) & (result s< 0)) | ((val1 s< 0) & (val2 s< 0) & (result s>= 0));
+    $(C_flag) = scarry(val1, val2);
 }
 
 macro subFlags(result, val1, val2) {
-  $(N_flag) = (result s< 0);
-  $(Z_flag) = (result == 0);
-  $(V_flag) = ((val1 s< 0) & (val2 s>= 0) & (result s< 0)) | ((val1 s>= 0) & (val2 s< 0) & (result s>= 0));
-  $(C_flag) = sborrow(val1, val2);
+    resultFlags(result);
+    $(V_flag) = ((val1 s< 0) & (val2 s>= 0) & (result s< 0)) | ((val1 s>= 0) & (val2 s< 0) & (result s>= 0));
+    $(C_flag) = sborrow(val1, val2);
+}
+
+# 4 bit immediates don't convert cleanly with zext/sext
+signedi_4: i4 is i4 {
+    local value:4 = 0x0000000F & i4;
+
+    local check:1 = 0x8 & i4;
+    if (check == 0) goto <END>;
+
+    value = value + 0xFFFFFFF0;
+
+    <END>
+    export value;
+}
+
+usignedi_4: i4 is i4 {
+    local value:4 = 0x0000000F & i4;
+    export value;
 }
 
 
@@ -52,34 +67,35 @@ macro subFlags(result, val1, val2) {
     addFlags(ri, tmpi, rj);
 }
 
-:ADD #^i4, ri is op8=0xa4 & i4 & ri {
-    tmpi:4 = ri;
-    ri = ri + zext(i4);
-    addFlags(ri, tmpi, zext(i4));
+:ADD usignedi_4, ri is op8=0xa4 & usignedi_4 & ri {
+    local tmpi:4 = ri;
+    ri = ri + usignedi_4;
+    addFlags(ri, tmpi, usignedi_4);
 }
 
-:ADD2 #^i4, ri is op8=0xa5 & i4 & ri {
+:ADD2 signedi_4, ri is op8=0xa5 & signedi_4 & ri {
     tmpi:4 = ri;
-    ri = ri + sext(i4);
-    addFlags(ri, tmpi, sext(i4));
+    ri = ri + signedi_4;
+    addFlags(ri, tmpi, signedi_4);
 }
 
 :ADDC rj, ri is op8=0xa7 & rj & ri {
-    tempi:4 = ri;
-    ri = ri + rj + zext($(C_flag));
-    addFlags(ri, tmpi, (rj + zext($(C_flag))));
+    tmpi:4 = ri;
+    flag:4 = zext($(C_flag));
+    ri = ri + rj + flag;
+    addFlags(ri, tmpi, (rj + flag));
 }
 
 :ADDN rj, ri is op8=0xa2 & rj & ri {
     ri = ri + rj;
 }
 
-:ADDN #^i4, ri is op8=0xa0 & i4 & ri {
-    ri = ri + zext(i4);
+:ADDN usignedi_4, ri is op8=0xa0 & usignedi_4 & ri {
+    ri = ri + usignedi_4;
 }
 
-:ADDN2 #^i4, ri is op8=0xa1 & i4 & ri {
-    ri = ri + sext(i4);
+:ADDN2 signedi_4, ri is op8=0xa1 & signedi_4 & ri {
+    ri = ri + signedi_4;
 }
 
 :SUB rj, ri is op8=0xac & rj & ri {
@@ -103,14 +119,14 @@ macro subFlags(result, val1, val2) {
     subFlags(res, ri, rj);
 }
 
-:CMP rj, ri is op8=0xa8 & i4 & ri {
-    res:4 = ri - zext(i4);
-    subFlags(res, ri, zext(i4));
+:CMP usignedi_4, ri is op8=0xa8 & usignedi_4 & ri {
+    res:4 = ri - usignedi_4;
+    subFlags(res, ri, usignedi_4);
 }
 
-:CMP2 rj, ri is op8=0xa9 & i4 & ri {
-    res:4 = ri - sext(i4);
-    subFlags(res, ri, sext(i4));
+:CMP2 signedi_4, ri is op8=0xa9 & signedi_4 & ri {
+    res:4 = ri - signedi_4;
+    subFlags(res, ri, signedi_4);
 }
 
 :AND rj, ri is op8=0x82 & rj & ri {
@@ -119,6 +135,6 @@ macro subFlags(result, val1, val2) {
 }
 
 :AND rj, @^ri is op8=0x84 & rj & ri {
-    *ri = *ri & rj;
-    resultFlags(*ri);
+    *ri = *:4 ri & rj;
+    resultFlags(*:4 ri);
 }
