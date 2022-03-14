@@ -16,13 +16,8 @@
     </size_alignment_map>
   </data_organization>
   <global>
-    <range space="external"/>
     <range space="ram"/>
-    <range space="io"/>
   </global>
-  <returnaddress>
-    <register name="ra"/>
-  </returnaddress>
   <stackpointer register="SP" space="ram"/>
   <default_proto>
     <prototype name="fcc911" extrapop="0" stackshift="0" strategy="register">
