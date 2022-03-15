@@ -1,5 +1,6 @@
 
 define token instr (16)
+    op16     = (0,15)
     op12     = (4,15)
     op8      = (8,15)
     op5      = (11,15)
@@ -11,6 +12,7 @@ define token instr (16)
     m4       = (4,7)
     i4       = (4,7)
     rj       = (4,7)
+    rs4_4    = (4,7)
 
     rel11    = (0,10)
     u8       = (0,7)
@@ -22,8 +24,21 @@ define token instr (16)
     rs       = (0,3)
 ;
 
-attach variables [ ri rj ] [ R0 R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12 AC FP SP ];
-attach variables [ rs ] [ TBR RP SSP USP MDH MDL _ _ _ _ _ _ _ _ _ _ ];
+define token instr48 (48)
+    op48_12  = (36,47)
+    ri48_4   = (32,35)
+    i32      = (0,31)
+;
+
+define token instr32 (32)
+    op32_8   = (24,31)
+    i20_4h   = (20,23)
+    ri32_4   = (16,19)
+    i20_16l  = (0,15)
+;
+
+attach variables [ ri rj ri48_4 ri32_4 ] [ R0 R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12 AC FP SP ];
+attach variables [ rs rs4_4 ] [ TBR RP SSP USP MDH MDL _ _ _ _ _ _ _ _ _ _ ];
 
 macro resultFlags(result) {
     $(N_flag) = (result s< 0);
@@ -67,13 +82,13 @@ usignedi_4: i4 is i4 {
     addFlags(ri, tmpi, rj);
 }
 
-:ADD usignedi_4, ri is op8=0xa4 & usignedi_4 & ri {
+:ADD #^usignedi_4, ri is op8=0xa4 & usignedi_4 & ri {
     local tmpi:4 = ri;
     ri = ri + usignedi_4;
     addFlags(ri, tmpi, usignedi_4);
 }
 
-:ADD2 signedi_4, ri is op8=0xa5 & signedi_4 & ri {
+:ADD2 #^signedi_4, ri is op8=0xa5 & signedi_4 & ri {
     tmpi:4 = ri;
     ri = ri + signedi_4;
     addFlags(ri, tmpi, signedi_4);
@@ -90,11 +105,11 @@ usignedi_4: i4 is i4 {
     ri = ri + rj;
 }
 
-:ADDN usignedi_4, ri is op8=0xa0 & usignedi_4 & ri {
+:ADDN #^usignedi_4, ri is op8=0xa0 & usignedi_4 & ri {
     ri = ri + usignedi_4;
 }
 
-:ADDN2 signedi_4, ri is op8=0xa1 & signedi_4 & ri {
+:ADDN2 #^signedi_4, ri is op8=0xa1 & signedi_4 & ri {
     ri = ri + signedi_4;
 }
 
@@ -138,3 +153,104 @@ usignedi_4: i4 is i4 {
     *ri = *:4 ri & rj;
     resultFlags(*:4 ri);
 }
+
+# UNIMPLEMENTED
+
+:ANDH rj, @^ri is op8=0x85 & rj & ri unimpl
+:ANDB rj, @^ri is op8=0x86 & rj & ri unimpl
+
+:OR rj, ri is op8=0x92 & rj & ri unimpl
+:OR rj, @^ri is op8=0x94 & rj & ri unimpl
+:ORH rj, @^ri is op8=0x95 & rj & ri unimpl
+:ORB rj, @^ri is op8=0x96 & rj & ri unimpl
+
+:EOR rj, ri is op8=0x9a & rj & ri unimpl
+:EOR rj, @^ri is op8=0x9c & rj & ri unimpl
+:EORH rj, @^ri is op8=0x9d & rj & ri unimpl
+:EORB rj, @^ri is op8=0x9e & rj & ri unimpl
+
+:BANDL #^u4, @^ri is op8=0x80 & u4 & ri unimpl
+:BANDL #^u4, @^ri is op8=0x81 & u4 & ri unimpl
+
+:BORL #^u4, @^ri is op8=0x90 & u4 & ri unimpl
+:BORH #^u4, @^ri is op8=0x91 & u4 & ri unimpl
+
+:BEORL #^u4, @^ri is op8=0x98 & u4 & ri unimpl
+:BEORH #^u4, @^ri is op8=0x99 & u4 & ri unimpl
+
+:BTSTL #^u4, @^ri is op8=0x88 & u4 & ri unimpl
+:BTSTH #^u4, @^ri is op8=0x89 & u4 & ri unimpl
+
+:MUL rj, ri is op8=0xaf & rj & ri unimpl
+:MULU rj, ri is op8=0xab & rj & ri unimpl
+:MULH rj, ri is op8=0xbf & rj & ri unimpl
+:MULUH rj, ri is op8=0xbb & rj & ri unimpl
+
+:DIV0S ri is op12=0x974 & ri unimpl
+:DIV0U ri is op12=0x975 & ri unimpl
+:DIV1 ri is op12=0x976 & ri unimpl
+:DIV2 ri is op12=0x977 & ri unimpl
+:DIV3 is op16=0x9f60 & ri unimpl
+:DIV4S is op16=0x9f70 & ri unimpl
+
+:LSL rj, ri is op8=0xb6 & rj & ri unimpl
+:LSL #^u4, ri is op8=0xb4 & u4 & ri unimpl
+:LSL2 #^u4, ri is op8=0xb5 & u4 & ri unimpl
+
+:LSR rj, ri is op8=0xb2 & rj & ri unimpl
+:LSR #^u4, ri is op8=0xb0 & u4 & ri unimpl
+:LSR2 #^u4, ri is op8=0xb1 & u4 & ri unimpl
+
+:ASR rj, ri is op8=0xba & rj & ri unimpl
+:ASR #^u4, ri is op8=0xb8 & u4 & ri unimpl
+:ASR2 #^u4, ri is op8=0xb9 & u4 & ri unimpl
+
+:LDI_32 #^i32, ri48_4 is op48_12=0x9f8 & i32 & ri48_4 unimpl
+:LDI_20 #^i20_4h, #^i20_16l, ri32_4 is op32_8=0x9b & i20_4h & i20_16l & ri32_4 unimpl
+:LDI_8 #^i8, ri is op4=0xc & i8 & ri unimpl
+
+:LD @^rj, ri is op8=0x04 & rj & ri unimpl
+:LD @("AC", rj), ri is op8=0x00 & rj & ri unimpl
+:LD @("FP", o8), ri is op4=0x2 & o8 & ri unimpl # TODO: o8 is a signed calc of value * 4
+:LD @("SP", u4), ri is op8=0x03 & u4 & ri unimpl # TODO: u4 is unsigned calc of value * 4
+:LD @"SP"+, ri is op12=0x070 & ri unimpl
+:LD @"SP"+, rs is op12=0x078 & rs unimpl
+:LD @"SP"+, "PS" is op16=0x0790 unimpl
+
+:LDUH @^rj, ri is op8=0x05 & rj & ri unimpl
+:LDUH @("AC", rj), ri is op8=0x01 & rj & ri unimpl
+:LDUH @("FP", o8), ri is op4=0x4 & o8 & ri unimpl # TODO: o8 is a signed calc of value * 2
+
+:LDUB @^rj, ri is op8=0x06 & rj & ri unimpl
+:LDUB @("AC", rj), ri is op8=0x02 & rj & ri unimpl
+:LDUB @("FP", o8), ri is op4=0x6 & o8 & ri unimpl
+
+:ST ri, @^rj is op8=0x14 & rj & ri unimpl
+:ST ri, @("AC", rj) is op8=0x10 & rj & ri unimpl
+:ST ri, @("FP", o8) is op4=0x3 & o8 & ri unimpl # TODO: o8 is signed calc of value * 4
+:ST ri, @("SP", u4) is op8=0x13 & u4 & ri unimpl # TODO: u4 is unsigned calc of value * 4
+:ST ri @"-SP" is op12=0x170 & ri unimpl
+:ST rs @"-SP" is op12=0x178 & rs unimpl
+:ST "PS", @"-SP" is op16=0x1790 unimpl
+
+:STH ri, @^rj is op8=0x15 & rj & ri unimpl
+:STH ri, @("AC", rj) is op8=0x11 & rj & ri unimpl
+:STH ri, @("FP", o8) is op4=0x5 & o8 & ri unimpl # TODO: o8 is signed calc of value * 2
+
+:STB ri, @^rj is op8=0x16 & rj & ri unimpl
+:STB ri, @("AC", rj) is op8=0x12 & rj & ri unimpl
+:STB ri, @("FP", o8) is op4=0x7 & o8 & ri unimpl
+
+:MOV rj, ri is op8=0x8b & rj & ri unimpl
+:MOV rs4_4, ri is op8=0xb7 & rs4_4 & ri unimpl
+:MOV "PS", ri is op12=0x171 & ri unimpl
+:MOV ri, rs4_4 is op8=0xb3 & rs4_4 & ri unimpl
+:MOV ri, "PS" is op12=0x071 & ri unimpl
+
+:JMP @^ri is op12=0x970 & ri unimpl
+:CALL rel11 is op5=0x1A & rel11 unimpl # TODO: rel11 is signed calc of value * 2
+:CALL @^ri is op12=0x971 & ri unimpl
+:RET is op16=0x9720 unimpl
+:INT #^u8 is op8=0x1f & u8 unimpl
+:INTE is op16=0x9F30 unimpl # Emulator only
+:RETI is op16=0x9730 unimpl
