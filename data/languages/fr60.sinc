@@ -5,20 +5,22 @@ define token instr (16)
     op8      = (8,15)
     op5      = (11,15)
     op4      = (12,15)
+    cc       = (8,11)
 
     i8       = (4,11)
     o8       = (4,11)
     u4       = (4,7)
-    m4       = (4,7)
     i4       = (4,7)
     rj       = (4,7)
     rs4_4    = (4,7)
 
     rel11    = (0,10)
     u8       = (0,7)
+    s8       = (0,7)
     rel8     = (0,7)
-    dir      = (0,7)
-    rlist    = (0,7)
+    dir8     = (0,7)
+    rlist_lo = (0,7)
+    rlist_hi = (0,7)
 
     ri       = (0,3)
     rs       = (0,3)
@@ -35,10 +37,91 @@ define token instr32 (32)
     i20_4h   = (20,23)
     ri32_4   = (16,19)
     i20_16l  = (0,15)
+
+    op32_12  = (20,31)
+    u32_4    = (16,19)
+    cc32_6   = (10,15)
+    cc32_2   = (8,9)
+    crj32_4  = (4,7)
+    cri32_4  = (0,3)
 ;
 
 attach variables [ ri rj ri48_4 ri32_4 ] [ R0 R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12 AC FP SP ];
 attach variables [ rs rs4_4 ] [ TBR RP SSP USP MDH MDL _ _ _ _ _ _ _ _ _ _ ];
+attach names [ cc ] [ RA NO EQ NE C NC N P V NV LT GE LE GT LS HI ];
+attach names [ cc32_2 ] [ ADD SUB MUL DIV ];
+
+attach names [ rlist_lo ] [
+  null
+  "R0" "R1" "R0, R1" "R2" "R0, R2" "R1, R2" "R0, R1, R2" "R3"
+  "R0, R3" "R1, R3" "R0, R1, R3" "R2, R3" "R0, R2, R3" "R1, R2, R3" "R0, R1, R2, R3" "R4"
+  "R0, R4" "R1, R4" "R0, R1, R4" "R2, R4" "R0, R2, R4" "R1, R2, R4" "R0, R1, R2, R4" "R3, R4"
+  "R0, R3, R4" "R1, R3, R4" "R0, R1, R3, R4" "R2, R3, R4" "R0, R2, R3, R4" "R1, R2, R3, R4" "R0, R1, R2, R3, R4" "R5"
+  "R0, R5" "R1, R5" "R0, R1, R5" "R2, R5" "R0, R2, R5" "R1, R2, R5" "R0, R1, R2, R5" "R3, R5"
+  "R0, R3, R5" "R1, R3, R5" "R0, R1, R3, R5" "R2, R3, R5" "R0, R2, R3, R5" "R1, R2, R3, R5" "R0, R1, R2, R3, R5" "R4, R5"
+  "R0, R4, R5" "R1, R4, R5" "R0, R1, R4, R5" "R2, R4, R5" "R0, R2, R4, R5" "R1, R2, R4, R5" "R0, R1, R2, R4, R5" "R3, R4, R5"
+  "R0, R3, R4, R5" "R1, R3, R4, R5" "R0, R1, R3, R4, R5" "R2, R3, R4, R5" "R0, R2, R3, R4, R5" "R1, R2, R3, R4, R5" "R0, R1, R2, R3, R4, R5" "R6"
+  "R0, R6" "R1, R6" "R0, R1, R6" "R2, R6" "R0, R2, R6" "R1, R2, R6" "R0, R1, R2, R6" "R3, R6"
+  "R0, R3, R6" "R1, R3, R6" "R0, R1, R3, R6" "R2, R3, R6" "R0, R2, R3, R6" "R1, R2, R3, R6" "R0, R1, R2, R3, R6" "R4, R6"
+  "R0, R4, R6" "R1, R4, R6" "R0, R1, R4, R6" "R2, R4, R6" "R0, R2, R4, R6" "R1, R2, R4, R6" "R0, R1, R2, R4, R6" "R3, R4, R6"
+  "R0, R3, R4, R6" "R1, R3, R4, R6" "R0, R1, R3, R4, R6" "R2, R3, R4, R6" "R0, R2, R3, R4, R6" "R1, R2, R3, R4, R6" "R0, R1, R2, R3, R4, R6" "R5, R6"
+  "R0, R5, R6" "R1, R5, R6" "R0, R1, R5, R6" "R2, R5, R6" "R0, R2, R5, R6" "R1, R2, R5, R6" "R0, R1, R2, R5, R6" "R3, R5, R6"
+  "R0, R3, R5, R6" "R1, R3, R5, R6" "R0, R1, R3, R5, R6" "R2, R3, R5, R6" "R0, R2, R3, R5, R6" "R1, R2, R3, R5, R6" "R0, R1, R2, R3, R5, R6" "R4, R5, R6"
+  "R0, R4, R5, R6" "R1, R4, R5, R6" "R0, R1, R4, R5, R6" "R2, R4, R5, R6" "R0, R2, R4, R5, R6" "R1, R2, R4, R5, R6" "R0, R1, R2, R4, R5, R6" "R3, R4, R5, R6"
+  "R0, R3, R4, R5, R6" "R1, R3, R4, R5, R6" "R0, R1, R3, R4, R5, R6" "R2, R3, R4, R5, R6" "R0, R2, R3, R4, R5, R6" "R1, R2, R3, R4, R5, R6" "R0, R1, R2, R3, R4, R5, R6" "R7"
+  "R0, R7" "R1, R7" "R0, R1, R7" "R2, R7" "R0, R2, R7" "R1, R2, R7" "R0, R1, R2, R7" "R3, R7"
+  "R0, R3, R7" "R1, R3, R7" "R0, R1, R3, R7" "R2, R3, R7" "R0, R2, R3, R7" "R1, R2, R3, R7" "R0, R1, R2, R3, R7" "R4, R7"
+  "R0, R4, R7" "R1, R4, R7" "R0, R1, R4, R7" "R2, R4, R7" "R0, R2, R4, R7" "R1, R2, R4, R7" "R0, R1, R2, R4, R7" "R3, R4, R7"
+  "R0, R3, R4, R7" "R1, R3, R4, R7" "R0, R1, R3, R4, R7" "R2, R3, R4, R7" "R0, R2, R3, R4, R7" "R1, R2, R3, R4, R7" "R0, R1, R2, R3, R4, R7" "R5, R7"
+  "R0, R5, R7" "R1, R5, R7" "R0, R1, R5, R7" "R2, R5, R7" "R0, R2, R5, R7" "R1, R2, R5, R7" "R0, R1, R2, R5, R7" "R3, R5, R7"
+  "R0, R3, R5, R7" "R1, R3, R5, R7" "R0, R1, R3, R5, R7" "R2, R3, R5, R7" "R0, R2, R3, R5, R7" "R1, R2, R3, R5, R7" "R0, R1, R2, R3, R5, R7" "R4, R5, R7"
+  "R0, R4, R5, R7" "R1, R4, R5, R7" "R0, R1, R4, R5, R7" "R2, R4, R5, R7" "R0, R2, R4, R5, R7" "R1, R2, R4, R5, R7" "R0, R1, R2, R4, R5, R7" "R3, R4, R5, R7"
+  "R0, R3, R4, R5, R7" "R1, R3, R4, R5, R7" "R0, R1, R3, R4, R5, R7" "R2, R3, R4, R5, R7" "R0, R2, R3, R4, R5, R7" "R1, R2, R3, R4, R5, R7" "R0, R1, R2, R3, R4, R5, R7" "R6, R7"
+  "R0, R6, R7" "R1, R6, R7" "R0, R1, R6, R7" "R2, R6, R7" "R0, R2, R6, R7" "R1, R2, R6, R7" "R0, R1, R2, R6, R7" "R3, R6, R7"
+  "R0, R3, R6, R7" "R1, R3, R6, R7" "R0, R1, R3, R6, R7" "R2, R3, R6, R7" "R0, R2, R3, R6, R7" "R1, R2, R3, R6, R7" "R0, R1, R2, R3, R6, R7" "R4, R6, R7"
+  "R0, R4, R6, R7" "R1, R4, R6, R7" "R0, R1, R4, R6, R7" "R2, R4, R6, R7" "R0, R2, R4, R6, R7" "R1, R2, R4, R6, R7" "R0, R1, R2, R4, R6, R7" "R3, R4, R6, R7"
+  "R0, R3, R4, R6, R7" "R1, R3, R4, R6, R7" "R0, R1, R3, R4, R6, R7" "R2, R3, R4, R6, R7" "R0, R2, R3, R4, R6, R7" "R1, R2, R3, R4, R6, R7" "R0, R1, R2, R3, R4, R6, R7" "R5, R6, R7"
+  "R0, R5, R6, R7" "R1, R5, R6, R7" "R0, R1, R5, R6, R7" "R2, R5, R6, R7" "R0, R2, R5, R6, R7" "R1, R2, R5, R6, R7" "R0, R1, R2, R5, R6, R7" "R3, R5, R6, R7"
+  "R0, R3, R5, R6, R7" "R1, R3, R5, R6, R7" "R0, R1, R3, R5, R6, R7" "R2, R3, R5, R6, R7" "R0, R2, R3, R5, R6, R7" "R1, R2, R3, R5, R6, R7" "R0, R1, R2, R3, R5, R6, R7" "R4, R5, R6, R7"
+  "R0, R4, R5, R6, R7" "R1, R4, R5, R6, R7" "R0, R1, R4, R5, R6, R7" "R2, R4, R5, R6, R7" "R0, R2, R4, R5, R6, R7" "R1, R2, R4, R5, R6, R7" "R0, R1, R2, R4, R5, R6, R7" "R3, R4, R5, R6, R7"
+  "R0, R3, R4, R5, R6, R7" "R1, R3, R4, R5, R6, R7" "R0, R1, R3, R4, R5, R6, R7" "R2, R3, R4, R5, R6, R7" "R0, R2, R3, R4, R5, R6, R7" "R1, R2, R3, R4, R5, R6, R7" "R0, R1, R2, R3, R4, R5, R6, R7"
+];
+
+attach names [ rlist_hi ] [
+  null
+  "R8" "R9" "R8, R9" "R10" "R8, R10" "R9, R10" "R8, R9, R10" "R11"
+  "R8, R11" "R9, R11" "R8, R9, R11" "R10, R11" "R8, R10, R11" "R9, R10, R11" "R8, R9, R10, R11" "R12"
+  "R8, R12" "R9, R12" "R8, R9, R12" "R10, R12" "R8, R10, R12" "R9, R10, R12" "R8, R9, R10, R12" "R11, R12"
+  "R8, R11, R12" "R9, R11, R12" "R8, R9, R11, R12" "R10, R11, R12" "R8, R10, R11, R12" "R9, R10, R11, R12" "R8, R9, R10, R11, R12" "R13"
+  "R8, R13" "R9, R13" "R8, R9, R13" "R10, R13" "R8, R10, R13" "R9, R10, R13" "R8, R9, R10, R13" "R11, R13"
+  "R8, R11, R13" "R9, R11, R13" "R8, R9, R11, R13" "R10, R11, R13" "R8, R10, R11, R13" "R9, R10, R11, R13" "R8, R9, R10, R11, R13" "R12, R13"
+  "R8, R12, R13" "R9, R12, R13" "R8, R9, R12, R13" "R10, R12, R13" "R8, R10, R12, R13" "R9, R10, R12, R13" "R8, R9, R10, R12, R13" "R11, R12, R13"
+  "R8, R11, R12, R13" "R9, R11, R12, R13" "R8, R9, R11, R12, R13" "R10, R11, R12, R13" "R8, R10, R11, R12, R13" "R9, R10, R11, R12, R13" "R8, R9, R10, R11, R12, R13" "R14"
+  "R8, R14" "R9, R14" "R8, R9, R14" "R10, R14" "R8, R10, R14" "R9, R10, R14" "R8, R9, R10, R14" "R11, R14"
+  "R8, R11, R14" "R9, R11, R14" "R8, R9, R11, R14" "R10, R11, R14" "R8, R10, R11, R14" "R9, R10, R11, R14" "R8, R9, R10, R11, R14" "R12, R14"
+  "R8, R12, R14" "R9, R12, R14" "R8, R9, R12, R14" "R10, R12, R14" "R8, R10, R12, R14" "R9, R10, R12, R14" "R8, R9, R10, R12, R14" "R11, R12, R14"
+  "R8, R11, R12, R14" "R9, R11, R12, R14" "R8, R9, R11, R12, R14" "R10, R11, R12, R14" "R8, R10, R11, R12, R14" "R9, R10, R11, R12, R14" "R8, R9, R10, R11, R12, R14" "R13, R14"
+  "R8, R13, R14" "R9, R13, R14" "R8, R9, R13, R14" "R10, R13, R14" "R8, R10, R13, R14" "R9, R10, R13, R14" "R8, R9, R10, R13, R14" "R11, R13, R14"
+  "R8, R11, R13, R14" "R9, R11, R13, R14" "R8, R9, R11, R13, R14" "R10, R11, R13, R14" "R8, R10, R11, R13, R14" "R9, R10, R11, R13, R14" "R8, R9, R10, R11, R13, R14" "R12, R13, R14"
+  "R8, R12, R13, R14" "R9, R12, R13, R14" "R8, R9, R12, R13, R14" "R10, R12, R13, R14" "R8, R10, R12, R13, R14" "R9, R10, R12, R13, R14" "R8, R9, R10, R12, R13, R14" "R11, R12, R13, R14"
+  "R8, R11, R12, R13, R14" "R9, R11, R12, R13, R14" "R8, R9, R11, R12, R13, R14" "R10, R11, R12, R13, R14" "R8, R10, R11, R12, R13, R14" "R9, R10, R11, R12, R13, R14" "R8, R9, R10, R11, R12, R13, R14" "R15"
+  "R8, R15" "R9, R15" "R8, R9, R15" "R10, R15" "R8, R10, R15" "R9, R10, R15" "R8, R9, R10, R15" "R11, R15"
+  "R8, R11, R15" "R9, R11, R15" "R8, R9, R11, R15" "R10, R11, R15" "R8, R10, R11, R15" "R9, R10, R11, R15" "R8, R9, R10, R11, R15" "R12, R15"
+  "R8, R12, R15" "R9, R12, R15" "R8, R9, R12, R15" "R10, R12, R15" "R8, R10, R12, R15" "R9, R10, R12, R15" "R8, R9, R10, R12, R15" "R11, R12, R15"
+  "R8, R11, R12, R15" "R9, R11, R12, R15" "R8, R9, R11, R12, R15" "R10, R11, R12, R15" "R8, R10, R11, R12, R15" "R9, R10, R11, R12, R15" "R8, R9, R10, R11, R12, R15" "R13, R15"
+  "R8, R13, R15" "R9, R13, R15" "R8, R9, R13, R15" "R10, R13, R15" "R8, R10, R13, R15" "R9, R10, R13, R15" "R8, R9, R10, R13, R15" "R11, R13, R15"
+  "R8, R11, R13, R15" "R9, R11, R13, R15" "R8, R9, R11, R13, R15" "R10, R11, R13, R15" "R8, R10, R11, R13, R15" "R9, R10, R11, R13, R15" "R8, R9, R10, R11, R13, R15" "R12, R13, R15"
+  "R8, R12, R13, R15" "R9, R12, R13, R15" "R8, R9, R12, R13, R15" "R10, R12, R13, R15" "R8, R10, R12, R13, R15" "R9, R10, R12, R13, R15" "R8, R9, R10, R12, R13, R15" "R11, R12, R13, R15"
+  "R8, R11, R12, R13, R15" "R9, R11, R12, R13, R15" "R8, R9, R11, R12, R13, R15" "R10, R11, R12, R13, R15" "R8, R10, R11, R12, R13, R15" "R9, R10, R11, R12, R13, R15" "R8, R9, R10, R11, R12, R13, R15" "R14, R15"
+  "R8, R14, R15" "R9, R14, R15" "R8, R9, R14, R15" "R10, R14, R15" "R8, R10, R14, R15" "R9, R10, R14, R15" "R8, R9, R10, R14, R15" "R11, R14, R15"
+  "R8, R11, R14, R15" "R9, R11, R14, R15" "R8, R9, R11, R14, R15" "R10, R11, R14, R15" "R8, R10, R11, R14, R15" "R9, R10, R11, R14, R15" "R8, R9, R10, R11, R14, R15" "R12, R14, R15"
+  "R8, R12, R14, R15" "R9, R12, R14, R15" "R8, R9, R12, R14, R15" "R10, R12, R14, R15" "R8, R10, R12, R14, R15" "R9, R10, R12, R14, R15" "R8, R9, R10, R12, R14, R15" "R11, R12, R14, R15"
+  "R8, R11, R12, R14, R15" "R9, R11, R12, R14, R15" "R8, R9, R11, R12, R14, R15" "R10, R11, R12, R14, R15" "R8, R10, R11, R12, R14, R15" "R9, R10, R11, R12, R14, R15" "R8, R9, R10, R11, R12, R14, R15" "R13, R14, R15"
+  "R8, R13, R14, R15" "R9, R13, R14, R15" "R8, R9, R13, R14, R15" "R10, R13, R14, R15" "R8, R10, R13, R14, R15" "R9, R10, R13, R14, R15" "R8, R9, R10, R13, R14, R15" "R11, R13, R14, R15"
+  "R8, R11, R13, R14, R15" "R9, R11, R13, R14, R15" "R8, R9, R11, R13, R14, R15" "R10, R11, R13, R14, R15" "R8, R10, R11, R13, R14, R15" "R9, R10, R11, R13, R14, R15" "R8, R9, R10, R11, R13, R14, R15" "R12, R13, R14, R15"
+  "R8, R12, R13, R14, R15" "R9, R12, R13, R14, R15" "R8, R9, R12, R13, R14, R15" "R10, R12, R13, R14, R15" "R8, R10, R12, R13, R14, R15" "R9, R10, R12, R13, R14, R15" "R8, R9, R10, R12, R13, R14, R15" "R11, R12, R13, R14, R15"
+  "R8, R11, R12, R13, R14, R15" "R9, R11, R12, R13, R14, R15" "R8, R9, R11, R12, R13, R14, R15" "R10, R11, R12, R13, R14, R15" "R8, R10, R11, R12, R13, R14, R15" "R9, R10, R11, R12, R13, R14, R15" "R8, R9, R10, R11, R12, R13, R14, R15"
+];
 
 macro resultFlags(result) {
     $(N_flag) = (result s< 0);
@@ -82,13 +165,13 @@ usignedi_4: i4 is i4 {
     addFlags(ri, tmpi, rj);
 }
 
-:ADD #^usignedi_4, ri is op8=0xa4 & usignedi_4 & ri {
+:ADD #usignedi_4, ri is op8=0xa4 & usignedi_4 & ri {
     local tmpi:4 = ri;
     ri = ri + usignedi_4;
     addFlags(ri, tmpi, usignedi_4);
 }
 
-:ADD2 #^signedi_4, ri is op8=0xa5 & signedi_4 & ri {
+:ADD2 #signedi_4, ri is op8=0xa5 & signedi_4 & ri {
     tmpi:4 = ri;
     ri = ri + signedi_4;
     addFlags(ri, tmpi, signedi_4);
@@ -105,11 +188,11 @@ usignedi_4: i4 is i4 {
     ri = ri + rj;
 }
 
-:ADDN #^usignedi_4, ri is op8=0xa0 & usignedi_4 & ri {
+:ADDN #usignedi_4, ri is op8=0xa0 & usignedi_4 & ri {
     ri = ri + usignedi_4;
 }
 
-:ADDN2 #^signedi_4, ri is op8=0xa1 & signedi_4 & ri {
+:ADDN2 #signedi_4, ri is op8=0xa1 & signedi_4 & ri {
     ri = ri + signedi_4;
 }
 
@@ -149,37 +232,37 @@ usignedi_4: i4 is i4 {
     resultFlags(ri);
 }
 
-:AND rj, @^ri is op8=0x84 & rj & ri {
+:AND rj, @ri is op8=0x84 & rj & ri {
     *ri = *:4 ri & rj;
     resultFlags(*:4 ri);
 }
 
 # UNIMPLEMENTED
 
-:ANDH rj, @^ri is op8=0x85 & rj & ri unimpl
-:ANDB rj, @^ri is op8=0x86 & rj & ri unimpl
+:ANDH rj, @ri is op8=0x85 & rj & ri unimpl
+:ANDB rj, @ri is op8=0x86 & rj & ri unimpl
 
 :OR rj, ri is op8=0x92 & rj & ri unimpl
-:OR rj, @^ri is op8=0x94 & rj & ri unimpl
-:ORH rj, @^ri is op8=0x95 & rj & ri unimpl
-:ORB rj, @^ri is op8=0x96 & rj & ri unimpl
+:OR rj, @ri is op8=0x94 & rj & ri unimpl
+:ORH rj, @ri is op8=0x95 & rj & ri unimpl
+:ORB rj, @ri is op8=0x96 & rj & ri unimpl
 
 :EOR rj, ri is op8=0x9a & rj & ri unimpl
-:EOR rj, @^ri is op8=0x9c & rj & ri unimpl
-:EORH rj, @^ri is op8=0x9d & rj & ri unimpl
-:EORB rj, @^ri is op8=0x9e & rj & ri unimpl
+:EOR rj, @ri is op8=0x9c & rj & ri unimpl
+:EORH rj, @ri is op8=0x9d & rj & ri unimpl
+:EORB rj, @ri is op8=0x9e & rj & ri unimpl
 
-:BANDL #^u4, @^ri is op8=0x80 & u4 & ri unimpl
-:BANDL #^u4, @^ri is op8=0x81 & u4 & ri unimpl
+:BANDL #u4, @ri is op8=0x80 & u4 & ri unimpl
+:BANDL #u4, @ri is op8=0x81 & u4 & ri unimpl
 
-:BORL #^u4, @^ri is op8=0x90 & u4 & ri unimpl
-:BORH #^u4, @^ri is op8=0x91 & u4 & ri unimpl
+:BORL #u4, @ri is op8=0x90 & u4 & ri unimpl
+:BORH #u4, @ri is op8=0x91 & u4 & ri unimpl
 
-:BEORL #^u4, @^ri is op8=0x98 & u4 & ri unimpl
-:BEORH #^u4, @^ri is op8=0x99 & u4 & ri unimpl
+:BEORL #u4, @ri is op8=0x98 & u4 & ri unimpl
+:BEORH #u4, @ri is op8=0x99 & u4 & ri unimpl
 
-:BTSTL #^u4, @^ri is op8=0x88 & u4 & ri unimpl
-:BTSTH #^u4, @^ri is op8=0x89 & u4 & ri unimpl
+:BTSTL #u4, @ri is op8=0x88 & u4 & ri unimpl
+:BTSTH #u4, @ri is op8=0x89 & u4 & ri unimpl
 
 :MUL rj, ri is op8=0xaf & rj & ri unimpl
 :MULU rj, ri is op8=0xab & rj & ri unimpl
@@ -194,22 +277,22 @@ usignedi_4: i4 is i4 {
 :DIV4S is op16=0x9f70 & ri unimpl
 
 :LSL rj, ri is op8=0xb6 & rj & ri unimpl
-:LSL #^u4, ri is op8=0xb4 & u4 & ri unimpl
-:LSL2 #^u4, ri is op8=0xb5 & u4 & ri unimpl
+:LSL #u4, ri is op8=0xb4 & u4 & ri unimpl
+:LSL2 #u4, ri is op8=0xb5 & u4 & ri unimpl
 
 :LSR rj, ri is op8=0xb2 & rj & ri unimpl
-:LSR #^u4, ri is op8=0xb0 & u4 & ri unimpl
-:LSR2 #^u4, ri is op8=0xb1 & u4 & ri unimpl
+:LSR #u4, ri is op8=0xb0 & u4 & ri unimpl
+:LSR2 #u4, ri is op8=0xb1 & u4 & ri unimpl
 
 :ASR rj, ri is op8=0xba & rj & ri unimpl
-:ASR #^u4, ri is op8=0xb8 & u4 & ri unimpl
-:ASR2 #^u4, ri is op8=0xb9 & u4 & ri unimpl
+:ASR #u4, ri is op8=0xb8 & u4 & ri unimpl
+:ASR2 #u4, ri is op8=0xb9 & u4 & ri unimpl
 
-:LDI_32 #^i32, ri48_4 is op48_12=0x9f8 & i32 & ri48_4 unimpl
-:LDI_20 #^i20_4h, #^i20_16l, ri32_4 is op32_8=0x9b & i20_4h & i20_16l & ri32_4 unimpl
-:LDI_8 #^i8, ri is op4=0xc & i8 & ri unimpl
+:LDI_32 #i32, ri48_4 is op48_12=0x9f8 & i32 & ri48_4 unimpl
+:LDI_20 #i20_4h, #i20_16l, ri32_4 is op32_8=0x9b & i20_4h & i20_16l & ri32_4 unimpl
+:LDI_8 #i8, ri is op4=0xc & i8 & ri unimpl
 
-:LD @^rj, ri is op8=0x04 & rj & ri unimpl
+:LD @rj, ri is op8=0x04 & rj & ri unimpl
 :LD @("AC", rj), ri is op8=0x00 & rj & ri unimpl
 :LD @("FP", o8), ri is op4=0x2 & o8 & ri unimpl # TODO: o8 is a signed calc of value * 4
 :LD @("SP", u4), ri is op8=0x03 & u4 & ri unimpl # TODO: u4 is unsigned calc of value * 4
@@ -217,15 +300,15 @@ usignedi_4: i4 is i4 {
 :LD @"SP"+, rs is op12=0x078 & rs unimpl
 :LD @"SP"+, "PS" is op16=0x0790 unimpl
 
-:LDUH @^rj, ri is op8=0x05 & rj & ri unimpl
+:LDUH @rj, ri is op8=0x05 & rj & ri unimpl
 :LDUH @("AC", rj), ri is op8=0x01 & rj & ri unimpl
 :LDUH @("FP", o8), ri is op4=0x4 & o8 & ri unimpl # TODO: o8 is a signed calc of value * 2
 
-:LDUB @^rj, ri is op8=0x06 & rj & ri unimpl
+:LDUB @rj, ri is op8=0x06 & rj & ri unimpl
 :LDUB @("AC", rj), ri is op8=0x02 & rj & ri unimpl
 :LDUB @("FP", o8), ri is op4=0x6 & o8 & ri unimpl
 
-:ST ri, @^rj is op8=0x14 & rj & ri unimpl
+:ST ri, @rj is op8=0x14 & rj & ri unimpl
 :ST ri, @("AC", rj) is op8=0x10 & rj & ri unimpl
 :ST ri, @("FP", o8) is op4=0x3 & o8 & ri unimpl # TODO: o8 is signed calc of value * 4
 :ST ri, @("SP", u4) is op8=0x13 & u4 & ri unimpl # TODO: u4 is unsigned calc of value * 4
@@ -233,11 +316,11 @@ usignedi_4: i4 is i4 {
 :ST rs @"-SP" is op12=0x178 & rs unimpl
 :ST "PS", @"-SP" is op16=0x1790 unimpl
 
-:STH ri, @^rj is op8=0x15 & rj & ri unimpl
+:STH ri, @rj is op8=0x15 & rj & ri unimpl
 :STH ri, @("AC", rj) is op8=0x11 & rj & ri unimpl
 :STH ri, @("FP", o8) is op4=0x5 & o8 & ri unimpl # TODO: o8 is signed calc of value * 2
 
-:STB ri, @^rj is op8=0x16 & rj & ri unimpl
+:STB ri, @rj is op8=0x16 & rj & ri unimpl
 :STB ri, @("AC", rj) is op8=0x12 & rj & ri unimpl
 :STB ri, @("FP", o8) is op4=0x7 & o8 & ri unimpl
 
@@ -247,10 +330,69 @@ usignedi_4: i4 is i4 {
 :MOV ri, rs4_4 is op8=0xb3 & rs4_4 & ri unimpl
 :MOV ri, "PS" is op12=0x071 & ri unimpl
 
-:JMP @^ri is op12=0x970 & ri unimpl
+:JMP @ri is op12=0x970 & ri unimpl
 :CALL rel11 is op5=0x1A & rel11 unimpl # TODO: rel11 is signed calc of value * 2
-:CALL @^ri is op12=0x971 & ri unimpl
+:CALL @ri is op12=0x971 & ri unimpl
 :RET is op16=0x9720 unimpl
-:INT #^u8 is op8=0x1f & u8 unimpl
+:INT #u8 is op8=0x1f & u8 unimpl
 :INTE is op16=0x9F30 unimpl # Emulator only
 :RETI is op16=0x9730 unimpl
+
+:B^cc rel8 is op4=0xE & cc & rel8 unimpl # TODO: rel8 is signed calc of value * 2
+
+:JMP_D @ri is op12=0x9f0 & ri unimpl
+
+:CALL_D rel11 is op5=0x1b & rel11 unimpl # TODO: rel11 is unsigned calc of value * 2
+:CALL_D @ri is op12=0x9f1 & ri unimpl
+
+:RET_D is op16=0x9420 unimpl
+
+:B^cc"_D" rel8 is op4=0xF & cc & rel8 unimpl # TODO: rel8 is signed calc of value * 2
+
+:DMOV @dir8, "AC" is op8=0x08 & dir8 unimpl # TODO: dir8 is signed calc of value * 4
+:DMOV "AC", @dir8 is op8=0x18 & dir8 unimpl # TODO: dir8 is signed calc of value * 4
+:DMOV @dir8, @"AC"+ is op8=0x0c & dir8 unimpl # TODO: dir8 is signed calc of value * 4
+:DMOV "AC"+, @dir8 is op8=0x1c & dir8 unimpl # TODO: dir8 is signed calc of value * 4
+:DMOV @dir8, @"-SP" is op8=0x0b & dir8 unimpl # TODO: dir8 is signed calc of value * 4
+:DMOV @"SP+", @dir8 is op8=0x1b & dir8 unimpl # TODO: dir8 is signed calc of value * 4
+
+:DMOVH @dir8, "AC" is op8=0x09 & dir8 unimpl # TODO: dir8 is signed calc of value * 2
+:DMOVH "AC", @dir8 is op8=0x19 & dir8 unimpl # TODO: dir8 is signed calc of value * 2
+:DMOVH @dir8, @"AC"+ is op8=0x0d & dir8 unimpl # TODO: dir8 is signed calc of value * 2
+:DMOVH "AC"+, @dir8 is op8=0x1d & dir8 unimpl # TODO: dir8 is signed calc of value * 2
+
+:DMOVB @dir8, "AC" is op8=0x0a & dir8 unimpl
+:DMOVB "AC", @dir8 is op8=0x1a & dir8 unimpl
+:DMOVB @dir8, @"AC"+ is op8=0x0e & dir8 unimpl
+:DMOVB "AC"+, @dir8 is op8=0x1e & dir8 unimpl
+
+:LDRES @ri+, #u4 is op8=0xbc & u4 & ri unimpl
+:STRES #u4, @ri+ is op8=0xbd & u4 & ri unimpl
+
+:COPOP #u32_4, #cc32_2, crj32_4, cri32_4 is op32_12=0x9fc & u32_4 & cc32_6 & cc32_2 & crj32_4 & cri32_4 unimpl
+:COPLD #u32_4, #cc32_2, crj32_4, cri32_4 is op32_12=0x9fd & u32_4 & cc32_6 & cc32_2 & crj32_4 & cri32_4 unimpl
+:COPST #u32_4, #cc32_2, crj32_4, cri32_4 is op32_12=0x9fe & u32_4 & cc32_6 & cc32_2 & crj32_4 & cri32_4 unimpl
+:COPSV #u32_4, #cc32_2, crj32_4, cri32_4 is op32_12=0x9ff & u32_4 & cc32_6 & cc32_2 & crj32_4 & cri32_4 unimpl
+
+:NOP is op16=0x9fa0 unimpl
+
+:ANDCCR #u8 is op8=0x83 & u8 unimpl
+:ORCCR #u8 is op8=0x93 & u8 unimpl
+:STILM #u8 is op8=0x87 & u8 unimpl
+:ADDSP #s8 is op8=0xa3 & s8 unimpl # TODO: s8 is signed calc of value * 4
+
+:EXTSB ri is op12=0x978 & ri unimpl
+:EXTUB ri is op12=0x979 & ri unimpl
+:EXTSH ri is op12=0x97a & ri unimpl
+:EXTUH ri is op12=0x97b & ri unimpl
+
+:LDM0 rlist_lo is op8=0x8c & rlist_lo unimpl
+:LDM1 rlist_hi is op8=0x8d & rlist_hi unimpl
+
+:STM0 rlist_lo is op8=0x8e & rlist_lo unimpl
+:STM1 rlist_hi is op8=0x8f & rlist_hi unimpl
+
+:ENTER #u8 is op8=0x0f & u8 unimpl
+:LEAVE is op16=0x9f90 unimpl
+
+:XCHB @rj, ri is op8=0x8a & rj & ri unimpl
