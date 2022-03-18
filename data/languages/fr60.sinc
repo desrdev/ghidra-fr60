@@ -141,10 +141,16 @@ macro subFlags(result, val1, val2) {
 }
 
 macro mulFlags64(result, val1, val2) {
-    $(N_flag) = (result:4 s< 0);
+    $(N_flag) = (result s< 0);
     $(Z_flag) = (result == 0);
-    $(V_flag) = (val2 > 0 && (val1 > (0xFFFFFFFFFFFFFFFF / val2)));
+    $(V_flag) = (val1 > 0 && (val1 > (0xFFFFFFFFFFFFFFFF / val2)));
 }
+
+macro mulFlagsH(result, val1, val2) {
+    resultFlags(result);
+}
+
+# ====
 
 # 4 bit immediates don't convert cleanly with zext/sext
 signedi_4: i4 is i4 {
@@ -161,6 +167,11 @@ signedi_4: i4 is i4 {
 
 usignedi_4: i4 is i4 {
     local value:4 = 0x0000000F & i4;
+    export value;
+}
+
+usignedi20h: i20_4h is i20_4h {
+    local value:4 = 0x0000000F & i20_4h;
     export value;
 }
 
@@ -379,34 +390,200 @@ borh_ext: u4 is u4 {
     mulFlags64(full, rj, ri);
 }
 
-:MULU rj, ri is op8=0xab & rj & ri unimpl
-:MULH rj, ri is op8=0xbf & rj & ri unimpl
-:MULUH rj, ri is op8=0xbb & rj & ri unimpl
+:MULU rj, ri is op8=0xab & rj & ri {
+    local full:8 = zext(rj) * zext(ri);
+    MDL = full:4;
+    MDH = full(4);
+    mulFlags64(full, rj, ri);
+}
+
+:MULH rj, ri is op8=0xbf & rj & ri {
+    MDL = sext(rj:2) * sext(ri:2);
+    mulFlagsH(MDL, rj, ri);
+}
+
+:MULUH rj, ri is op8=0xbb & rj & ri {
+    MDL = zext(rj:2) * zext(ri:2);
+    mulFlagsH(MDL, rj, ri);
+}
 
 # ====
 
-:DIV0S ri is op12=0x974 & ri unimpl
-:DIV0U ri is op12=0x975 & ri unimpl
-:DIV1 ri is op12=0x976 & ri unimpl
-:DIV2 ri is op12=0x977 & ri unimpl
-:DIV3 is op16=0x9f60 & ri unimpl
-:DIV4S is op16=0x9f70 & ri unimpl
+:DIV0S ri is op12=0x974 & ri {
+    $(D0_flag) = MDL s< 0;
+    $(D1_flag) = MDL[31,1] == ri[31,1];
+    local ext64:8 = sext(MDL);
+    MDL = ext64:4;
+    MDH = ext64(4);
+}
 
-:LSL rj, ri is op8=0xb6 & rj & ri unimpl
-:LSL #u4, ri is op8=0xb4 & u4 & ri unimpl
-:LSL2 #u4, ri is op8=0xb5 & u4 & ri unimpl
+:DIV0U ri is op12=0x975 & ri {
+    $(D_flag) = 0b00;
+    MDH = 0x00000000;
+}
 
-:LSR rj, ri is op8=0xb2 & rj & ri unimpl
-:LSR #u4, ri is op8=0xb0 & u4 & ri unimpl
-:LSR2 #u4, ri is op8=0xb1 & u4 & ri unimpl
+:DIV1 ri is op12=0x976 & ri {
+    MDH = MDH << 1;
+    MDL = MDL << 1;
 
-:ASR rj, ri is op8=0xba & rj & ri unimpl
-:ASR #u4, ri is op8=0xb8 & u4 & ri unimpl
-:ASR2 #u4, ri is op8=0xb9 & u4 & ri unimpl
+    local temp:4 = 0x00000000;
 
-:LDI_32 #i32, ri48_4 is op48_12=0x9f8 & i32 & ri48_4 unimpl
-:LDI_20 #i20_4h, #i20_16l, ri32_4 is op32_8=0x9b & i20_4h & i20_16l & ri32_4 unimpl
-:LDI_8 #i8, ri is op4=0xc & i8 & ri unimpl
+    if ($(D1_flag) != 0b1) goto <D1_ZERO_OP>;
+        temp = MDH + ri;
+        $(C_flag) = scarry(MDH, ri);
+        goto <D1_OP>;
+    <D1_ZERO_OP>
+        temp = MDH - ri;
+        $(C_flag) = sborrow(MDH, ri);
+    <D1_OP>
+
+    if ($(D0_flag) ^ $(D1_flag) ^ $(C_flag) != 0b0) goto <END>;
+        MDH = temp;
+        MDL[0,1] = 0b1;
+    <END>
+
+    $(Z_flag) = MDH == 0;
+}
+
+:DIV2 ri is op12=0x977 & ri {
+    if ($(D1_flag) != 0b1) goto <D1_ZERO_OP2>;
+        $(C_flag) = scarry(MDH, ri);
+        $(Z_flag) = (MDH + ri) == 0;
+        goto <D1_OP2>;
+    <D1_ZERO_OP2>
+        $(C_flag) = sborrow(MDH, ri);
+        $(Z_flag) = (MDH - ri) == 0;
+    <D1_OP2>
+
+    if ($(Z_flag) != 0b1) goto <END>;
+        MDH = 0x00000000;
+    <END>
+   $(Z_flag) = MDH == 0;
+}
+
+:DIV3 is op16=0x9f60 & ri {
+    if ($(Z_flag) != 0b1) goto <END>;
+        MDL = MDL + 0x1;
+    <END>
+}
+
+:DIV4S is op16=0x9f70 & ri {
+    if ($(D1_flag) != 0b1) goto <END>;
+        MDL = 0x0 - MDL;
+    <END>
+}
+
+# ====
+
+:LSL rj, ri is op8=0xb6 & rj & ri {
+    if (rj[0,5] == 0) goto <END>;
+        local shiftAmount:2 = zext(rj[0,5]);
+        ri = ri << (shiftAmount - 1);
+        $(C_flag) = ri[31,1];
+        ri = ri << 1;
+    <END>
+
+    resultFlags(ri);
+}
+
+:LSL #usignedi_4, ri is op8=0xb4 & usignedi_4 & ri {
+    if (usignedi_4 == 0) goto <END>;
+        ri = ri << (usignedi_4 - 1);
+        $(C_flag) = ri[31,1];
+        ri = ri << 1;
+    <END>
+
+    resultFlags(ri);
+}
+
+:LSL2 #usignedi_4, ri is op8=0xb5 & usignedi_4 & ri {
+    local amount = usignedi_4 + 15;
+    ri = ri << amount;
+    $(C_flag) = ri[31,1];
+    ri = ri << 1;
+
+    resultFlags(ri);
+}
+
+# ====
+
+:LSR rj, ri is op8=0xb2 & rj & ri {
+    if (rj[0,5] == 0) goto <END>;
+        local shiftAmount:2 = zext(rj[0,5]);
+        ri = ri >> (shiftAmount - 1);
+        $(C_flag) = ri[0,1];
+        ri = ri >> 1;
+    <END>
+
+    resultFlags(ri);
+}
+
+:LSR #usignedi_4, ri is op8=0xb0 & usignedi_4 & ri {
+    if (usignedi_4 == 0) goto <END>;
+        ri = ri >> (usignedi_4 - 1);
+        $(C_flag) = ri[0,1];
+        ri = ri >> 1;
+    <END>
+
+    resultFlags(ri);
+}
+
+:LSR2 #usignedi_4, ri is op8=0xb1 & usignedi_4 & ri {
+    local amount = usignedi_4 + 15;
+    ri = ri >> amount;
+    $(C_flag) = ri[0,1];
+    ri = ri >> 1;
+
+    resultFlags(ri);
+}
+
+# ====
+
+:ASR rj, ri is op8=0xba & rj & ri {
+    if (rj[0,5] == 0) goto <END>;
+        local shiftAmount:2 = zext(rj[0,5]);
+        ri = ri s>> (shiftAmount - 1);
+        $(C_flag) = ri[0,1];
+        ri = ri s>> 1;
+    <END>
+
+    resultFlags(ri);
+}
+
+:ASR #usignedi_4, ri is op8=0xb8 & usignedi_4 & ri {
+    if (usignedi_4 == 0) goto <END>;
+        ri = ri s>> (usignedi_4 - 1);
+        $(C_flag) = ri[0,1];
+        ri = ri s>> 1;
+    <END>
+
+    resultFlags(ri);
+}
+
+:ASR2 #usignedi_4, ri is op8=0xb9 & usignedi_4 & ri {
+    local amount = usignedi_4 + 15;
+    ri = ri s>> amount;
+    $(C_flag) = ri[0,1];
+    ri = ri s>> 1;
+
+    resultFlags(ri);
+}
+
+# ====
+
+:LDI_32 #i32, ri48_4 is op48_12=0x9f8 & i32 & ri48_4 {
+    ri48_4 = i32;
+}
+
+:LDI_20 #usignedi20h^i20_16l, ri32_4 is op32_8=0x9b & usignedi20h & i20_16l & ri32_4 {
+    local high:4 = usignedi20h << 16;
+    local low:4 = zext(i20_16l:2);
+    ri32_4 = high + low;
+}
+
+:LDI_8 #i8, ri is op4=0xc & i8 & ri {
+    ri = zext(i8:1);
+}
 
 :LD @rj, ri is op8=0x04 & rj & ri unimpl
 :LD @("AC", rj), ri is op8=0x00 & rj & ri unimpl

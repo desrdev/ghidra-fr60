@@ -11,6 +11,8 @@ define register offset=0x20 size=4 [ _  _  _  _  _  _  _  _  _  _  _   _   _    
 
 # Flag bits (?? manual is very confusing - could be typos!)
 @define ILM_flag    "PS[16,4]"      # ILM: Interrupt Level Mask
+@define D1_flag     "PS[10,1]"
+@define D0_flag     "PS[9,1]"
 @define D_flag      "PS[9,2]"       # D: step Division
 @define T_flag      "PS[8,1]"       # T: step Trace trap
 @define S_flag      "PS[5,1]"		# S: Stack
