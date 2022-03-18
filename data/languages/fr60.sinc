@@ -585,29 +585,111 @@ borh_ext: u4 is u4 {
     ri = zext(i8:1);
 }
 
-:LD @rj, ri is op8=0x04 & rj & ri unimpl
-:LD @("AC", rj), ri is op8=0x00 & rj & ri unimpl
-:LD @("FP", o8), ri is op4=0x2 & o8 & ri unimpl # TODO: o8 is a signed calc of value * 4
-:LD @("SP", u4), ri is op8=0x03 & u4 & ri unimpl # TODO: u4 is unsigned calc of value * 4
-:LD @"SP"+, ri is op12=0x070 & ri unimpl
-:LD @"SP"+, rs is op12=0x078 & rs unimpl
-:LD @"SP"+, "PS" is op16=0x0790 unimpl
+# ====
 
-:LDUH @rj, ri is op8=0x05 & rj & ri unimpl
-:LDUH @("AC", rj), ri is op8=0x01 & rj & ri unimpl
-:LDUH @("FP", o8), ri is op4=0x4 & o8 & ri unimpl # TODO: o8 is a signed calc of value * 2
+:LD @rj, ri is op8=0x04 & rj & ri {
+    ri = *:4 rj;
+}
 
-:LDUB @rj, ri is op8=0x06 & rj & ri unimpl
-:LDUB @("AC", rj), ri is op8=0x02 & rj & ri unimpl
-:LDUB @("FP", o8), ri is op4=0x6 & o8 & ri unimpl
+:LD @("AC", rj), ri is op8=0x00 & rj & ri {
+    local pointer:4 = AC + rj;
+    ri = *:4 pointer;
+}
 
-:ST ri, @rj is op8=0x14 & rj & ri unimpl
-:ST ri, @("AC", rj) is op8=0x10 & rj & ri unimpl
-:ST ri, @("FP", o8) is op4=0x3 & o8 & ri unimpl # TODO: o8 is signed calc of value * 4
-:ST ri, @("SP", u4) is op8=0x13 & u4 & ri unimpl # TODO: u4 is unsigned calc of value * 4
-:ST ri @"-SP" is op12=0x170 & ri unimpl
-:ST rs @"-SP" is op12=0x178 & rs unimpl
-:ST "PS", @"-SP" is op16=0x1790 unimpl
+:LD @("FP", o8), ri is op4=0x2 & o8 & ri {
+    local pointer:4 = FP + (sext(o8:2) * 4);
+    ri = *:4 pointer;
+}
+
+:LD @("SP", usignedi_4), ri is op8=0x03 & usignedi_4 & ri {
+    local pointer:4 = SP + (usignedi_4 * 4);
+    ri = *:4 pointer;
+}
+
+:LD @"SP"+, ri is op12=0x070 & ri {
+    ri = *:4 SP;
+    SP = SP + 4;
+}
+
+:LD @"SP"+, rs is op12=0x078 & rs {
+    rs = *:4 SP;
+    SP = SP + 4;
+}
+
+:LD @"SP"+, "PS" is op16=0x0790 {
+    PS = *:4 SP;
+    SP = SP + 4;
+}
+
+# ====
+
+:LDUH @rj, ri is op8=0x05 & rj & ri {
+    ri = zext(*:2 rj);
+}
+
+:LDUH @("AC", rj), ri is op8=0x01 & rj & ri {
+    local pointer:4 = AC + rj;
+    ri = zext(*:2 pointer);
+}
+
+:LDUH @("FP", o8), ri is op4=0x4 & o8 & ri {
+    local pointer:4 = FP + (sext(o8:2) * 2);
+    ri = zext(*:2 pointer);
+}
+
+# ====
+
+:LDUB @rj, ri is op8=0x06 & rj & ri {
+    ri = zext(*:1 rj);
+}
+
+:LDUB @("AC", rj), ri is op8=0x02 & rj & ri {
+    local pointer:4 = AC + rj;
+    ri = zext(*:1 pointer);
+}
+
+:LDUB @("FP", o8), ri is op4=0x6 & o8 & ri {
+    local pointer:4 = FP + (sext(o8:2) * 2);
+    ri = zext(*:2 pointer);
+}
+
+# ====
+
+:ST ri, @rj is op8=0x14 & rj & ri {
+    *:4 rj = ri;
+}
+
+:ST ri, @("AC", rj) is op8=0x10 & rj & ri {
+    local pointer:4 = AC + rj;
+    *:4 pointer = ri;
+}
+
+:ST ri, @("FP", o8) is op4=0x3 & o8 & ri {
+    local pointer:4 = FP + (sext(o8:2) * 4);
+    *:4 pointer = ri;
+}
+
+:ST ri, @("SP", signedi_4) is op8=0x13 & signedi_4 & ri {
+    local pointer:4 = SP + (signedi_4 * 4);
+    *:4 pointer = ri;
+}
+
+:ST ri @"-SP" is op12=0x170 & ri {
+    SP = SP - 4;
+    *:4 SP = ri;
+}
+
+:ST rs @"-SP" is op12=0x178 & rs {
+    SP = SP - 4;
+    *:4 SP = rs;
+}
+
+:ST "PS", @"-SP" is op16=0x1790 {
+    SP = SP - 4;
+    *:4 SP = PS;
+}
+
+# ====
 
 :STH ri, @rj is op8=0x15 & rj & ri unimpl
 :STH ri, @("AC", rj) is op8=0x11 & rj & ri unimpl
