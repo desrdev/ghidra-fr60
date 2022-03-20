@@ -21,5 +21,6 @@ define register offset=0x20 size=4 [ _  _  _  _  _  _  _  _  _  _  _   _   _    
 @define Z_flag      "PS[2,1]"		# Z: Zero
 @define V_flag      "PS[1,1]"		# V: oVerflow
 @define C_flag      "PS[0,1]"		# C: Carry
+@define CCR         "PS[0,8]"       # CCR: Condition Code Register
 
 @include "fr60.sinc"
