@@ -48,7 +48,7 @@ define token instr32 (32)
 
 attach variables [ ri rj ri48_4 ri32_4 ] [ R0 R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12 AC FP SP ];
 attach variables [ rs rs4_4 ] [ TBR RP SSP USP MDH MDL _ _ _ _ _ _ _ _ _ _ ];
-attach names [ cc ] [ RA NO EQ NE C NC N P V NV LT GE LE GT LS HI ];
+attach variables [ cc ] [ RA NO EQ NE C NC N P V NV LT GE LE GT LS HI ];
 attach names [ cc32_2 ] [ ADD SUB MUL DIV ];
 
 attach names [ rlist_lo ] [
@@ -187,11 +187,6 @@ sextrel11: rel11 is rel11 {
     export value;
 }
 
-ccext: cc is cc {
-    local value:1 = 0x0F & cc;
-    export value;
-}
-
 bandl_ext: u4 is u4 {
     local value:1 = 0xff & u4;
     export value;
@@ -212,6 +207,10 @@ borh_ext: u4 is u4 {
     local offset:1 = u4 << 4;
     local value:1 = 0xf0 & offset;
     export value;
+}
+
+REL: reloc is rel8 [ reloc = inst_next + (rel8 * 2); ] {
+    export *:2 reloc;
 }
 
 :ADD rj, ri is op8=0xa6 & rj & ri {
@@ -763,21 +762,21 @@ borh_ext: u4 is u4 {
 # ====
 
 :JMP @ri is op12=0x970 & ri {
-    PC = ri;
+    goto [ri];
 }
 
 :CALL sextrel11 is op5=0x1A & sextrel11 {
-    RP = PC + 2;
-    PC = (sextrel11 * 2) + 2 + PC;
+    RP = inst_next;
+    call [(sextrel11 * 2) + inst_next];
 }
 
 :CALL @ri is op12=0x971 & ri {
-    RP = PC + 2;
-    PC = ri;
+    RP = inst_next;
+    call [ri];
 }
 
 :RET is op16=0x9720 {
-    PC = RP;
+    return [RP];
 }
 
 :INT #u8 is op8=0x1f & u8 {
@@ -788,184 +787,181 @@ borh_ext: u4 is u4 {
     $(I_flag) = 0b0;
     $(S_flag) = 0b0;
     local pointer:4 = ((TBR + 0x3FC) - (zext(u8:2) * 4));
-    PC = *:4 pointer;
+    call [*:4 pointer];
 }
 
 :INTE is op16=0x9F30 unimpl # Emulator only
 
 :RETI is op16=0x9730 {
-    PC = *:4 SP;
+    local tempsp:4 = *:4 SP;
     SP = SP + 4;
     PS = *:4 SP;
     SP = SP + 4;
+    return [tempsp];
 }
 
 # ====
 
-:B^ccext rel8 is op4=0xE & ccext & rel8 {
-    local rel:4 = sext(rel8:1);
-    local target:4 = PC + 2 + (rel * 2);
-    if (ccext == 0b0000) goto <BRA>;
-    if (ccext == 0b0001) goto <BNO>;
-    if (ccext == 0b0010) goto <BEQ>;
-    if (ccext == 0b0011) goto <BNE>;
-    if (ccext == 0b0100) goto <BC>;
-    if (ccext == 0b0101) goto <BNC>;
-    if (ccext == 0b0110) goto <BN>;
-    if (ccext == 0b0111) goto <BP>;
-    if (ccext == 0b1000) goto <BV>;
-    if (ccext == 0b1001) goto <BNV>;
-    if (ccext == 0b1010) goto <BLT>;
-    if (ccext == 0b1011) goto <BGE>;
-    if (ccext == 0b1100) goto <BLE>;
-    if (ccext == 0b1101) goto <BGT>;
-    if (ccext == 0b1110) goto <BLS>;
-    if (ccext == 0b1111) goto <BHI>;
-    goto <END>;
-    <BRA>
-        goto <SUCCESS>;
-    <BNO>
-        goto <END>;
-    <BEQ>
-        if ($(Z_flag) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BNE>
-        if ($(Z_flag) == 0) goto <SUCCESS>;
-        goto <END>;
-    <BC>
-        if ($(C_flag) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BNC>
-        if ($(C_flag) == 0) goto <SUCCESS>;
-        goto <END>;
-    <BN>
-        if ($(N_flag) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BP>
-        if ($(N_flag) == 0) goto <SUCCESS>;
-        goto <END>;
-    <BV>
-        if ($(V_flag) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BNV>
-        if ($(V_flag) == 0) goto <SUCCESS>;
-        goto <END>;
-    <BLT>
-        if (($(V_flag) ^ $(N_flag)) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BGE>
-        if (($(V_flag) ^ $(N_flag)) == 0) goto <SUCCESS>;
-        goto <END>;
-    <BLE>
-        if ((($(V_flag) ^ $(N_flag)) | $(Z_flag)) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BGT>
-        if ((($(V_flag) ^ $(N_flag)) | $(Z_flag)) == 0) goto <SUCCESS>;
-        goto <END>;
-    <BLS>
-        if (($(C_flag) | $(Z_flag)) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BHI>
-        if (($(C_flag) | $(Z_flag)) == 0) goto <SUCCESS>;
-        goto <END>;
+:BRA REL is op4=0xe & cc=0x0 & REL {
+    goto REL;
+}
 
-    <SUCCESS>
-    PC = target;
-    <END>
+:BNO REL is op4=0xe & cc=0x1 & REL {}
+
+:BEQ REL is op4=0xe & cc=0x2 & REL {
+    if ($(Z_flag) == 1) goto REL;
+}
+
+:BNE REL is op4=0xe & cc=0x3 & REL {
+    if ($(Z_flag) == 0) goto REL;
+}
+
+:BC REL is op4=0xe & cc=0x4 & REL {
+    if ($(C_flag) == 1) goto REL;
+}
+
+:BNC REL is op4=0xe & cc=0x5 & REL {
+    if ($(C_flag) == 0) goto REL;
+}
+
+:BN REL is op4=0xe & cc=0x6 & REL {
+    if ($(N_flag) == 1) goto REL;
+}
+
+:BP REL is op4=0xe & cc=0x7 & REL {
+    if ($(N_flag) == 0) goto REL;
+}
+
+:BV REL is op4=0xe & cc=0x8 & REL {
+    if ($(V_flag) == 1) goto REL;
+}
+
+:BNV REL is op4=0xe & cc=0x9 & REL {
+    if ($(V_flag) == 0) goto REL;
+}
+
+:BLT REL is op4=0xe & cc=0xa & REL {
+    if (($(V_flag) ^ $(N_flag)) == 1) goto REL;
+}
+
+:BGE REL is op4=0xe & cc=0xb & REL {
+    if (($(V_flag) ^ $(N_flag)) == 0) goto REL;
+}
+
+:BLE REL is op4=0xe & cc=0xc & REL {
+    if ((($(V_flag) ^ $(N_flag)) | $(Z_flag)) == 1) goto REL;
+}
+
+:BGT REL is op4=0xe & cc=0xd & REL {
+    if ((($(V_flag) ^ $(N_flag)) | $(Z_flag)) == 0) goto REL;
+}
+
+:BLS REL is op4=0xe & cc=0xe & REL {
+    if (($(C_flag) | $(Z_flag)) == 1) goto REL;
+}
+
+:BHI REL is op4=0xe & cc=0xf & REL {
+    if (($(C_flag) | $(Z_flag)) == 0) goto REL;
 }
 
 :JMP_D @ri is op12=0x9f0 & ri {
-    PC = ri;
+    goto [ri];
     delayslot(1);
 }
 
 :CALL_D sextrel11 is op5=0x1b & sextrel11 {
-    RP = PC + 4;
-    PC = PC + 2 + (sextrel11 * 2);
+    RP = inst_next + 2;
+    call [inst_next + (sextrel11 * 2)];
     delayslot(1);
 }
 
 :CALL_D @ri is op12=0x9f1 & ri {
-    RP = PC + 4;
-    PC = ri;
+    RP = inst_next + 2;
+    call [ri];
     delayslot(1);
 }
 
 :RET_D is op16=0x9f20 {
-    PC = RP;
+    return [RP];
     delayslot(1);
 }
 
-:B^ccext"_D" rel8 is op4=0xF & ccext & rel8 {
-    local rel:4 = sext(rel8:1);
-    local target:4 = PC + 2 + (rel * 2);
-    if (ccext == 0b0000) goto <BRA>;
-    if (ccext == 0b0001) goto <BNO>;
-    if (ccext == 0b0010) goto <BEQ>;
-    if (ccext == 0b0011) goto <BNE>;
-    if (ccext == 0b0100) goto <BC>;
-    if (ccext == 0b0101) goto <BNC>;
-    if (ccext == 0b0110) goto <BN>;
-    if (ccext == 0b0111) goto <BP>;
-    if (ccext == 0b1000) goto <BV>;
-    if (ccext == 0b1001) goto <BNV>;
-    if (ccext == 0b1010) goto <BLT>;
-    if (ccext == 0b1011) goto <BGE>;
-    if (ccext == 0b1100) goto <BLE>;
-    if (ccext == 0b1101) goto <BGT>;
-    if (ccext == 0b1110) goto <BLS>;
-    if (ccext == 0b1111) goto <BHI>;
-    goto <END>;
-    <BRA>
-        goto <SUCCESS>;
-    <BNO>
-        goto <END>;
-    <BEQ>
-        if ($(Z_flag) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BNE>
-        if ($(Z_flag) == 0) goto <SUCCESS>;
-        goto <END>;
-    <BC>
-        if ($(C_flag) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BNC>
-        if ($(C_flag) == 0) goto <SUCCESS>;
-        goto <END>;
-    <BN>
-        if ($(N_flag) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BP>
-        if ($(N_flag) == 0) goto <SUCCESS>;
-        goto <END>;
-    <BV>
-        if ($(V_flag) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BNV>
-        if ($(V_flag) == 0) goto <SUCCESS>;
-        goto <END>;
-    <BLT>
-        if (($(V_flag) ^ $(N_flag)) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BGE>
-        if (($(V_flag) ^ $(N_flag)) == 0) goto <SUCCESS>;
-        goto <END>;
-    <BLE>
-        if ((($(V_flag) ^ $(N_flag)) | $(Z_flag)) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BGT>
-        if ((($(V_flag) ^ $(N_flag)) | $(Z_flag)) == 0) goto <SUCCESS>;
-        goto <END>;
-    <BLS>
-        if (($(C_flag) | $(Z_flag)) == 1) goto <SUCCESS>;
-        goto <END>;
-    <BHI>
-        if (($(C_flag) | $(Z_flag)) == 0) goto <SUCCESS>;
-        goto <END>;
+:BRA_D REL is op4=0xf & cc=0x0 & REL {
+    goto REL;
+    delayslot(1);
+}
 
-    <SUCCESS>
-    PC = target;
-    <END>
+:BNO_D REL is op4=0xf & cc=0x1 & REL {
+    delayslot(1);
+}
+
+:BEQ_D REL is op4=0xf & cc=0x2 & REL {
+    if ($(Z_flag) == 1) goto REL;
+    delayslot(1);
+}
+
+:BNE_D REL is op4=0xf & cc=0x3 & REL {
+    if ($(Z_flag) == 0) goto REL;
+    delayslot(1);
+}
+
+:BC_D REL is op4=0xf & cc=0x4 & REL {
+    if ($(C_flag) == 1) goto REL;
+    delayslot(1);
+}
+
+:BNC_D REL is op4=0xf & cc=0x5 & REL {
+    if ($(C_flag) == 0) goto REL;
+    delayslot(1);
+}
+
+:BN_D REL is op4=0xf & cc=0x6 & REL {
+    if ($(N_flag) == 1) goto REL;
+    delayslot(1);
+}
+
+:BP_D REL is op4=0xf & cc=0x7 & REL {
+    if ($(N_flag) == 0) goto REL;
+    delayslot(1);
+}
+
+:BV_D REL is op4=0xf & cc=0x8 & REL {
+    if ($(V_flag) == 1) goto REL;
+    delayslot(1);
+}
+
+:BNV_D REL is op4=0xf & cc=0x9 & REL {
+    if ($(V_flag) == 0) goto REL;
+    delayslot(1);
+}
+
+:BLT_D REL is op4=0xf & cc=0xa & REL {
+    if (($(V_flag) ^ $(N_flag)) == 1) goto REL;
+    delayslot(1);
+}
+
+:BGE_D REL is op4=0xf & cc=0xb & REL {
+    if (($(V_flag) ^ $(N_flag)) == 0) goto REL;
+    delayslot(1);
+}
+
+:BLE_D REL is op4=0xf & cc=0xc & REL {
+    if ((($(V_flag) ^ $(N_flag)) | $(Z_flag)) == 1) goto REL;
+    delayslot(1);
+}
+
+:BGT_D REL is op4=0xf & cc=0xd & REL {
+    if ((($(V_flag) ^ $(N_flag)) | $(Z_flag)) == 0) goto REL;
+    delayslot(1);
+}
+
+:BLS_D REL is op4=0xf & cc=0xe & REL {
+    if (($(C_flag) | $(Z_flag)) == 1) goto REL;
+    delayslot(1);
+}
+
+:BHI_D REL is op4=0xf & cc=0xf & REL {
+    if (($(C_flag) | $(Z_flag)) == 0) goto REL;
     delayslot(1);
 }
 
