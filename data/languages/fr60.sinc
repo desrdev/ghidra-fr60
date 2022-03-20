@@ -891,7 +891,7 @@ borh_ext: u4 is u4 {
     delayslot(1);
 }
 
-:RET_D is op16=0x9420 {
+:RET_D is op16=0x9f20 {
     PC = RP;
     delayslot(1);
 }
