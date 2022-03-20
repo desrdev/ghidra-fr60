@@ -8946,14 +8946,7 @@
 </instruct_pat>
 </pair>
 </decision>
-<decision number="2" context="false" start="0" size="0">
-<pair id="97">
-<instruct_pat>
-<pat_block offset="0" nonzero="2">
-  <mask_word mask="0xffff0000" val="0x94200000"/>
-</pat_block>
-</instruct_pat>
-</pair>
+<decision number="1" context="false" start="0" size="0">
 <pair id="18">
 <instruct_pat>
 <pat_block offset="0" nonzero="1">
@@ -9161,7 +9154,7 @@
 </instruct_pat>
 </pair>
 </decision>
-<decision number="12" context="false" start="8" size="4">
+<decision number="13" context="false" start="8" size="4">
 <decision number="1" context="false" start="0" size="0">
 <pair id="94">
 <instruct_pat>
@@ -9180,7 +9173,14 @@
 </instruct_pat>
 </pair>
 </decision>
-<decision number="0" context="false" start="0" size="0">
+<decision number="1" context="false" start="0" size="0">
+<pair id="97">
+<instruct_pat>
+<pat_block offset="0" nonzero="2">
+  <mask_word mask="0xffff0000" val="0x9f200000"/>
+</pat_block>
+</instruct_pat>
+</pair>
 </decision>
 <decision number="1" context="false" start="0" size="0">
 <pair id="91">
