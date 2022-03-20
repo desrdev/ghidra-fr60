@@ -213,6 +213,14 @@ REL: reloc is rel8 [ reloc = inst_next + (rel8 * 2); ] {
     export *:2 reloc;
 }
 
+REL_SEXT11: reloc is rel11 [ reloc = inst_next + (rel11 * 2); ] {
+    export *:2 reloc;
+}
+
+TBR_REL: reloc is u8 [ reloc = ((TBR + 0x3FC) - (u8 * 4)); ] {
+    export *:2 reloc;
+}
+
 :ADD rj, ri is op8=0xa6 & rj & ri {
     tmpi:4 = ri;
     ri = ri + rj;
@@ -762,38 +770,37 @@ REL: reloc is rel8 [ reloc = inst_next + (rel8 * 2); ] {
 # ====
 
 :JMP @ri is op12=0x970 & ri {
-    goto [ri];
+    goto ri;
 }
 
-:CALL sextrel11 is op5=0x1A & sextrel11 {
+:CALL REL_SEXT11 is op5=0x1A & REL_SEXT11 {
     RP = inst_next;
-    call [(sextrel11 * 2) + inst_next];
+    call REL_SEXT11;
 }
 
 :CALL @ri is op12=0x971 & ri {
     RP = inst_next;
-    call [ri];
+    call ri;
 }
 
 :RET is op16=0x9720 {
     return [RP];
 }
 
-:INT #u8 is op8=0x1f & u8 {
+:INT #TBR_REL is op8=0x1f & TBR_REL {
     SSP = SSP - 4;
     *:4 SSP = PS;
     SSP = SSP - 4;
-    *:4 SSP = PC + 2;
+    *:4 SSP = inst_next + 2;
     $(I_flag) = 0b0;
     $(S_flag) = 0b0;
-    local pointer:4 = ((TBR + 0x3FC) - (zext(u8:2) * 4));
-    call [*:4 pointer];
+    call TBR_REL;
 }
 
 :INTE is op16=0x9F30 unimpl # Emulator only
 
 :RETI is op16=0x9730 {
-    local tempsp:4 = *:4 SP;
+    local tempsp:2 = *:2 SP;
     SP = SP + 4;
     PS = *:4 SP;
     SP = SP + 4;
@@ -865,19 +872,19 @@ REL: reloc is rel8 [ reloc = inst_next + (rel8 * 2); ] {
 }
 
 :JMP_D @ri is op12=0x9f0 & ri {
-    goto [ri];
+    goto ri;
     delayslot(1);
 }
 
-:CALL_D sextrel11 is op5=0x1b & sextrel11 {
+:CALL_D REL_SEXT11 is op5=0x1b & REL_SEXT11 {
     RP = inst_next + 2;
-    call [inst_next + (sextrel11 * 2)];
+    call REL_SEXT11;
     delayslot(1);
 }
 
 :CALL_D @ri is op12=0x9f1 & ri {
     RP = inst_next + 2;
-    call [ri];
+    call ri;
     delayslot(1);
 }
 
