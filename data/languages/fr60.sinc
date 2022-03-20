@@ -175,6 +175,23 @@ usignedi20h: i20_4h is i20_4h {
     export value;
 }
 
+sextrel11: rel11 is rel11 {
+    local value:4 = 0x000007FF & rel11;
+
+    local check:3 = 0x400 & rel11;
+    if (check == 0) goto <END>;
+
+    value = value + 0xFFFFF800;
+
+    <END>
+    export value;
+}
+
+ccext: cc is cc {
+    local value:1 = 0x0F & cc;
+    export value;
+}
+
 bandl_ext: u4 is u4 {
     local value:1 = 0xff & u4;
     export value;
@@ -691,83 +708,604 @@ borh_ext: u4 is u4 {
 
 # ====
 
-:STH ri, @rj is op8=0x15 & rj & ri unimpl
-:STH ri, @("AC", rj) is op8=0x11 & rj & ri unimpl
-:STH ri, @("FP", o8) is op4=0x5 & o8 & ri unimpl # TODO: o8 is signed calc of value * 2
+:STH ri, @rj is op8=0x15 & rj & ri {
+    *:2 rj = ri:2;
+}
 
-:STB ri, @rj is op8=0x16 & rj & ri unimpl
-:STB ri, @("AC", rj) is op8=0x12 & rj & ri unimpl
-:STB ri, @("FP", o8) is op4=0x7 & o8 & ri unimpl
+:STH ri, @("AC", rj) is op8=0x11 & rj & ri {
+    local pointer:4 = AC + rj;
+    *:2 pointer = ri:2;
+}
 
-:MOV rj, ri is op8=0x8b & rj & ri unimpl
-:MOV rs4_4, ri is op8=0xb7 & rs4_4 & ri unimpl
-:MOV "PS", ri is op12=0x171 & ri unimpl
-:MOV ri, rs4_4 is op8=0xb3 & rs4_4 & ri unimpl
-:MOV ri, "PS" is op12=0x071 & ri unimpl
+:STH ri, @("FP", o8) is op4=0x5 & o8 & ri {
+    local pointer:4 = FP + (sext(o8:2) * 2);
+    *:2 pointer = ri:2;
+}
 
-:JMP @ri is op12=0x970 & ri unimpl
-:CALL rel11 is op5=0x1A & rel11 unimpl # TODO: rel11 is signed calc of value * 2
-:CALL @ri is op12=0x971 & ri unimpl
-:RET is op16=0x9720 unimpl
-:INT #u8 is op8=0x1f & u8 unimpl
+# ====
+
+:STB ri, @rj is op8=0x16 & rj & ri {
+    *:1 rj = ri:1;
+}
+
+:STB ri, @("AC", rj) is op8=0x12 & rj & ri {
+    local pointer:4 = AC + rj;
+    *:1 pointer = ri:1;
+}
+
+:STB ri, @("FP", o8) is op4=0x7 & o8 & ri {
+    local pointer:4 = FP + (sext(o8:2) * 2);
+    *:1 pointer = ri:1;
+}
+
+# ====
+
+:MOV rj, ri is op8=0x8b & rj & ri {
+    ri = rj;
+}
+
+:MOV rs4_4, ri is op8=0xb7 & rs4_4 & ri {
+    ri = rs4_4;
+}
+
+:MOV "PS", ri is op12=0x171 & ri {
+    ri = PS;
+}
+
+:MOV ri, rs4_4 is op8=0xb3 & rs4_4 & ri {
+    rs4_4 = ri;
+}
+
+:MOV ri, "PS" is op12=0x071 & ri {
+    PS = ri;
+}
+
+# ====
+
+:JMP @ri is op12=0x970 & ri {
+    PC = ri;
+}
+
+:CALL sextrel11 is op5=0x1A & sextrel11 {
+    RP = PC + 2;
+    PC = (sextrel11 * 2) + 2 + PC;
+}
+
+:CALL @ri is op12=0x971 & ri {
+    RP = PC + 2;
+    PC = ri;
+}
+
+:RET is op16=0x9720 {
+    PC = RP;
+}
+
+:INT #u8 is op8=0x1f & u8 {
+    SSP = SSP - 4;
+    *:4 SSP = PS;
+    SSP = SSP - 4;
+    *:4 SSP = PC + 2;
+    $(I_flag) = 0b0;
+    $(S_flag) = 0b0;
+    local pointer:4 = ((TBR + 0x3FC) - (zext(u8:2) * 4));
+    PC = *:4 pointer;
+}
+
 :INTE is op16=0x9F30 unimpl # Emulator only
-:RETI is op16=0x9730 unimpl
 
-:B^cc rel8 is op4=0xE & cc & rel8 unimpl # TODO: rel8 is signed calc of value * 2
+:RETI is op16=0x9730 {
+    PC = *:4 SP;
+    SP = SP + 4;
+    PS = *:4 SP;
+    SP = SP + 4;
+}
 
-:JMP_D @ri is op12=0x9f0 & ri unimpl
+# ====
 
-:CALL_D rel11 is op5=0x1b & rel11 unimpl # TODO: rel11 is unsigned calc of value * 2
-:CALL_D @ri is op12=0x9f1 & ri unimpl
+:B^ccext rel8 is op4=0xE & ccext & rel8 {
+    local rel:4 = sext(rel8:1);
+    local target:4 = PC + 2 + (rel * 2);
+    if (ccext == 0b0000) goto <BRA>;
+    if (ccext == 0b0001) goto <BNO>;
+    if (ccext == 0b0010) goto <BEQ>;
+    if (ccext == 0b0011) goto <BNE>;
+    if (ccext == 0b0100) goto <BC>;
+    if (ccext == 0b0101) goto <BNC>;
+    if (ccext == 0b0110) goto <BN>;
+    if (ccext == 0b0111) goto <BP>;
+    if (ccext == 0b1000) goto <BV>;
+    if (ccext == 0b1001) goto <BNV>;
+    if (ccext == 0b1010) goto <BLT>;
+    if (ccext == 0b1011) goto <BGE>;
+    if (ccext == 0b1100) goto <BLE>;
+    if (ccext == 0b1101) goto <BGT>;
+    if (ccext == 0b1110) goto <BLS>;
+    if (ccext == 0b1111) goto <BHI>;
+    goto <END>;
+    <BRA>
+        goto <SUCCESS>;
+    <BNO>
+        goto <END>;
+    <BEQ>
+        if ($(Z_flag) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BNE>
+        if ($(Z_flag) == 0) goto <SUCCESS>;
+        goto <END>;
+    <BC>
+        if ($(C_flag) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BNC>
+        if ($(C_flag) == 0) goto <SUCCESS>;
+        goto <END>;
+    <BN>
+        if ($(N_flag) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BP>
+        if ($(N_flag) == 0) goto <SUCCESS>;
+        goto <END>;
+    <BV>
+        if ($(V_flag) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BNV>
+        if ($(V_flag) == 0) goto <SUCCESS>;
+        goto <END>;
+    <BLT>
+        if (($(V_flag) ^ $(N_flag)) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BGE>
+        if (($(V_flag) ^ $(N_flag)) == 0) goto <SUCCESS>;
+        goto <END>;
+    <BLE>
+        if ((($(V_flag) ^ $(N_flag)) | $(Z_flag)) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BGT>
+        if ((($(V_flag) ^ $(N_flag)) | $(Z_flag)) == 0) goto <SUCCESS>;
+        goto <END>;
+    <BLS>
+        if (($(C_flag) | $(Z_flag)) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BHI>
+        if (($(C_flag) | $(Z_flag)) == 0) goto <SUCCESS>;
+        goto <END>;
 
-:RET_D is op16=0x9420 unimpl
+    <SUCCESS>
+    PC = target;
+    <END>
+}
 
-:B^cc"_D" rel8 is op4=0xF & cc & rel8 unimpl # TODO: rel8 is signed calc of value * 2
+:JMP_D @ri is op12=0x9f0 & ri {
+    PC = ri;
+    delayslot(1);
+}
 
-:DMOV @dir8, "AC" is op8=0x08 & dir8 unimpl # TODO: dir8 is signed calc of value * 4
-:DMOV "AC", @dir8 is op8=0x18 & dir8 unimpl # TODO: dir8 is signed calc of value * 4
-:DMOV @dir8, @"AC"+ is op8=0x0c & dir8 unimpl # TODO: dir8 is signed calc of value * 4
-:DMOV "AC"+, @dir8 is op8=0x1c & dir8 unimpl # TODO: dir8 is signed calc of value * 4
-:DMOV @dir8, @"-SP" is op8=0x0b & dir8 unimpl # TODO: dir8 is signed calc of value * 4
-:DMOV @"SP+", @dir8 is op8=0x1b & dir8 unimpl # TODO: dir8 is signed calc of value * 4
+:CALL_D sextrel11 is op5=0x1b & sextrel11 {
+    RP = PC + 4;
+    PC = PC + 2 + (sextrel11 * 2);
+    delayslot(1);
+}
 
-:DMOVH @dir8, "AC" is op8=0x09 & dir8 unimpl # TODO: dir8 is signed calc of value * 2
-:DMOVH "AC", @dir8 is op8=0x19 & dir8 unimpl # TODO: dir8 is signed calc of value * 2
-:DMOVH @dir8, @"AC"+ is op8=0x0d & dir8 unimpl # TODO: dir8 is signed calc of value * 2
-:DMOVH "AC"+, @dir8 is op8=0x1d & dir8 unimpl # TODO: dir8 is signed calc of value * 2
+:CALL_D @ri is op12=0x9f1 & ri {
+    RP = PC + 4;
+    PC = ri;
+    delayslot(1);
+}
 
-:DMOVB @dir8, "AC" is op8=0x0a & dir8 unimpl
-:DMOVB "AC", @dir8 is op8=0x1a & dir8 unimpl
-:DMOVB @dir8, @"AC"+ is op8=0x0e & dir8 unimpl
-:DMOVB "AC"+, @dir8 is op8=0x1e & dir8 unimpl
+:RET_D is op16=0x9420 {
+    PC = RP;
+    delayslot(1);
+}
+
+:B^ccext"_D" rel8 is op4=0xF & ccext & rel8 {
+    local rel:4 = sext(rel8:1);
+    local target:4 = PC + 2 + (rel * 2);
+    if (ccext == 0b0000) goto <BRA>;
+    if (ccext == 0b0001) goto <BNO>;
+    if (ccext == 0b0010) goto <BEQ>;
+    if (ccext == 0b0011) goto <BNE>;
+    if (ccext == 0b0100) goto <BC>;
+    if (ccext == 0b0101) goto <BNC>;
+    if (ccext == 0b0110) goto <BN>;
+    if (ccext == 0b0111) goto <BP>;
+    if (ccext == 0b1000) goto <BV>;
+    if (ccext == 0b1001) goto <BNV>;
+    if (ccext == 0b1010) goto <BLT>;
+    if (ccext == 0b1011) goto <BGE>;
+    if (ccext == 0b1100) goto <BLE>;
+    if (ccext == 0b1101) goto <BGT>;
+    if (ccext == 0b1110) goto <BLS>;
+    if (ccext == 0b1111) goto <BHI>;
+    goto <END>;
+    <BRA>
+        goto <SUCCESS>;
+    <BNO>
+        goto <END>;
+    <BEQ>
+        if ($(Z_flag) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BNE>
+        if ($(Z_flag) == 0) goto <SUCCESS>;
+        goto <END>;
+    <BC>
+        if ($(C_flag) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BNC>
+        if ($(C_flag) == 0) goto <SUCCESS>;
+        goto <END>;
+    <BN>
+        if ($(N_flag) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BP>
+        if ($(N_flag) == 0) goto <SUCCESS>;
+        goto <END>;
+    <BV>
+        if ($(V_flag) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BNV>
+        if ($(V_flag) == 0) goto <SUCCESS>;
+        goto <END>;
+    <BLT>
+        if (($(V_flag) ^ $(N_flag)) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BGE>
+        if (($(V_flag) ^ $(N_flag)) == 0) goto <SUCCESS>;
+        goto <END>;
+    <BLE>
+        if ((($(V_flag) ^ $(N_flag)) | $(Z_flag)) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BGT>
+        if ((($(V_flag) ^ $(N_flag)) | $(Z_flag)) == 0) goto <SUCCESS>;
+        goto <END>;
+    <BLS>
+        if (($(C_flag) | $(Z_flag)) == 1) goto <SUCCESS>;
+        goto <END>;
+    <BHI>
+        if (($(C_flag) | $(Z_flag)) == 0) goto <SUCCESS>;
+        goto <END>;
+
+    <SUCCESS>
+    PC = target;
+    <END>
+    delayslot(1);
+}
+
+# ====
+
+:DMOV @dir8, "AC" is op8=0x08 & dir8 {
+    local ext:4 = zext(dir8:1) * 4;
+    AC = *:4 ext;
+}
+
+:DMOV "AC", @dir8 is op8=0x18 & dir8 {
+    local ext:4 = zext(dir8:1) * 4;
+    *:4 ext = AC;
+}
+
+:DMOV @dir8, @"AC"+ is op8=0x0c & dir8 {
+    local ext:4 = zext(dir8:1) * 4;
+    *:4 AC = *:4 ext;
+    AC = AC + 4;
+}
+
+:DMOV "AC"+, @dir8 is op8=0x1c & dir8 {
+    local ext:4 = zext(dir8:1) * 4;
+    *:4 ext = *:4 AC;
+    AC = AC + 4;
+}
+
+:DMOV @dir8, @"-SP" is op8=0x0b & dir8 {
+    local ext:4 = zext(dir8:1) * 4;
+    SP = SP - 4;
+    *:4 SP = *:4 ext;
+}
+
+:DMOV @"SP+", @dir8 is op8=0x1b & dir8 {
+    local ext:4 = zext(dir8:1) * 4;
+    *:4 ext = *:4 SP;
+    SP = SP + 4;
+}
+
+# ====
+
+:DMOVH @dir8, "AC" is op8=0x09 & dir8 {
+    local ext:4 = zext(dir8:1) * 2;
+    AC = zext(*:2 ext);
+}
+
+:DMOVH "AC", @dir8 is op8=0x19 & dir8 {
+    local ext:4 = zext(dir8:1) * 2;
+    *:2 ext = AC:2;
+}
+
+:DMOVH @dir8, @"AC"+ is op8=0x0d & dir8 {
+    local ext:4 = zext(dir8:1) * 2;
+    *:2 AC = *:2 ext;
+    AC = AC + 2;
+}
+
+:DMOVH @"AC"+, @dir8 is op8=0x1d & dir8 {
+    local ext:4 = zext(dir8:1) * 2;
+    *:2 ext = *:2 AC;
+    AC = AC + 2;
+}
+
+# ====
+
+:DMOVB @dir8, "AC" is op8=0x0a & dir8 {
+    local ext:4 = zext(dir8:1);
+    AC = zext(*:1 ext);
+}
+
+:DMOVB "AC", @dir8 is op8=0x1a & dir8 {
+    local ext:4 = zext(dir8:1);
+    *:1 ext = AC:1;
+}
+
+:DMOVB @dir8, @"AC"+ is op8=0x0e & dir8 {
+    local ext:4 = zext(dir8:1);
+    *:1 AC = *:1 ext;
+    AC = AC + 1;
+}
+
+:DMOVB "AC"+, @dir8 is op8=0x1e & dir8 {
+    local ext:4 = zext(dir8:1);
+    *:1 ext = *:1 AC;
+    AC = AC + 1;
+}
+
+# ====
 
 :LDRES @ri+, #u4 is op8=0xbc & u4 & ri unimpl
 :STRES #u4, @ri+ is op8=0xbd & u4 & ri unimpl
+
+# ====
 
 :COPOP #u32_4, #cc32_2, crj32_4, cri32_4 is op32_12=0x9fc & u32_4 & cc32_6 & cc32_2 & crj32_4 & cri32_4 unimpl
 :COPLD #u32_4, #cc32_2, crj32_4, cri32_4 is op32_12=0x9fd & u32_4 & cc32_6 & cc32_2 & crj32_4 & cri32_4 unimpl
 :COPST #u32_4, #cc32_2, crj32_4, cri32_4 is op32_12=0x9fe & u32_4 & cc32_6 & cc32_2 & crj32_4 & cri32_4 unimpl
 :COPSV #u32_4, #cc32_2, crj32_4, cri32_4 is op32_12=0x9ff & u32_4 & cc32_6 & cc32_2 & crj32_4 & cri32_4 unimpl
 
-:NOP is op16=0x9fa0 unimpl
+# ====
 
-:ANDCCR #u8 is op8=0x83 & u8 unimpl
-:ORCCR #u8 is op8=0x93 & u8 unimpl
-:STILM #u8 is op8=0x87 & u8 unimpl
-:ADDSP #s8 is op8=0xa3 & s8 unimpl # TODO: s8 is signed calc of value * 4
+:NOP is op16=0x9fa0 { }
 
-:EXTSB ri is op12=0x978 & ri unimpl
-:EXTUB ri is op12=0x979 & ri unimpl
-:EXTSH ri is op12=0x97a & ri unimpl
-:EXTUH ri is op12=0x97b & ri unimpl
+# ====
 
-:LDM0 rlist_lo is op8=0x8c & rlist_lo unimpl
-:LDM1 rlist_hi is op8=0x8d & rlist_hi unimpl
+:ANDCCR #u8 is op8=0x83 & u8 {
+    $(CCR) = $(CCR) & u8:1;
+}
 
-:STM0 rlist_lo is op8=0x8e & rlist_lo unimpl
-:STM1 rlist_hi is op8=0x8f & rlist_hi unimpl
+:ORCCR #u8 is op8=0x93 & u8 {
+    $(CCR) = $(CCR) | u8:1;
+}
 
-:ENTER #u8 is op8=0x0f & u8 unimpl
-:LEAVE is op16=0x9f90 unimpl
+:STILM #u8 is op8=0x87 & u8 {
+    $(ILM_flag) = u8:1;
+}
 
-:XCHB @rj, ri is op8=0x8a & rj & ri unimpl
+:ADDSP #s8 is op8=0xa3 & s8 {
+    local ext:4 = sext(s8:1) * 4;
+    SP = SP + ext;
+}
+
+# ====
+
+:EXTSB ri is op12=0x978 & ri {
+    ri = sext(ri:1);
+}
+
+:EXTUB ri is op12=0x979 & ri {
+    ri = zext(ri:1);
+}
+
+:EXTSH ri is op12=0x97a & ri {
+    ri = sext(ri:2);
+}
+
+:EXTUH ri is op12=0x97b & ri {
+    ri = zext(ri:2);
+}
+
+# ====
+
+:LDM0 rlist_lo is op8=0x8c & rlist_lo {
+    local rl7:1 = rlist_lo:1 & 0b10000000;
+    local rl6:1 = rlist_lo:1 & 0b01000000;
+    local rl5:1 = rlist_lo:1 & 0b00100000;
+    local rl4:1 = rlist_lo:1 & 0b00010000;
+    local rl3:1 = rlist_lo:1 & 0b00001000;
+    local rl2:1 = rlist_lo:1 & 0b00000100;
+    local rl1:1 = rlist_lo:1 & 0b00000010;
+    local rl0:1 = rlist_lo:1 & 0b00000001;
+
+    if (rl0 == 0) goto <RL0>;
+        R0 = *:4 SP;
+        SP = SP + 4;
+    <RL0>
+    if (rl1 == 0) goto <RL1>;
+        R1 = *:4 SP;
+        SP = SP + 4;
+    <RL1>
+    if (rl2 == 0) goto <RL2>;
+        R2 = *:4 SP;
+        SP = SP + 4;
+    <RL2>
+    if (rl3 == 0) goto <RL3>;
+        R3 = *:4 SP;
+        SP = SP + 4;
+    <RL3>
+    if (rl4 == 0) goto <RL4>;
+        R4 = *:4 SP;
+        SP = SP + 4;
+    <RL4>
+    if (rl5 == 0) goto <RL5>;
+        R5 = *:4 SP;
+        SP = SP + 4;
+    <RL5>
+    if (rl6 == 0) goto <RL6>;
+        R6 = *:4 SP;
+        SP = SP + 4;
+    <RL6>
+    if (rl7 == 0) goto <RL7>;
+        R7 = *:4 SP;
+        SP = SP + 4;
+    <RL7>
+}
+
+:LDM1 rlist_hi is op8=0x8d & rlist_hi {
+    local rl15:1 = rlist_hi:1 & 0b10000000;
+    local rl14:1 = rlist_hi:1 & 0b01000000;
+    local rl13:1 = rlist_hi:1 & 0b00100000;
+    local rl12:1 = rlist_hi:1 & 0b00010000;
+    local rl11:1 = rlist_hi:1 & 0b00001000;
+    local rl10:1 = rlist_hi:1 & 0b00000100;
+    local rl9:1 = rlist_hi:1 & 0b00000010;
+    local rl8:1 = rlist_hi:1 & 0b00000001;
+
+    if (rl8 == 0) goto <RL8>;
+        R8 = *:4 SP;
+        SP = SP + 4;
+    <RL8>
+    if (rl9 == 0) goto <RL9>;
+        R9 = *:4 SP;
+        SP = SP + 4;
+    <RL9>
+    if (rl10 == 0) goto <RL10>;
+        R10 = *:4 SP;
+        SP = SP + 4;
+    <RL10>
+    if (rl11 == 0) goto <RL11>;
+        R11 = *:4 SP;
+        SP = SP + 4;
+    <RL11>
+    if (rl12 == 0) goto <RL12>;
+        R12 = *:4 SP;
+        SP = SP + 4;
+    <RL12>
+    if (rl13 == 0) goto <RL13>;
+        AC = *:4 SP;
+        SP = SP + 4;
+    <RL13>
+    if (rl14 == 0) goto <RL14>;
+        FP = *:4 SP;
+        SP = SP + 4;
+    <RL14>
+    if (rl15 == 0) goto <RL15>;
+        SP = *:4 SP;
+        SP = SP + 4;
+    <RL15>
+}
+
+# ====
+
+:STM0 rlist_lo is op8=0x8e & rlist_lo {
+    local rl7:1 = rlist_lo:1 & 0b10000000;
+    local rl6:1 = rlist_lo:1 & 0b01000000;
+    local rl5:1 = rlist_lo:1 & 0b00100000;
+    local rl4:1 = rlist_lo:1 & 0b00010000;
+    local rl3:1 = rlist_lo:1 & 0b00001000;
+    local rl2:1 = rlist_lo:1 & 0b00000100;
+    local rl1:1 = rlist_lo:1 & 0b00000010;
+    local rl0:1 = rlist_lo:1 & 0b00000001;
+
+    if (rl0 == 0) goto <RL0>;
+        SP = SP - 4;
+        *:4 SP = R0;
+    <RL0>
+    if (rl1 == 0) goto <RL1>;
+        SP = SP - 4;
+        *:4 SP = R1;
+    <RL1>
+    if (rl2 == 0) goto <RL2>;
+        SP = SP - 4;
+        *:4 SP = R2;
+    <RL2>
+    if (rl3 == 0) goto <RL3>;
+        SP = SP - 4;
+        *:4 SP = R3;
+    <RL3>
+    if (rl4 == 0) goto <RL4>;
+        SP = SP - 4;
+        *:4 SP = R4;
+    <RL4>
+    if (rl5 == 0) goto <RL5>;
+        SP = SP - 4;
+        *:4 SP = R5;
+    <RL5>
+    if (rl6 == 0) goto <RL6>;
+        SP = SP - 4;
+        *:4 SP = R6;
+    <RL6>
+    if (rl7 == 0) goto <RL7>;
+        SP = SP - 4;
+        *:4 SP = R7;
+    <RL7>
+}
+
+:STM1 rlist_hi is op8=0x8f & rlist_hi {
+    local rl15:1 = rlist_hi:1 & 0b10000000;
+    local rl14:1 = rlist_hi:1 & 0b01000000;
+    local rl13:1 = rlist_hi:1 & 0b00100000;
+    local rl12:1 = rlist_hi:1 & 0b00010000;
+    local rl11:1 = rlist_hi:1 & 0b00001000;
+    local rl10:1 = rlist_hi:1 & 0b00000100;
+    local rl9:1 = rlist_hi:1 & 0b00000010;
+    local rl8:1 = rlist_hi:1 & 0b00000001;
+
+    if (rl8 == 0) goto <RL8>;
+        SP = SP - 4;
+        *:4 SP = R8;
+    <RL8>
+    if (rl9 == 0) goto <RL9>;
+        SP = SP - 4;
+        *:4 SP = R9;
+    <RL9>
+    if (rl10 == 0) goto <RL10>;
+        SP = SP - 4;
+        *:4 SP = R10;
+    <RL10>
+    if (rl11 == 0) goto <RL11>;
+        SP = SP - 4;
+        *:4 SP = R11;
+    <RL11>
+    if (rl12 == 0) goto <RL12>;
+        SP = SP - 4;
+        *:4 SP = R12;
+    <RL12>
+    if (rl13 == 0) goto <RL13>;
+        SP = SP - 4;
+        *:4 SP = AC;
+    <RL13>
+    if (rl14 == 0) goto <RL14>;
+        SP = SP - 4;
+        *:4 SP = FP;
+    <RL14>
+    if (rl15 == 0) goto <RL15>;
+        SP = SP - 4;
+        *:4 SP = SP;
+    <RL15>
+}
+
+# ====
+
+:ENTER #u8 is op8=0x0f & u8 {
+    local pointer:4 = SP - 4;
+    *:4 pointer = FP;
+    FP = SP - 4;
+    local ext:4 = zext(u8:1) * 4;
+    SP = SP - ext;
+}
+
+:LEAVE is op16=0x9f90 {
+    local pointer:4 = SP - 4;
+    SP = FP + 4;
+    FP = *:4 pointer;
+}
+
+# ====
+
+:XCHB @rj, ri is op8=0x8a & rj & ri {
+    local temp:1 = ri:1;
+    ri = zext(*:1 rj);
+    *:1 rj = temp;
+}
