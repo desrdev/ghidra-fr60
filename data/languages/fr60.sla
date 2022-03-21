@@ -5369,7 +5369,7 @@
 <print piece="@"/>
 <opprint id="0"/>
 <construct_tpl>
-<null/><op_tpl code="BRANCH"><null/>
+<null/><op_tpl code="BRANCHIND"><null/>
 <varnode_tpl><const_tpl type="handle" val="0" s="space"/><const_tpl type="handle" val="0" s="offset"/><const_tpl type="handle" val="0" s="size"/></varnode_tpl>
 </op_tpl>
 </construct_tpl>
@@ -5401,7 +5401,7 @@
 <null/><op_tpl code="COPY"><varnode_tpl><const_tpl type="spaceid" name="register"/><const_tpl type="real" val="0x8"/><const_tpl type="real" val="0x4"/></varnode_tpl>
 <varnode_tpl><const_tpl type="spaceid" name="const"/><const_tpl type="next"/><const_tpl type="real" val="0x4"/></varnode_tpl>
 </op_tpl>
-<op_tpl code="CALL"><null/>
+<op_tpl code="CALLIND"><null/>
 <varnode_tpl><const_tpl type="handle" val="0" s="space"/><const_tpl type="handle" val="0" s="offset"/><const_tpl type="handle" val="0" s="size"/></varnode_tpl>
 </op_tpl>
 </construct_tpl>
@@ -6086,7 +6086,7 @@
 <print piece="@"/>
 <opprint id="0"/>
 <construct_tpl delay="1">
-<null/><op_tpl code="BRANCH"><null/>
+<null/><op_tpl code="BRANCHIND"><null/>
 <varnode_tpl><const_tpl type="handle" val="0" s="space"/><const_tpl type="handle" val="0" s="offset"/><const_tpl type="handle" val="0" s="size"/></varnode_tpl>
 </op_tpl>
 <op_tpl code="DELAY_SLOT"><null/>
@@ -6126,7 +6126,7 @@
 <varnode_tpl><const_tpl type="spaceid" name="const"/><const_tpl type="next"/><const_tpl type="real" val="0x4"/></varnode_tpl>
 <varnode_tpl><const_tpl type="spaceid" name="const"/><const_tpl type="real" val="0x2"/><const_tpl type="real" val="0x4"/></varnode_tpl>
 </op_tpl>
-<op_tpl code="CALL"><null/>
+<op_tpl code="CALLIND"><null/>
 <varnode_tpl><const_tpl type="handle" val="0" s="space"/><const_tpl type="handle" val="0" s="offset"/><const_tpl type="handle" val="0" s="size"/></varnode_tpl>
 </op_tpl>
 <op_tpl code="DELAY_SLOT"><null/>
@@ -11403,13 +11403,13 @@
 <operand_sym name="ri" id="0x100" scope="0x5e" subsym="0x3e" off="0" base="-1" minlen="2" index="0">
 <operand_exp index="0" table="0x0" ct="0x55"/>
 </operand_sym>
-<operand_sym name="ri" id="0x101" scope="0x5f" subsym="0x3e" off="0" base="-1" minlen="2" code="true" index="0">
+<operand_sym name="ri" id="0x101" scope="0x5f" subsym="0x3e" off="0" base="-1" minlen="2" index="0">
 <operand_exp index="0" table="0x0" ct="0x56"/>
 </operand_sym>
 <operand_sym name="REL_SEXT11" id="0x102" scope="0x60" subsym="0x5e" off="0" base="-1" minlen="2" code="true" index="0">
 <operand_exp index="0" table="0x0" ct="0x57"/>
 </operand_sym>
-<operand_sym name="ri" id="0x103" scope="0x61" subsym="0x3e" off="0" base="-1" minlen="2" code="true" index="0">
+<operand_sym name="ri" id="0x103" scope="0x61" subsym="0x3e" off="0" base="-1" minlen="2" index="0">
 <operand_exp index="0" table="0x0" ct="0x58"/>
 </operand_sym>
 <operand_sym name="TBR_REL" id="0x104" scope="0x62" subsym="0x61" off="0" base="-1" minlen="2" code="true" index="0">
@@ -11463,13 +11463,13 @@
 <operand_sym name="REL" id="0x114" scope="0x72" subsym="0x5b" off="0" base="-1" minlen="2" code="true" index="0">
 <operand_exp index="0" table="0x0" ct="0x6c"/>
 </operand_sym>
-<operand_sym name="ri" id="0x115" scope="0x73" subsym="0x3e" off="0" base="-1" minlen="2" code="true" index="0">
+<operand_sym name="ri" id="0x115" scope="0x73" subsym="0x3e" off="0" base="-1" minlen="2" index="0">
 <operand_exp index="0" table="0x0" ct="0x6d"/>
 </operand_sym>
 <operand_sym name="REL_SEXT11" id="0x116" scope="0x74" subsym="0x5e" off="0" base="-1" minlen="2" code="true" index="0">
 <operand_exp index="0" table="0x0" ct="0x6e"/>
 </operand_sym>
-<operand_sym name="ri" id="0x117" scope="0x75" subsym="0x3e" off="0" base="-1" minlen="2" code="true" index="0">
+<operand_sym name="ri" id="0x117" scope="0x75" subsym="0x3e" off="0" base="-1" minlen="2" index="0">
 <operand_exp index="0" table="0x0" ct="0x6f"/>
 </operand_sym>
 <operand_sym name="REL" id="0x118" scope="0x76" subsym="0x5b" off="0" base="-1" minlen="2" code="true" index="0">
