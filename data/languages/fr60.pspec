@@ -5,7 +5,6 @@
 <processor_spec>
   <programcounter register="PC"/>
   <default_symbols>
-    <!-- REMEMBER TO CHANGE ram: to ram: -->
     <!-- Memory IO setup registers -->
     <symbol name="ASR0" address="ram:640"/>
     <symbol name="ASR1" address="ram:644"/>

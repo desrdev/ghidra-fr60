@@ -58,11 +58,11 @@ public class ResolveUTronSyscallsScript extends GhidraScript {
 	//disassembles to "INT 0x40"
 	private static final byte[] fr60_bytes = { 0x1f, 0x40 };
 
-	private static final String fr60 = "fr60";
+	private static final String fr60 = "FR60";
 
 	private static final String SYSCALL_SPACE_NAME = "syscall";
 
-	private static final int SYSCALL_SPACE_LENGTH = 0x10000;
+	private static final int SYSCALL_SPACE_LENGTH = 0xFF;
 
 	//this is the name of the userop (aka CALLOTHER) in the pcode translation of the
 	//native "syscall" instruction
@@ -163,7 +163,8 @@ public class ResolveUTronSyscallsScript extends GhidraScript {
 		for (Entry<Address, Long> entry : addressesToSyscalls.entrySet()) {
 			Address callSite = entry.getKey();
 			Long offset = entry.getValue();
-			Address callTarget = syscallSpace.getAddress(offset);
+			//syscall values for uTron are negative, use positive address space
+			Address callTarget = syscallSpace.getAddress(offset * -1);
 			Function callee = currentProgram.getFunctionManager().getFunctionAt(callTarget);
 			if (callee == null) {
 				String funcName = "syscall_" + String.format("%08X", offset);
@@ -171,6 +172,11 @@ public class ResolveUTronSyscallsScript extends GhidraScript {
 					funcName = syscallNumbersToNames.get(offset);
 				}
 				callee = createFunction(callTarget, funcName);
+				
+				if (callee == null) {
+					printf("Could not map " + funcName + ".");
+					continue;
+				}
 				callee.setCallingConvention(callingConvention);
 
 				//check if the function name is one of the non-returning syscalls
@@ -188,9 +194,7 @@ public class ResolveUTronSyscallsScript extends GhidraScript {
 		//to the new system call space, so that the system calls have the correct signatures
 		AutoAnalysisManager mgr = AutoAnalysisManager.getAnalysisManager(currentProgram);
 		DataTypeManagerService service = mgr.getDataTypeManagerService();
-		List<DataTypeManager> dataTypeManagers = new ArrayList<>();
-		dataTypeManagers.add(service.openDataTypeArchive(datatypeArchiveName));
-		dataTypeManagers.add(currentProgram.getDataTypeManager());
+		List<DataTypeManager> dataTypeManagers = Arrays.asList(service.getDataTypeManagers());
 		ApplyFunctionDataTypesCmd cmd = new ApplyFunctionDataTypesCmd(dataTypeManagers,
 			new AddressSet(syscallSpace.getMinAddress(), syscallSpace.getMaxAddress()),
 			SourceType.USER_DEFINED, false, false);
