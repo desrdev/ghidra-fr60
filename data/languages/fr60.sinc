@@ -770,7 +770,7 @@ TBR_REL: reloc is u8 [ reloc = ((TBR + 0x3FC) - (u8 * 4)); ] {
 # ====
 
 :JMP @ri is op12=0x970 & ri {
-    goto ri;
+    goto [ri];
 }
 
 :CALL REL_SEXT11 is op5=0x1A & REL_SEXT11 {
@@ -780,7 +780,7 @@ TBR_REL: reloc is u8 [ reloc = ((TBR + 0x3FC) - (u8 * 4)); ] {
 
 :CALL @ri is op12=0x971 & ri {
     RP = inst_next;
-    call ri;
+    call [ri];
 }
 
 :RET is op16=0x9720 {
@@ -872,7 +872,7 @@ TBR_REL: reloc is u8 [ reloc = ((TBR + 0x3FC) - (u8 * 4)); ] {
 }
 
 :JMP_D @ri is op12=0x9f0 & ri {
-    goto ri;
+    goto [ri];
     delayslot(1);
 }
 
@@ -884,7 +884,7 @@ TBR_REL: reloc is u8 [ reloc = ((TBR + 0x3FC) - (u8 * 4)); ] {
 
 :CALL_D @ri is op12=0x9f1 & ri {
     RP = inst_next + 2;
-    call ri;
+    call [ri];
     delayslot(1);
 }
 
