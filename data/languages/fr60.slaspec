@@ -5,12 +5,15 @@ define space register type=register_space size=4;
 
 define space ram type=ram_space size=4 wordsize=1 default;
 
-define register offset=0x00 size=4 [ PC TBR RP SSP USP MDH MDL PS ];           #R13 #R14 #R15
+define register offset=0x00 size=4 [ PC RP SSP USP MDH MDL PS TBR ];           #R14 #R14 #R15
+define register offset=0x00 size=8 [ _     _       MD      _      ];
 define register offset=0x20 size=4 [ R0 R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12  _    _    _  ];
 define register offset=0x20 size=4 [ _  _  _  _  _  _  _  _  _  _  _   _   _    AC   FP   SP ];
-define register offset=0x100 size=1 [ RA NO EQ NE C NC N P V NV LT GE LE GT LS HI ];
 
-# Flag bits (?? manual is very confusing - could be typos!)
+# Fake flag registers for cleaner p-code decomp
+define register offset=0x40 size=1 [ ILM D1 D0 T S I N Z V C ];
+
+# Flag bits
 @define ILM_flag    "PS[16,4]"      # ILM: Interrupt Level Mask
 @define D1_flag     "PS[10,1]"
 @define D0_flag     "PS[9,1]"
