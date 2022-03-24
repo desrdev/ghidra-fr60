@@ -598,29 +598,29 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
     ri = *:4 rj;
 }
 
-:LD @("AC" + rj), ri is op8=0x00 & rj & ri {
+:LD @(AC, rj), ri is op8=0x00 & rj & ri & AC {
     ri = *:4 (AC + rj);
 }
 
-:LD @("FP" + o8_imm), ri is op4=0x2 & o8 & ri [ o8_imm = o8 * 4; ]{
+:LD @(FP, o8_imm), ri is op4=0x2 & o8 & ri & FP [ o8_imm = o8 * 4; ]{
     ri = *:4 (FP + o8_imm);
 }
 
-:LD @("SP" + i4_imm), ri is op8=0x03 & i4 & ri [ i4_imm = i4 * 4; ] {
+:LD @(SP, i4_imm), ri is op8=0x03 & i4 & ri & SP [ i4_imm = i4 * 4; ] {
     ri = *:4 (SP + i4_imm);
 }
 
-:LD @"SP+", ri is op12=0x070 & ri {
+:LD @SP+, ri is op12=0x070 & ri & SP {
     ri = *:4 SP;
     SP = SP + 4;
 }
 
-:LD @"SP+", rs is op12=0x078 & rs {
+:LD @SP+, rs is op12=0x078 & rs & SP {
     rs = *:4 SP;
     SP = SP + 4;
 }
 
-:LD @"SP+", "PS" is op16=0x0790 {
+:LD @SP+, PS is op16=0x0790 & SP & PS {
     PS = *:4 SP;
     SP = SP + 4;
 }
@@ -631,11 +631,11 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
     ri = zext(*:2 rj);
 }
 
-:LDUH @("AC" + rj), ri is op8=0x01 & rj & ri {
+:LDUH @(AC, rj), ri is op8=0x01 & rj & ri & AC {
     ri = zext(*:2 (AC + rj));
 }
 
-:LDUH @("FP" + o8_imm), ri is op4=0x4 & o8 & ri [ o8_imm = o8 * 2; ] {
+:LDUH @(FP, o8_imm), ri is op4=0x4 & o8 & ri & FP [ o8_imm = o8 * 2; ] {
     ri = zext(*:2 (FP + o8_imm));
 }
 
@@ -645,11 +645,11 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
     ri = zext(*:1 rj);
 }
 
-:LDUB @("AC" + rj), ri is op8=0x02 & rj & ri {
+:LDUB @(AC, rj), ri is op8=0x02 & rj & ri & AC {
     ri = zext(*:1 (AC + rj));
 }
 
-:LDUB @("FP" + o8), ri is op4=0x6 & o8 & ri {
+:LDUB @(FP, o8), ri is op4=0x6 & o8 & ri & FP {
     ri = zext(*:1 (FP + o8));
 }
 
@@ -659,29 +659,29 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
     *:4 rj = ri;
 }
 
-:ST ri, @("AC" + rj) is op8=0x10 & rj & ri {
+:ST ri, @(AC, rj) is op8=0x10 & rj & ri & AC {
     *:4 (AC + rj) = ri;
 }
 
-:ST ri, @("FP" + o8_imm) is op4=0x3 & o8 & ri [ o8_imm = o8 * 4; ] {
+:ST ri, @(FP, o8_imm) is op4=0x3 & o8 & ri & FP [ o8_imm = o8 * 4; ] {
     *:4 (FP + o8_imm) = ri;
 }
 
-:ST ri, @("SP" + o4_imm) is op8=0x13 & o4 & ri [ o4_imm = o4 * 4; ] {
+:ST ri, @(SP, o4_imm) is op8=0x13 & o4 & ri & SP [ o4_imm = o4 * 4; ] {
     *:4 (SP + o4_imm) = ri;
 }
 
-:ST ri @"-SP" is op12=0x170 & ri {
+:ST ri @-SP is op12=0x170 & ri & SP {
     SP = SP - 4;
     *:4 SP = ri;
 }
 
-:ST rs @-"SP" is op12=0x178 & rs {
+:ST rs @-SP is op12=0x178 & rs & SP {
     SP = SP - 4;
     *:4 SP = rs;
 }
 
-:ST "PS", @-"SP" is op16=0x1790 {
+:ST PS, @-SP is op16=0x1790 & SP & PS {
     SP = SP - 4;
     *:4 SP = PS;
 }
@@ -692,11 +692,11 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
     *:2 rj = ri:2;
 }
 
-:STH ri, @("AC" + rj) is op8=0x11 & rj & ri {
+:STH ri, @(AC, rj) is op8=0x11 & rj & ri & AC {
     *:2 (AC + rj) = ri:2;
 }
 
-:STH ri, @("FP" + o8imm) is op4=0x5 & o8 & ri [ o8imm = o8 * 2; ] {
+:STH ri, @(FP, o8imm) is op4=0x5 & o8 & ri & FP [ o8imm = o8 * 2; ] {
     *:2 (FP + o8imm) = ri:2;
 }
 
@@ -706,11 +706,11 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
     *:1 rj = ri:1;
 }
 
-:STB ri, @("AC" + rj) is op8=0x12 & rj & ri {
+:STB ri, @(AC, rj) is op8=0x12 & rj & ri & AC {
     *:1 (AC + rj) = ri:1;
 }
 
-:STB ri, @("FP" + o8) is op4=0x7 & o8 & ri {
+:STB ri, @(FP, o8) is op4=0x7 & o8 & ri & FP {
     *:1 (FP + o8) = ri:1;
 }
 
@@ -724,7 +724,7 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
     ri = rs4_4;
 }
 
-:MOV "PS", ri is op12=0x171 & ri {
+:MOV PS, ri is op12=0x171 & ri & PS {
     ri = PS;
 }
 
@@ -732,7 +732,7 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
     rs4_4 = ri;
 }
 
-:MOV ri, "PS" is op12=0x071 & ri {
+:MOV ri, PS is op12=0x071 & ri & PS {
     PS = ri;
 }
 
@@ -945,70 +945,70 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
 
 # ====
 
-:DMOV @DIR8_REL, "AC" is op8=0x08 & DIR8_REL {
+:DMOV @DIR8_REL, AC is op8=0x08 & DIR8_REL & AC {
     AC = DIR8_REL;
 }
 
-:DMOV "AC", @DIR8_REL is op8=0x18 & DIR8_REL {
+:DMOV AC, @DIR8_REL is op8=0x18 & DIR8_REL & AC {
     DIR8_REL = AC;
 }
 
-:DMOV @DIR8_REL, @"AC+" is op8=0x0c & DIR8_REL {
+:DMOV @DIR8_REL, @AC+ is op8=0x0c & DIR8_REL & AC {
     *:4 AC = DIR8_REL;
     AC = AC + 4;
 }
 
-:DMOV "AC+", @DIR8_REL is op8=0x1c & DIR8_REL {
+:DMOV AC+, @DIR8_REL is op8=0x1c & DIR8_REL & AC {
     DIR8_REL = *:4 AC;
     AC = AC + 4;
 }
 
-:DMOV @DIR8_REL, @"-SP" is op8=0x0b & DIR8_REL {
+:DMOV @DIR8_REL, @-SP is op8=0x0b & DIR8_REL & SP {
     SP = SP - 4;
     *:4 SP = DIR8_REL;
 }
 
-:DMOV @"SP+", @DIR8_REL is op8=0x1b & DIR8_REL {
+:DMOV @SP+, @DIR8_REL is op8=0x1b & DIR8_REL & SP {
     DIR8_REL = *:4 SP;
     SP = SP + 4;
 }
 
 # ====
 
-:DMOVH @DIR8H_REL, "AC" is op8=0x09 & DIR8H_REL {
+:DMOVH @DIR8H_REL, AC is op8=0x09 & DIR8H_REL & AC {
     AC = zext(DIR8H_REL);
 }
 
-:DMOVH "AC", @DIR8H_REL is op8=0x19 & DIR8H_REL {
+:DMOVH AC, @DIR8H_REL is op8=0x19 & DIR8H_REL & AC {
     DIR8H_REL = AC:2;
 }
 
-:DMOVH @DIR8H_REL, @"AC+" is op8=0x0d & DIR8H_REL {
+:DMOVH @DIR8H_REL, @AC+ is op8=0x0d & DIR8H_REL & AC {
     *:2 AC = DIR8H_REL;
     AC = AC + 2;
 }
 
-:DMOVH @"AC+", @DIR8H_REL is op8=0x1d & DIR8H_REL {
+:DMOVH @AC+, @DIR8H_REL is op8=0x1d & DIR8H_REL & AC {
     DIR8H_REL = *:2 AC;
     AC = AC + 2;
 }
 
 # ====
 
-:DMOVB @DIR8B_REL, "AC" is op8=0x0a & DIR8B_REL {
+:DMOVB @DIR8B_REL, AC is op8=0x0a & DIR8B_REL & AC {
     AC = zext(DIR8B_REL);
 }
 
-:DMOVB "AC", @DIR8B_REL is op8=0x1a & DIR8B_REL {
+:DMOVB AC, @DIR8B_REL is op8=0x1a & DIR8B_REL & AC {
     DIR8B_REL = AC:1;
 }
 
-:DMOVB @DIR8B_REL, @"AC+" is op8=0x0e & DIR8B_REL {
+:DMOVB @DIR8B_REL, @AC+ is op8=0x0e & DIR8B_REL & AC {
     *:1 AC = DIR8B_REL;
     AC = AC + 1;
 }
 
-:DMOVB "AC+", @DIR8B_REL is op8=0x1e & DIR8B_REL {
+:DMOVB AC+, @DIR8B_REL is op8=0x1e & DIR8B_REL & AC {
     DIR8B_REL = *:1 AC;
     AC = AC + 1;
 }
