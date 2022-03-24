@@ -13,5 +13,6 @@
             id="fr60:BE:16:default">
     <description>Fujitsu FR 60 Instruction Set</description>
     <compiler name="fcc911" spec="fr60.cspec" id="fcc911"/>
+    <external_name tool="DWARF.register.mapping.file" name="fr60.dwarf"/>
   </language>
 </language_definitions>

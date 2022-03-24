@@ -1,0 +1,17 @@
+<dwarf>
+	<register_mappings>
+		<register_mapping dwarf="1" ghidra="R0" auto_count="12"/> <!-- R0..R11 -->
+		<register_mapping dwarf="12" ghidra="AC"/>
+		<register_mapping dwarf="13" ghidra="FP"/>
+		<register_mapping dwarf="14" ghidra="SP" stackpointer="true/>
+		<register_mapping dwarf="15" ghidra="PC"/>
+		<register_mapping dwarf="16" ghidra="RP"/>
+		<register_mapping dwarf="17" ghidra="SSP"/>
+		<register_mapping dwarf="18" ghidra="USP"/>
+		<register_mapping dwarf="19" ghidra="MDH"/>
+		<register_mapping dwarf="20" ghidra="MDL"/>
+		<register_mapping dwarf="21" ghidra="PS"/>
+		<register_mapping dwarf="22" ghidra="TBR"/>
+	</register_mappings>
+	<call_frame_cfa value="0"/>
+</dwarf>
