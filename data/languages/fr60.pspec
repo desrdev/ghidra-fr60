@@ -4,13 +4,6 @@
 
 <processor_spec>
   <programcounter register="PC"/>
-  <default_memory_blocks>
-    <memory_block name="io_direct_b" start_address="0x0" length="0x100" initialized="false" mode="rwvx"/>
-    <memory_block name="io" start_address="0x400" length="0xc00" initialized="false" mode="rwvx"/>
-    <memory_block name="int_ram" start_address="0x3f000" length="0x1000" initialized="false" mode="rwx"/>
-    <memory_block name="extern" start_address="0x400000" length="0xa00000" initialized="false" mode="rwx"/>
-    <memory_block name="int_rom" start_address="0xff000" length="0x1000" initialized="false" mode="rwvx"/>
-  </default_memory_blocks>
   <default_symbols>
     <!-- Memory IO setup registers -->
     <symbol name="ASR0" address="ram:640"/>

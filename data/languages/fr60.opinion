@@ -9,4 +9,7 @@
         <constraint primary="61"                    processor="Skel"  size="16" variant="default" />
     </constraint>
 -->
+	<constraint loader="DVRP Firmware Loader (UDM)" compilerSpecID="fcc911">
+		<constraint processor="fr60" size="16" variant="default" />
+	</constraint>
 </opinions>
