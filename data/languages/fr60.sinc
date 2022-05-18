@@ -11,7 +11,6 @@ define token instr (16)
     o8       = (4,11) signed
     u4       = (4,7)
     i4       = (4,7)
-    o4       = (4,7) signed
     rj       = (4,7)
     rs4_4    = (4,7)
 
@@ -21,8 +20,6 @@ define token instr (16)
     rel8     = (0,7) signed
     dir8     = (0,7)
     rlist    = (0,7)
-    rlist_lo = (0,7)
-    rlist_hi = (0,7)
 
     ri       = (0,3)
     rs       = (0,3)
@@ -595,8 +592,8 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
     *:4 (FP + o8_imm) = ri;
 }
 
-:ST ri, @(SP, o4_imm) is op8=0x13 & o4 & ri & SP [ o4_imm = o4 * 4; ] {
-    *:4 (SP + o4_imm) = ri;
+:ST ri, @(SP, u4_imm) is op8=0x13 & u4 & ri & SP [ u4_imm = u4 * 4; ] {
+    *:4 (SP + u4_imm) = ri;
 }
 
 :ST ri @-SP is op12=0x170 & ri & SP {
@@ -776,13 +773,13 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
 }
 
 :CALL_D REL_SEXT11 is op5=0x1b & REL_SEXT11 {
-    RP = inst_next + 2;
+    RP = inst_next;
     delayslot(1);
     call REL_SEXT11;
 }
 
 :CALL_D @ri is op12=0x9f1 & ri {
-    RP = inst_next + 2;
+    RP = inst_next;
     delayslot(1);
     call [ri];
 }
@@ -802,73 +799,87 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
 }
 
 :BEQ_D REL is op4=0xf & cc=0x2 & REL {
+    local t = Z == 1;
     delayslot(1);
-    if (Z == 1) goto REL;
+    if (t) goto REL;
 }
 
 :BNE_D REL is op4=0xf & cc=0x3 & REL {
+    local t = Z == 0;
     delayslot(1);
-    if (Z == 0) goto REL;
+    if (t) goto REL;
 }
 
 :BC_D REL is op4=0xf & cc=0x4 & REL {
+    local t = C == 1;
     delayslot(1);
-    if (C == 1) goto REL;
+    if (t) goto REL;
 }
 
 :BNC_D REL is op4=0xf & cc=0x5 & REL {
+    local t = C == 0;
     delayslot(1);
-    if (C == 0) goto REL;
+    if (t) goto REL;
 }
 
 :BN_D REL is op4=0xf & cc=0x6 & REL {
+    local t = N == 1;
     delayslot(1);
-    if (N == 1) goto REL;
+    if (t) goto REL;
 }
 
 :BP_D REL is op4=0xf & cc=0x7 & REL {
+    local t = N == 0;
     delayslot(1);
-    if (N == 0) goto REL;
+    if (t) goto REL;
 }
 
 :BV_D REL is op4=0xf & cc=0x8 & REL {
+    local t = V == 1;
     delayslot(1);
-    if (V == 1) goto REL;
+    if (t) goto REL;
 }
 
 :BNV_D REL is op4=0xf & cc=0x9 & REL {
+    local t = V == 0;
     delayslot(1);
-    if (V == 0) goto REL;
+    if (t) goto REL;
 }
 
 :BLT_D REL is op4=0xf & cc=0xa & REL {
+    local t = (V ^ N) == 1;
     delayslot(1);
-    if ((V ^ N) == 1) goto REL;
+    if (t) goto REL;
 }
 
 :BGE_D REL is op4=0xf & cc=0xb & REL {
+    local t = (V ^ N) == 0;
     delayslot(1);
-    if ((V ^ N) == 0) goto REL;
+    if (t) goto REL;
 }
 
 :BLE_D REL is op4=0xf & cc=0xc & REL {
+    local t = ((V ^ N) | Z) == 1;
     delayslot(1);
-    if (((V ^ N) | Z) == 1) goto REL;
+    if (t) goto REL;
 }
 
 :BGT_D REL is op4=0xf & cc=0xd & REL {
+    local t = ((V ^ N) | Z) == 0;
     delayslot(1);
-    if (((V ^ N) | Z) == 0) goto REL;
+    if (t) goto REL;
 }
 
 :BLS_D REL is op4=0xf & cc=0xe & REL {
+    local t = (C | Z) == 1;
     delayslot(1);
-    if ((C | Z) == 1) goto REL;
+    if (t) goto REL;
 }
 
 :BHI_D REL is op4=0xf & cc=0xf & REL {
+    local t = (C | Z) == 0;
     delayslot(1);
-    if ((C | Z) == 0) goto REL;
+    if (t) goto REL;
 }
 
 # ====
@@ -1019,9 +1030,8 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
 }
 
 :LEAVE is op16=0x9f90 {
-    local pointer:4 = SP - 4;
     SP = FP + 4;
-    FP = *:4 pointer;
+    FP = *:4 (SP - 4);
 }
 
 # ====
