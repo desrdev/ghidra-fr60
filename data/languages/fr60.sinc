@@ -94,6 +94,7 @@ macro loadProgramStatus() {
 
 # ====
 
+define pcodeop _interrupt_prelude;
 define pcodeop dma_write_chan;
 define pcodeop dma_read_chan;
 
@@ -682,13 +683,7 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
 }
 
 :INT #u8 is op8=0x1f & u8 {
-    # Not sure if worth emulating this?
-    SSP = SSP - 4;
-    *:4 SSP = PS;
-    SSP = SSP - 4;
-    *:4 SSP = inst_next;
-    I = 0;
-    S = 0;
+    _interrupt_prelude(PS, inst_next);
     call [((TBR + 0x3FC) - (sext(u8:2) * 4))];
 }
 
