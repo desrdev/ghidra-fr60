@@ -712,59 +712,59 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
 :BNO REL is op4=0xe & cc=0x1 & REL {}
 
 :BEQ REL is op4=0xe & cc=0x2 & REL {
-    if (Z == 1) goto REL;
+    if (Z) goto REL;
 }
 
 :BNE REL is op4=0xe & cc=0x3 & REL {
-    if (Z == 0) goto REL;
+    if (!Z) goto REL;
 }
 
 :BC REL is op4=0xe & cc=0x4 & REL {
-    if (C == 1) goto REL;
+    if (C) goto REL;
 }
 
 :BNC REL is op4=0xe & cc=0x5 & REL {
-    if (C == 0) goto REL;
+    if (!C) goto REL;
 }
 
 :BN REL is op4=0xe & cc=0x6 & REL {
-    if (N == 1) goto REL;
+    if (N) goto REL;
 }
 
 :BP REL is op4=0xe & cc=0x7 & REL {
-    if (N == 0) goto REL;
+    if (!N) goto REL;
 }
 
 :BV REL is op4=0xe & cc=0x8 & REL {
-    if (V == 1) goto REL;
+    if (V) goto REL;
 }
 
 :BNV REL is op4=0xe & cc=0x9 & REL {
-    if (V == 0) goto REL;
+    if (!V) goto REL;
 }
 
 :BLT REL is op4=0xe & cc=0xa & REL {
-    if ((V ^ N) == 1) goto REL;
+    if (V != N) goto REL;
 }
 
 :BGE REL is op4=0xe & cc=0xb & REL {
-    if ((V ^ N) == 0) goto REL;
+    if (V == N) goto REL;
 }
 
 :BLE REL is op4=0xe & cc=0xc & REL {
-    if (((V ^ N) | Z) == 1) goto REL;
+    if (Z || (V != N)) goto REL;
 }
 
 :BGT REL is op4=0xe & cc=0xd & REL {
-    if (((V ^ N) | Z) == 0) goto REL;
+    if (!Z && (V == N)) goto REL;
 }
 
 :BLS REL is op4=0xe & cc=0xe & REL {
-    if ((C | Z) == 1) goto REL;
+    if ((C || Z)) goto REL;
 }
 
 :BHI REL is op4=0xe & cc=0xf & REL {
-    if ((C | Z) == 0) goto REL;
+    if (!(C || Z)) goto REL;
 }
 
 :JMP_D @ri is op12=0x9f0 & ri {
@@ -799,85 +799,85 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
 }
 
 :BEQ_D REL is op4=0xf & cc=0x2 & REL {
-    local t = Z == 1;
+    local t = Z;
     delayslot(1);
     if (t) goto REL;
 }
 
 :BNE_D REL is op4=0xf & cc=0x3 & REL {
-    local t = Z == 0;
+    local t = !Z;
     delayslot(1);
     if (t) goto REL;
 }
 
 :BC_D REL is op4=0xf & cc=0x4 & REL {
-    local t = C == 1;
+    local t = C;
     delayslot(1);
     if (t) goto REL;
 }
 
 :BNC_D REL is op4=0xf & cc=0x5 & REL {
-    local t = C == 0;
+    local t = !C;
     delayslot(1);
     if (t) goto REL;
 }
 
 :BN_D REL is op4=0xf & cc=0x6 & REL {
-    local t = N == 1;
+    local t = N;
     delayslot(1);
     if (t) goto REL;
 }
 
 :BP_D REL is op4=0xf & cc=0x7 & REL {
-    local t = N == 0;
+    local t = !N;
     delayslot(1);
     if (t) goto REL;
 }
 
 :BV_D REL is op4=0xf & cc=0x8 & REL {
-    local t = V == 1;
+    local t = V;
     delayslot(1);
     if (t) goto REL;
 }
 
 :BNV_D REL is op4=0xf & cc=0x9 & REL {
-    local t = V == 0;
+    local t = !V;
     delayslot(1);
     if (t) goto REL;
 }
 
 :BLT_D REL is op4=0xf & cc=0xa & REL {
-    local t = (V ^ N) == 1;
+    local t = V != N;
     delayslot(1);
     if (t) goto REL;
 }
 
 :BGE_D REL is op4=0xf & cc=0xb & REL {
-    local t = (V ^ N) == 0;
+    local t = V == N;
     delayslot(1);
     if (t) goto REL;
 }
 
 :BLE_D REL is op4=0xf & cc=0xc & REL {
-    local t = ((V ^ N) | Z) == 1;
+    local t = Z || (V != N);
     delayslot(1);
     if (t) goto REL;
 }
 
 :BGT_D REL is op4=0xf & cc=0xd & REL {
-    local t = ((V ^ N) | Z) == 0;
+    local t = !Z && (V == N);
     delayslot(1);
     if (t) goto REL;
 }
 
 :BLS_D REL is op4=0xf & cc=0xe & REL {
-    local t = (C | Z) == 1;
+    local t = C || Z;
     delayslot(1);
     if (t) goto REL;
 }
 
 :BHI_D REL is op4=0xf & cc=0xf & REL {
-    local t = (C | Z) == 0;
+    local t = !(C || Z);
     delayslot(1);
     if (t) goto REL;
 }
