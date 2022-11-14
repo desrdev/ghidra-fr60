@@ -5,8 +5,8 @@ define token instr (16)
     op8      = (8,15)
     op5      = (11,15)
     op4      = (12,15)
-    cc       = (8,11)
 
+    cc       = (8,11)
     i8       = (4,11)
     o8       = (4,11) signed
     u4       = (4,7)
@@ -19,7 +19,36 @@ define token instr (16)
     s8       = (0,7) signed
     rel8     = (0,7) signed
     dir8     = (0,7)
-    rlist    = (0,7)
+    stmrlist7 = (0,0)
+    stmrlist6 = (1,1)
+    stmrlist5 = (2,2)
+    stmrlist4 = (3,3)
+    stmrlist3 = (4,4)
+    stmrlist2 = (5,5)
+    stmrlist1 = (6,6)
+    stmrlist0 = (7,7)
+    stmrlist7N = (0,0)
+    stmrlist6N = (0,1)
+    stmrlist5N = (0,2)
+    stmrlist4N = (0,3)
+    stmrlist3N = (0,4)
+    stmrlist2N = (0,5)
+    stmrlist1N = (0,6)
+    ldmrlist0 = (0,0)
+    ldmrlist1 = (1,1)
+    ldmrlist2 = (2,2)
+    ldmrlist3 = (3,3)
+    ldmrlist4 = (4,4)
+    ldmrlist5 = (5,5)
+    ldmrlist6 = (6,6)
+    ldmrlist7 = (7,7)
+    ldmrlist1N = (1,7)
+    ldmrlist2N = (2,7)
+    ldmrlist3N = (3,7)
+    ldmrlist4N = (4,7)
+    ldmrlist5N = (5,7)
+    ldmrlist6N = (6,7)
+    ldmrlist7N = (7,7)
 
     ri       = (0,3)
     rs       = (0,3)
@@ -151,6 +180,155 @@ DIR8H_REL: reloc is dir8 [ reloc = dir8 * 2; ] {
 DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
     export *:1 reloc;
 }
+
+# If "R15" is specified in the parameter "stmrlist", the contents of "R15"
+# retained before the instruction is executed will be written to memory
+stm_r15:   SP          is SP & stmrlist7=1                          {              SP = SP - 4; *[ram]:4 SP = SP + 4; }
+stm_r15:   ""          is epsilon                                   {                                                 }
+
+stm_r14:   FP          is FP & stm_r15 & stmrlist6=1 & stmrlist7N=0  { build stm_r15; SP = SP - 4; *[ram]:4 SP = FP;  }
+stm_r14:   FP,stm_r15  is FP & stm_r15 & stmrlist6=1                 { build stm_r15; SP = SP - 4; *[ram]:4 SP = FP;  }
+stm_r14:   stm_r15     is stm_r15                                    { build stm_r15;                                 }
+
+stm_r13:   AC          is AC & stm_r14 & stmrlist5=1 & stmrlist6N=0  { build stm_r14; SP = SP - 4; *[ram]:4 SP = AC;  }
+stm_r13:   AC,stm_r14  is AC & stm_r14 & stmrlist5=1                 { build stm_r14; SP = SP - 4; *[ram]:4 SP = AC;  }
+stm_r13:   stm_r14     is stm_r14                                    { build stm_r14;                                 }
+
+stm_r12:   R12         is R12 & stm_r13 & stmrlist4=1 & stmrlist5N=0 { build stm_r13; SP = SP - 4; *[ram]:4 SP = R12; }
+stm_r12:   R12,stm_r13 is R12 & stm_r13 & stmrlist4=1                { build stm_r13; SP = SP - 4; *[ram]:4 SP = R12; }
+stm_r12:   stm_r13     is stm_r13                                    { build stm_r13;                                 }
+
+stm_r11:   R11         is R11 & stm_r12 & stmrlist3=1 & stmrlist4N=0 { build stm_r12; SP = SP - 4; *[ram]:4 SP = R11; }
+stm_r11:   R11,stm_r12 is R11 & stm_r12 & stmrlist3=1                { build stm_r12; SP = SP - 4; *[ram]:4 SP = R11; }
+stm_r11:   stm_r12     is stm_r12                                    { build stm_r12;                                 }
+
+stm_r10:   R10         is R10 & stm_r11 & stmrlist2=1 & stmrlist3N=0 { build stm_r11; SP = SP - 4; *[ram]:4 SP = R10; }
+stm_r10:   R10,stm_r11 is R10 & stm_r11 & stmrlist2=1                { build stm_r11; SP = SP - 4; *[ram]:4 SP = R10; }
+stm_r10:   stm_r11     is stm_r11                                    { build stm_r11;                                 }
+
+stm_r9:    R9          is R9 & stm_r10 & stmrlist1=1 & stmrlist2N=0  { build stm_r10; SP = SP - 4; *[ram]:4 SP = R9;  }
+stm_r9:    R9,stm_r10  is R9 & stm_r10 & stmrlist1=1                 { build stm_r10; SP = SP - 4; *[ram]:4 SP = R9;  }
+stm_r9:    stm_r10     is stm_r10                                    { build stm_r10;                                 }
+
+stm1_list: R8          is R8 & stm_r9 & stmrlist0=1 & stmrlist1N=0   { build stm_r9; SP = SP - 4; *[ram]:4 SP = R8;   }
+stm1_list: R8,stm_r9   is R8 & stm_r9 & stmrlist0=1                  { build stm_r9; SP = SP - 4; *[ram]:4 SP = R8;   }
+stm1_list: stm_r9      is stm_r9                                     { build stm_r9;                                  }
+
+
+stm_r7:    R7          is R7 & stmrlist7=1                         {                SP = SP - 4; *[ram]:4 SP = R7; }
+stm_r7:    ""          is epsilon                                  {                                               }
+
+stm_r6:    R6          is R6 & stm_r7 & stmrlist6=1 & stmrlist7N=0 { build stm_r7; SP = SP - 4; *[ram]:4 SP = R6;  }
+stm_r6:    R6,stm_r7   is R6 & stm_r7 & stmrlist6=1                { build stm_r7; SP = SP - 4; *[ram]:4 SP = R6;  }
+stm_r6:    stm_r7      is stm_r7                                   { build stm_r7;                                 }
+
+stm_r5:    R5          is R5 & stm_r6 & stmrlist5=1 & stmrlist6N=0 { build stm_r6; SP = SP - 4; *[ram]:4 SP = R5;  }
+stm_r5:    R5,stm_r6  is R5 & stm_r6 & stmrlist5=1                 { build stm_r6; SP = SP - 4; *[ram]:4 SP = R5;  }
+stm_r5:    stm_r6     is stm_r6                                    { build stm_r6;                                 }
+
+stm_r4:    R4         is R4 & stm_r5 & stmrlist4=1 & stmrlist5N=0  { build stm_r5; SP = SP - 4; *[ram]:4 SP = R4;  }
+stm_r4:    R4,stm_r5  is R4 & stm_r5 & stmrlist4=1                 { build stm_r5; SP = SP - 4; *[ram]:4 SP = R4;  }
+stm_r4:    stm_r5     is stm_r5                                    { build stm_r5;                                 }
+
+stm_r3:    R3         is R3 & stm_r4 & stmrlist3=1 & stmrlist4N=0  { build stm_r4; SP = SP - 4; *[ram]:4 SP = R3;  }
+stm_r3:    R3,stm_r4  is R3 & stm_r4 & stmrlist3=1                 { build stm_r4; SP = SP - 4; *[ram]:4 SP = R3;  }
+stm_r3:    stm_r4     is stm_r4                                    { build stm_r4;                                 }
+
+stm_r2:    R2         is R2 & stm_r3 & stmrlist2=1 & stmrlist3N=0  { build stm_r3; SP = SP - 4; *[ram]:4 SP = R2;  }
+stm_r2:    R2,stm_r3  is R2 & stm_r3 & stmrlist2=1                 { build stm_r3; SP = SP - 4; *[ram]:4 SP = R2;  }
+stm_r2:    stm_r3     is stm_r3                                    { build stm_r3;                                 }
+
+stm_r1:    R1          is R1 & stm_r2 & stmrlist1=1 & stmrlist2N=0 { build stm_r2;  SP = SP - 4; *[ram]:4 SP = R1; }
+stm_r1:    R1,stm_r2   is R1 & stm_r2 & stmrlist1=1                { build stm_r2;  SP = SP - 4; *[ram]:4 SP = R1; }
+stm_r1:    stm_r2      is stm_r2                                   { build stm_r2;                                 }
+
+stm0_list: R0          is R0 & stm_r1 & stmrlist0=1 & stmrlist1N=0 { build stm_r1; SP = SP - 4; *[ram]:4 SP = R0;  }
+stm0_list: R0,stm_r1   is R0 & stm_r1 & stmrlist0=1                { build stm_r1; SP = SP - 4; *[ram]:4 SP = R0;  }
+stm0_list: stm_r1      is stm_r1                                   { build stm_r1;                                 }
+
+# If "R15" is specified in the parameter "stmrlist", the final contents of "R15"
+# will be readfrom memory
+ldm_r15:   SP          is SP & ldmrlist7=1                           { SP = *[ram]:4 SP;                             }
+ldm_r15:   ""          is epsilon                                    {                                               }
+
+ldm_r14:   FP          is FP & ldm_r15 & ldmrlist6=1 & ldmrlist7N=0  { FP = *[ram]:4 SP; SP = SP + 4; build ldm_r15; }
+ldm_r14:   FP,ldm_r15  is FP & ldm_r15 & ldmrlist6=1                 { FP = *[ram]:4 SP; SP = SP + 4; build ldm_r15; }
+ldm_r14:   ldm_r15     is ldm_r15                                    {                                build ldm_r15; }
+
+ldm_r13:   AC          is AC & ldm_r14 & ldmrlist5=1 & ldmrlist6N=0  { AC = *[ram]:4 SP; SP = SP + 4; build ldm_r14; }
+ldm_r13:   AC,ldm_r14  is AC & ldm_r14 & ldmrlist5=1                 { AC = *[ram]:4 SP; SP = SP + 4; build ldm_r14; }
+ldm_r13:   ldm_r14     is ldm_r14                                    {                                build ldm_r14; }
+
+ldm_r12:   R12         is R12 & ldm_r13 & ldmrlist4=1 & ldmrlist5N=0 { R12 = *[ram]:4 SP; SP = SP + 4; build ldm_r13; }
+ldm_r12:   R12,ldm_r13 is R12 & ldm_r13 & ldmrlist4=1                { R12 = *[ram]:4 SP; SP = SP + 4; build ldm_r13; }
+ldm_r12:   ldm_r13     is ldm_r13                                    {                                 build ldm_r13; }
+
+ldm_r11:   R11         is R11 & ldm_r12 & ldmrlist3=1 & ldmrlist4N=0 { R11 = *[ram]:4 SP; SP = SP + 4; build ldm_r12; }
+ldm_r11:   R11,ldm_r12 is R11 & ldm_r12 & ldmrlist3=1                { R11 = *[ram]:4 SP; SP = SP + 4; build ldm_r12; }
+ldm_r11:   ldm_r12     is ldm_r12                                    {                                 build ldm_r12; }
+
+ldm_r10:   R10         is R10 & ldm_r11 & ldmrlist2=1 & ldmrlist3N=0 { R10 = *[ram]:4 SP; SP = SP + 4; build ldm_r11; }
+ldm_r10:   R10,ldm_r11 is R10 & ldm_r11 & ldmrlist2=1                { R10 = *[ram]:4 SP; SP = SP + 4; build ldm_r11; }
+ldm_r10:   ldm_r11     is ldm_r11                                    {                                 build ldm_r11; }
+
+ldm_r9:    R9          is R9 & ldm_r10 & ldmrlist1=1 & ldmrlist2N=0{ R9 = *[ram]:4 SP;  SP = SP + 4; build ldm_r10; }
+ldm_r9:    R9,ldm_r10  is R9 & ldm_r10 & ldmrlist1=1               { R9 = *[ram]:4 SP;  SP = SP + 4; build ldm_r10; }
+ldm_r9:    ldm_r10     is ldm_r10                                  {                                 build ldm_r10; }
+
+ldm1_list: R8          is R8 & ldm_r9 & ldmrlist0=1 & ldmrlist1N=0 { R8 = *[ram]:4 SP;   SP = SP + 4; build ldm_r9; }
+ldm1_list: R8,ldm_r9   is R8 & ldm_r9 & ldmrlist0=1                { R8 = *[ram]:4 SP;   SP = SP + 4; build ldm_r9; }
+ldm1_list: ldm_r9      is ldm_r9                                   {                                  build ldm_r9; }
+
+
+ldm_r7:    R7          is R7 & ldmrlist7=1                         { R7 = *[ram]:4 SP; SP = SP + 4;                }
+ldm_r7:    ""          is epsilon                                  {                                               }
+
+ldm_r6:    R6          is R6 & ldm_r7 & ldmrlist6=1 & ldmrlist7N=0 { R6 = *[ram]:4 SP;  SP = SP + 4; build ldm_r7; }
+ldm_r6:    R6,ldm_r7   is R6 & ldm_r7 & ldmrlist6=1                { R6 = *[ram]:4 SP;  SP = SP + 4; build ldm_r7; }
+ldm_r6:    ldm_r7      is ldm_r7                                   {                                 build ldm_r7; }
+
+ldm_r5:    R5          is R5 & ldm_r6 & ldmrlist5=1 & ldmrlist6N=0 { R5 = *[ram]:4 SP;  SP = SP + 4; build ldm_r6; }
+ldm_r5:    R5,ldm_r6   is R5 & ldm_r6 & ldmrlist5=1                { R5 = *[ram]:4 SP;  SP = SP + 4; build ldm_r6; }
+ldm_r5:    ldm_r6      is ldm_r6                                   {                                 build ldm_r6; }
+
+ldm_r4:    R4          is R4 & ldm_r5 & ldmrlist4=1 & ldmrlist5N=0 { R4 = *[ram]:4 SP;  SP = SP + 4; build ldm_r5; }
+ldm_r4:    R4,ldm_r5   is R4 & ldm_r5 & ldmrlist4=1                { R4 = *[ram]:4 SP;  SP = SP + 4; build ldm_r5; }
+ldm_r4:    ldm_r5      is ldm_r5                                   {                                 build ldm_r5; }
+
+ldm_r3:    R3          is R3 & ldm_r4 & ldmrlist3=1 & ldmrlist4N=0 { R3 = *[ram]:4 SP;  SP = SP + 4; build ldm_r4; }
+ldm_r3:    R3,ldm_r4   is R3 & ldm_r4 & ldmrlist3=1                { R3 = *[ram]:4 SP;  SP = SP + 4; build ldm_r4; }
+ldm_r3:    ldm_r4      is ldm_r4                                   {                                 build ldm_r4; }
+
+ldm_r2:    R2          is R2 & ldm_r3 & ldmrlist2=1 & ldmrlist3N=0 { R2 = *[ram]:4 SP;  SP = SP + 4; build ldm_r3; }
+ldm_r2:    R2,ldm_r3   is R2 & ldm_r3 & ldmrlist2=1                { R2 = *[ram]:4 SP;  SP = SP + 4; build ldm_r3; }
+ldm_r2:    ldm_r3      is ldm_r3                                   {                                 build ldm_r3; }
+
+ldm_r1:    R1          is R1 & ldm_r2 & ldmrlist1=1 & ldmrlist2N=0 {  R1 = *[ram]:4 SP; SP = SP + 4; build ldm_r2; }
+ldm_r1:    R1,ldm_r2   is R1 & ldm_r2 & ldmrlist1=1                {  R1 = *[ram]:4 SP; SP = SP + 4; build ldm_r2; }
+ldm_r1:    ldm_r2      is ldm_r2                                   {                                 build ldm_r2; }
+
+ldm0_list: R0          is R0 & ldm_r1 & ldmrlist0=1 & ldmrlist1N=0 { R0 = *[ram]:4 SP;  SP = SP + 4; build ldm_r1; }
+ldm0_list: R0,ldm_r1   is R0 & ldm_r1 & ldmrlist0=1                { R0 = *[ram]:4 SP;  SP = SP + 4; build ldm_r1; }
+ldm0_list: ldm_r1      is ldm_r1                                   {                                 build ldm_r1; }
+
+
+CC: "RA" is cc=0x0 { local tmp:1 = 1; export *[const]:1 tmp; }
+CC: "NO" is cc=0x1 { local tmp:1 = 0; export *[const]:1 tmp; }
+CC: "EQ" is cc=0x2 { local tmp:1 = (Z == 1); export *[const]:1 tmp; }
+CC: "NE" is cc=0x3 { local tmp:1 = (Z == 0); export *[const]:1 tmp; }
+CC: "C"  is cc=0x4 { local tmp:1 = (C == 1); export *[const]:1 tmp; }
+CC: "NC" is cc=0x5 { local tmp:1 = (C == 0); export *[const]:1 tmp; }
+CC: "N"  is cc=0x6 { local tmp:1 = (N == 1); export *[const]:1 tmp; }
+CC: "P"  is cc=0x7 { local tmp:1 = (N == 0); export *[const]:1 tmp; }
+CC: "V"  is cc=0x8 { local tmp:1 = (V == 1); export *[const]:1 tmp; }
+CC: "NV" is cc=0x9 { local tmp:1 = (V == 0); export *[const]:1 tmp; }
+CC: "LT" is cc=0xA { local tmp:1 = ((V ^ N) == 1); export *[const]:1 tmp; }
+CC: "GE" is cc=0xB { local tmp:1 = ((V ^ N) == 0); export *[const]:1 tmp; }
+CC: "LE" is cc=0xC { local tmp:1 = (((V ^ N) | Z) == 1); export *[const]:1 tmp; }
+CC: "GT" is cc=0xD { local tmp:1 = (((V ^ N) | Z) == 0); export *[const]:1 tmp; }
+CC: "LS" is cc=0xE { local tmp:1 = ((C | Z) == 1); export *[const]:1 tmp; }
+CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export *[const]:1 tmp; }
+
 
 # ====
 
@@ -506,15 +684,15 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
 
 # ====
 
-:LDI_32 #i32, ri48_4 is op48_12=0x9f8 & i32 & ri48_4 {
+:LDI^":32" #i32, ri48_4 is op48_12=0x9f8 & i32 & ri48_4 {
     ri48_4 = i32;
 }
 
-:LDI_20 #LDI_20_CON, ri32_4 is op32_8=0x9b & LDI_20_CON & ri32_4 {
+:LDI^":20" #LDI_20_CON, ri32_4 is op32_8=0x9b & LDI_20_CON & ri32_4 {
     ri32_4 = LDI_20_CON;
 }
 
-:LDI_8 #i8, ri is op4=0xc & i8 & ri {
+:LDI^":8" #i8, ri is op4=0xc & i8 & ri {
     ri = zext(i8:1);
 }
 
@@ -683,7 +861,8 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
 }
 
 :INT #u8 is op8=0x1f & u8 {
-    _interrupt_prelude(PS, inst_next);
+     local ea:4 = inst_next;
+    _interrupt_prelude(PS, ea);
     call [((TBR + 0x3FC) - (sext(u8:2) * 4))];
 }
 
@@ -700,181 +879,37 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
 
 # ====
 
-:BRA REL is op4=0xe & cc=0x0 & REL {
-    goto REL;
+:B^CC REL is op4=0xE & CC & REL
+{
+    if (CC != 0) goto REL;
 }
 
-:BNO REL is op4=0xe & cc=0x1 & REL {}
-
-:BEQ REL is op4=0xe & cc=0x2 & REL {
-    if (Z) goto REL;
+:B^CC^":D" REL is op4=0xF & CC & REL
+{
+    delayslot(1);
+    if (CC != 0) goto REL;
 }
 
-:BNE REL is op4=0xe & cc=0x3 & REL {
-    if (!Z) goto REL;
-}
-
-:BC REL is op4=0xe & cc=0x4 & REL {
-    if (C) goto REL;
-}
-
-:BNC REL is op4=0xe & cc=0x5 & REL {
-    if (!C) goto REL;
-}
-
-:BN REL is op4=0xe & cc=0x6 & REL {
-    if (N) goto REL;
-}
-
-:BP REL is op4=0xe & cc=0x7 & REL {
-    if (!N) goto REL;
-}
-
-:BV REL is op4=0xe & cc=0x8 & REL {
-    if (V) goto REL;
-}
-
-:BNV REL is op4=0xe & cc=0x9 & REL {
-    if (!V) goto REL;
-}
-
-:BLT REL is op4=0xe & cc=0xa & REL {
-    if (V != N) goto REL;
-}
-
-:BGE REL is op4=0xe & cc=0xb & REL {
-    if (V == N) goto REL;
-}
-
-:BLE REL is op4=0xe & cc=0xc & REL {
-    if (Z || (V != N)) goto REL;
-}
-
-:BGT REL is op4=0xe & cc=0xd & REL {
-    if (!Z && (V == N)) goto REL;
-}
-
-:BLS REL is op4=0xe & cc=0xe & REL {
-    if ((C || Z)) goto REL;
-}
-
-:BHI REL is op4=0xe & cc=0xf & REL {
-    if (!(C || Z)) goto REL;
-}
-
-:JMP_D @ri is op12=0x9f0 & ri {
+:JMP^":D" @ri is op12=0x9f0 & ri {
     delayslot(1);
     goto [ri];
 }
 
-:CALL_D REL_SEXT11 is op5=0x1b & REL_SEXT11 {
+:CALL^":D" REL_SEXT11 is op5=0x1b & REL_SEXT11 {
     RP = inst_next;
     delayslot(1);
     call REL_SEXT11;
 }
 
-:CALL_D @ri is op12=0x9f1 & ri {
+:CALL^":D" @ri is op12=0x9f1 & ri {
     RP = inst_next;
     delayslot(1);
     call [ri];
 }
 
-:RET_D is op16=0x9f20 {
+:RET^":D" is op16=0x9f20 {
     delayslot(1);
     return [RP];
-}
-
-:BRA_D REL is op4=0xf & cc=0x0 & REL {
-    delayslot(1);
-    goto REL;
-}
-
-:BNO_D REL is op4=0xf & cc=0x1 & REL {
-    delayslot(1);
-}
-
-:BEQ_D REL is op4=0xf & cc=0x2 & REL {
-    local t = Z;
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BNE_D REL is op4=0xf & cc=0x3 & REL {
-    local t = !Z;
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BC_D REL is op4=0xf & cc=0x4 & REL {
-    local t = C;
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BNC_D REL is op4=0xf & cc=0x5 & REL {
-    local t = !C;
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BN_D REL is op4=0xf & cc=0x6 & REL {
-    local t = N;
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BP_D REL is op4=0xf & cc=0x7 & REL {
-    local t = !N;
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BV_D REL is op4=0xf & cc=0x8 & REL {
-    local t = V;
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BNV_D REL is op4=0xf & cc=0x9 & REL {
-    local t = !V;
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BLT_D REL is op4=0xf & cc=0xa & REL {
-    local t = V != N;
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BGE_D REL is op4=0xf & cc=0xb & REL {
-    local t = V == N;
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BLE_D REL is op4=0xf & cc=0xc & REL {
-    local t = Z || (V != N);
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BGT_D REL is op4=0xf & cc=0xd & REL {
-    local t = !Z && (V == N);
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BLS_D REL is op4=0xf & cc=0xe & REL {
-    local t = C || Z;
-    delayslot(1);
-    if (t) goto REL;
-}
-
-:BHI_D REL is op4=0xf & cc=0xf & REL {
-    local t = !(C || Z);
-    delayslot(1);
-    if (t) goto REL;
 }
 
 # ====
@@ -1016,6 +1051,28 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
     ri = zext(ri:2);
 }
 
+:LDM0 (ldm0_list) is op8=0x8c & ldm0_list
+{
+	build ldm0_list;
+}
+
+:LDM1 (ldm1_list) is op8=0x8d & ldm1_list
+{
+	build ldm1_list;
+}
+
+:STM0 (stm0_list) is op8=0x8e & stm0_list
+{
+	build stm0_list;
+}
+
+:STM1 (stm1_list) is op8=0x8f & stm1_list
+{
+	build stm1_list;
+}
+
+
+
 # ====
 
 :ENTER #u8_imm is op8=0x0f & u8 [ u8_imm = u8 * 4; ] {
@@ -1036,8 +1093,3 @@ DIR8B_REL: reloc is dir8 [ reloc = dir8 * 1; ] {
     ri = zext(*:1 rj);
     *:1 rj = temp;
 }
-
-# ====
-
-@include "stm.sinc"
-@include "ldm.sinc"
