@@ -1,0 +1,15 @@
+<patternlist>
+  <patternpairs totalbits="16" postbits="16">
+    <prepatterns>
+      <data> 0x97 0x20 </data> <!-- RET -->
+      <data> 0x9f 0x20 0x.. 0x.. </data> <!-- RET ; delay -->
+    </prepatterns>
+    <postpatterns>
+      <data> 0x17 0x8. 0x0f 0x.. </data> <!-- ST ; ENTER-->
+      <data> 0x8f 0x.. 0x17 0x8. 0x0f 0x.. </data> <!-- STM1 ; ST ; ENTER-->
+      <data> 0x8e 0x.. 0x8f 0x.. 0x17 0x8. 0x0f 0x.. </data> <!-- STM0 ; STM1 ; ST ; ENTER-->
+      <codeboundary />
+      <possiblefuncstart/>
+    </postpatterns>
+  </patternpairs>
+</patternlist>
