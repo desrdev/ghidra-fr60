@@ -287,22 +287,22 @@ ldm0_list: R0,ldm_r1   is R0 & ldm_r1 & ldmrlist0=1                { R0 = *[ram]
 ldm0_list: ldm_r1      is ldm_r1                                   {                                 build ldm_r1; }
 
 
-CC: "RA" is cc=0x0 { local tmp:1 = 1; export *[const]:1 tmp; }
-CC: "NO" is cc=0x1 { local tmp:1 = 0; export *[const]:1 tmp; }
-CC: "EQ" is cc=0x2 { local tmp:1 = (Z == 1); export *[const]:1 tmp; }
-CC: "NE" is cc=0x3 { local tmp:1 = (Z == 0); export *[const]:1 tmp; }
-CC: "C"  is cc=0x4 { local tmp:1 = (C == 1); export *[const]:1 tmp; }
-CC: "NC" is cc=0x5 { local tmp:1 = (C == 0); export *[const]:1 tmp; }
-CC: "N"  is cc=0x6 { local tmp:1 = (N == 1); export *[const]:1 tmp; }
-CC: "P"  is cc=0x7 { local tmp:1 = (N == 0); export *[const]:1 tmp; }
-CC: "V"  is cc=0x8 { local tmp:1 = (V == 1); export *[const]:1 tmp; }
-CC: "NV" is cc=0x9 { local tmp:1 = (V == 0); export *[const]:1 tmp; }
-CC: "LT" is cc=0xA { local tmp:1 = ((V ^ N) == 1); export *[const]:1 tmp; }
-CC: "GE" is cc=0xB { local tmp:1 = ((V ^ N) == 0); export *[const]:1 tmp; }
-CC: "LE" is cc=0xC { local tmp:1 = (((V ^ N) | Z) == 1); export *[const]:1 tmp; }
-CC: "GT" is cc=0xD { local tmp:1 = (((V ^ N) | Z) == 0); export *[const]:1 tmp; }
-CC: "LS" is cc=0xE { local tmp:1 = ((C | Z) == 1); export *[const]:1 tmp; }
-CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export *[const]:1 tmp; }
+CC: "RA" is cc=0x0 { local tmp:1 = 1; export tmp; }
+CC: "NO" is cc=0x1 { local tmp:1 = 0; export tmp; }
+CC: "EQ" is cc=0x2 { local tmp:1 = (Z == 1); export tmp; }
+CC: "NE" is cc=0x3 { local tmp:1 = (Z == 0); export tmp; }
+CC: "C"  is cc=0x4 { local tmp:1 = (C == 1); export tmp; }
+CC: "NC" is cc=0x5 { local tmp:1 = (C == 0); export tmp; }
+CC: "N"  is cc=0x6 { local tmp:1 = (N == 1); export tmp; }
+CC: "P"  is cc=0x7 { local tmp:1 = (N == 0); export tmp; }
+CC: "V"  is cc=0x8 { local tmp:1 = (V == 1); export tmp; }
+CC: "NV" is cc=0x9 { local tmp:1 = (V == 0); export tmp; }
+CC: "LT" is cc=0xA { local tmp:1 = ((V ^ N) == 1); export tmp; }
+CC: "GE" is cc=0xB { local tmp:1 = ((V ^ N) == 0); export tmp; }
+CC: "LE" is cc=0xC { local tmp:1 = (((V ^ N) | Z) == 1); export tmp; }
+CC: "GT" is cc=0xD { local tmp:1 = (((V ^ N) | Z) == 0); export tmp; }
+CC: "LS" is cc=0xE { local tmp:1 = ((C | Z) == 1); export tmp; }
+CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 
 
 # ====
