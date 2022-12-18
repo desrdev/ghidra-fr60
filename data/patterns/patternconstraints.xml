@@ -1,0 +1,5 @@
+<patternconstraints>
+  <language id="fr60:BE:16:default">
+    <patternfile>fr60.xml</patternfile>
+  </language>
+</patternconstraints>
