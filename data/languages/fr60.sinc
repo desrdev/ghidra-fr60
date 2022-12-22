@@ -95,22 +95,40 @@ macro mulFlags64(val1, val2) {
     V = (val1 != 0 && (val1 > (0xFFFFFFFFFFFFFFFF / val2)));
 }
 
-macro loadCCR() {
-    S   = (PS & 0b00100000) != 0;
-    I   = (PS & 0b00010000) != 0;
-    N   = (PS & 0b00001000) != 0;
-    Z   = (PS & 0b00000100) != 0;
-    V   = (PS & 0b00000010) != 0;
-    C   = (PS & 0b00000001) != 0;
+macro unpackCCR() {
+    S = PS[5,1];
+    I = PS[4,1];
+    N = PS[3,1];
+    Z = PS[2,1];
+    V = PS[1,1];
+    C = PS[0,1];
 }
 
-macro loadProgramStatus() {
-    local ilm_sft:4 = (PS & 0b11110000000000000000) >> 16;
-    ILM = ilm_sft:1;
-    D1  = (PS & 0b0000010000000000) != 0;
-    D0  = (PS & 0b0000001000000000) != 0;
-    T   = (PS & 0b0000000100000000) != 0;
-    loadCCR();
+macro packCCR() {
+    PS[0,1] = C;
+    PS[1,1] = V;
+    PS[2,1] = Z;
+    PS[3,1] = N;
+    PS[4,1] = I;
+    PS[5,1] = S;
+}
+
+# Pack before an instruction reads from PS
+macro packProgramStatus() {
+    packCCR();
+    PS[8,1] = T;
+    PS[9,1] = D0;
+    PS[10,1] = D1;
+    PS[16,4] = ILM;
+}
+
+# Unpack after an instruction writes to PS
+macro unpackProgramStatus() {
+    ILM = PS[16,4];
+    D1 = PS[10,1];
+    D0 = PS[9,1];
+    T = PS[8,1];
+    unpackCCR();
 }
 
 # ====
@@ -289,19 +307,19 @@ ldm0_list: ldm_r1      is ldm_r1                                   {            
 
 CC: "RA" is cc=0x0 { local tmp:1 = 1; export tmp; }
 CC: "NO" is cc=0x1 { local tmp:1 = 0; export tmp; }
-CC: "EQ" is cc=0x2 { local tmp:1 = (Z == 1); export tmp; }
+CC: "EQ" is cc=0x2 { local tmp:1 = (Z != 0); export tmp; }
 CC: "NE" is cc=0x3 { local tmp:1 = (Z == 0); export tmp; }
-CC: "C"  is cc=0x4 { local tmp:1 = (C == 1); export tmp; }
+CC: "C"  is cc=0x4 { local tmp:1 = (C != 0); export tmp; }
 CC: "NC" is cc=0x5 { local tmp:1 = (C == 0); export tmp; }
-CC: "N"  is cc=0x6 { local tmp:1 = (N == 1); export tmp; }
+CC: "N"  is cc=0x6 { local tmp:1 = (N != 0); export tmp; }
 CC: "P"  is cc=0x7 { local tmp:1 = (N == 0); export tmp; }
-CC: "V"  is cc=0x8 { local tmp:1 = (V == 1); export tmp; }
+CC: "V"  is cc=0x8 { local tmp:1 = (V != 0); export tmp; }
 CC: "NV" is cc=0x9 { local tmp:1 = (V == 0); export tmp; }
-CC: "LT" is cc=0xA { local tmp:1 = ((V ^ N) == 1); export tmp; }
-CC: "GE" is cc=0xB { local tmp:1 = ((V ^ N) == 0); export tmp; }
-CC: "LE" is cc=0xC { local tmp:1 = (((V ^ N) | Z) == 1); export tmp; }
-CC: "GT" is cc=0xD { local tmp:1 = (((V ^ N) | Z) == 0); export tmp; }
-CC: "LS" is cc=0xE { local tmp:1 = ((C | Z) == 1); export tmp; }
+CC: "LT" is cc=0xA { local tmp:1 = ((V != N) != 0); export tmp; }
+CC: "GE" is cc=0xB { local tmp:1 = ((V != N) == 0); export tmp; }
+CC: "LE" is cc=0xC { local tmp:1 = (((V != N) | Z) != 0); export tmp; }
+CC: "GT" is cc=0xD { local tmp:1 = (((V != N) | Z) == 0); export tmp; }
+CC: "LS" is cc=0xE { local tmp:1 = ((C | Z) != 0); export tmp; }
 CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 
 
@@ -800,6 +818,7 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 # LD @R15+, PS E 07-9 1+a+b CCCC (R15) --> PS, R15+=4
 :LD @SP+, PS is op16=0x0790 & SP & PS {
     PS = *:4 SP;
+    unpackProgramStatus();
     SP = SP + 4;
 }
 
@@ -874,6 +893,7 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 # ST PS, @-R15 E 17-9 a ---- R15-=4, PS --> (R15)
 :ST PS, @-SP is op16=0x1790 & SP & PS {
     SP = SP - 4;
+    packProgramStatus();
     *:4 SP = PS;
 }
 
@@ -930,12 +950,14 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 
 # MOV PS, Ri E 17-1 1 ---- PS --> Ri
 :MOV PS, ri is op12=0x171 & ri & PS {
+    packProgramStatus();
     ri = PS;
 }
 
 # MOV Ri, PS E 07-1 c CCCC Ri --> PS
 :MOV ri, PS is op12=0x071 & ri & PS {
     PS = ri;
+    unpackProgramStatus();
 }
 
 # ====
@@ -990,7 +1012,8 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 
 # INT #u8 D AC 3+3a ---- SSP-=4,PS --> (SSP),SSP-=4,PC+2 --> (SSP),(TBR+0x3FC-u8x4) --> PC
 :INT #u8 is op8=0x1f & u8 {
-     local ea:4 = inst_next;
+    local ea:4 = inst_next;
+    packProgramStatus();
     _interrupt_prelude(PS, ea);
     call [((TBR + 0x3FC) - (sext(u8:2) << 2))];
 }
@@ -1004,7 +1027,7 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
     SP = SP + 4;
     PS = *:4 SP;
     SP = SP + 4;
-    loadProgramStatus();
+    unpackProgramStatus();
     return [tempsp];
 }
 
