@@ -633,7 +633,7 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
         MDL = MDL | 0x1;
     <END>
 
-    $(Z_flag) = MDH == 0;
+    Z = MDH == 0;
 }
 
 # DIV2 Ri E 97-7 1 -C-C
