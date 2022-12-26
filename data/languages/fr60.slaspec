@@ -11,20 +11,8 @@ define register offset=0x20 size=4 [ R0 R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12  
 define register offset=0x20 size=4 [ _  _  _  _  _  _  _  _  _  _  _   _   _    AC   FP   SP ];
 
 # Fake flag registers for cleaner p-code decomp
+# Instead of reading/writing bits to PS directly in each instruction
+# these registers are used and then synced when there is PS access
 define register offset=0x80 size=1 [ ILM D1 D0 T S I N Z V C ];
-
-# Flag bits
-@define ILM_flag    "PS[16,4]"      # ILM: Interrupt Level Mask
-@define D1_flag     "PS[10,1]"
-@define D0_flag     "PS[9,1]"
-@define D_flag      "PS[9,2]"       # D: step Division
-@define T_flag      "PS[8,1]"       # T: step Trace trap
-@define S_flag      "PS[5,1]"		# S: Stack
-@define I_flag      "PS[4,1]"		# I: Interrupt
-@define N_flag      "PS[3,1]"		# N: Negative
-@define Z_flag      "PS[2,1]"		# Z: Zero
-@define V_flag      "PS[1,1]"		# V: oVerflow
-@define C_flag      "PS[0,1]"		# C: Carry
-@define CCR         "PS[0,8]"       # CCR: Condition Code Register
 
 @include "fr60.sinc"
