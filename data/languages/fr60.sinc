@@ -68,7 +68,7 @@ define token instr32 (32)
 
 attach variables [ ri rj ] [ R0 R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12 AC FP SP ];
 
-attach variables [ rs ] [ TBR RP SSP USP MDH MDL _ _ _ _ _ _ _ _ _ _ ];
+attach variables [ rs rs4_4 ] [ TBR RP SSP USP MDH MDL _ _ _ _ _ _ _ _ _ _ ];
 
 # ====
 
@@ -881,13 +881,13 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 }
 
 # ST Ri, @-R15 E 17-0 a ---- R15-=4,Ri --> (R15)
-:ST ri @-SP is op12=0x170 & ri & SP {
+:ST ri, @-SP is op12=0x170 & ri & SP {
     SP = SP - 4;
     *:4 SP = ri;
 }
 
 # ST Rs, @-R15 E 17-8 a ---- R15-=4, Rs --> (R15)
-:ST rs @-SP is op12=0x178 & rs & SP {
+:ST rs, @-SP is op12=0x178 & rs & SP {
     SP = SP - 4;
     *:4 SP = rs;
 }
