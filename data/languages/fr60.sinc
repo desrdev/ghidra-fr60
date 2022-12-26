@@ -1015,7 +1015,7 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 # INT #u8 D AC 3+3a ---- SSP-=4,PS --> (SSP),SSP-=4,PC+2 --> (SSP),(TBR+0x3FC-u8x4) --> PC
 :INT #u8 is op8=0x1f & u8 {
     local ea:4 = inst_next;
-    packProgramStatus();
+    # Could packProgramStatus() into PS, but letting pcodeop handle that;
     _interrupt_prelude(PS, ea);
     call [((TBR + 0x3FC) - (sext(u8:2) << 2))];
 }
