@@ -22,6 +22,9 @@ define token instr (16)
     s8       = (0,7) signed
     rel8     = (0,7) signed
     dir8     = (0,7)
+    rel20hi  = (0,3) signed
+    rel20lo  = (0,15)
+
     stmrlist7 = (0,0)
     stmrlist6 = (1,1)
     stmrlist5 = (2,2)
@@ -1164,6 +1167,8 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 
 # ====
 
+@ifndef FR81_EXTENSION
+
 # COPOP #u4, #u8, CRj, CRi E 9F-C 2+a ---- Operation instruction
 :COPOP #ccu4, #copcc, crj, cri is op12=0x9fc & ccu4 ; copcc & crj & cri {
     local tmp0:4 = ccu4;
@@ -1196,6 +1201,8 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
     local tmp2:4 = crj;
     ri = copsv(tmp0, tmp1, tmp2, ri);
 }
+
+@endif # FR81_EXTENSION
 
 # ====
 
