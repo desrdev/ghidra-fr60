@@ -3,7 +3,7 @@
 <!-- See Relax specification: Ghidra/Framework/SoftwareModeling/data/languages/language_definitions.rxg -->
 
 <language_definitions>
-   <language processor="FR60"
+  <language processor="FR60"
             endian="big"
             size="32"
             variant="default"
@@ -11,6 +11,20 @@
             slafile="fr60.sla"
             processorspec="fr60.pspec"
             id="fr60:BE:16:default">
+   <description>Fujitsu FR 60 Instruction Set</description>
+   <compiler name="fcc911" spec="fr60.cspec" id="fcc911"/>
+   <external_name tool="gnu" name="fr30"/>
+   <external_name tool="DWARF.register.mapping.file" name="fr60.dwarf"/>
+  </language>
+
+  <language processor="FR81"
+            endian="big"
+            size="32"
+            variant="default"
+            version="1.1"
+            slafile="fr81.sla"
+            processorspec="fr60.pspec"
+            id="fr81:BE:16:default">
    <description>Fujitsu FR 60 Instruction Set</description>
    <compiler name="fcc911" spec="fr60.cspec" id="fcc911"/>
    <external_name tool="gnu" name="fr30"/>

@@ -15,4 +15,8 @@ define register offset=0x20 size=4 [ _  _  _  _  _  _  _  _  _  _  _   _   _    
 # these registers are used and then synced when there is PS access
 define register offset=0x80 size=1 [ ILM D1 D0 T S I N Z V C ];
 
+
+@define FR81_EXTENSION
+
 @include "fr60.sinc"
+@include "fr81ext.sinc"

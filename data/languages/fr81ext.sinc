@@ -1,0 +1,93 @@
+
+
+# TODO add float-point registers
+
+define pcodeop TODO;
+
+label21: lbl is rel20hi ; rel20lo 
+[ lbl = ((rel20hi << 17) | (rel20lo << 1)) + inst_next; ] {
+	export *:4 lbl; 
+}
+# LCALL label21
+:LCALL label21 is op12=0x072... & label21 {
+	RP = inst_next;
+	call label21;
+}
+# LCALL:D label21
+:LCALL^":D" label21 is op12=0x172... & label21 {
+    delayslot(1);
+	RP = inst_next + 2;
+	call label21;
+}
+
+
+# MOV Rj, FRi
+:MOV rj, ri is op12=0x073 & rj & ri {
+	TODO();
+}
+# MOV FRj, Ri
+:MOV rj, ri is op12=0x173 & rj & ri {
+	TODO();
+}
+
+# LD @(BP, udisp18), Ri
+:LD "@(BP, udisp18)", ri is op12=0x074 & ri {
+	TODO();
+}
+# ST Ri, @(BP, udisp18)
+:ST ri, "@(BP, udisp18)" is op12=0x174 & ri {
+	TODO();
+}
+
+# LDUH @(BP, udisp17), Ri
+:LDUH "@(BP, udisp17)", ri is op12=0x075 & ri {
+	TODO();
+}
+# STUH Ri, @(BP, udisp17)
+:STUH ri, "@(BP, udisp17)" is op12=0x175 & ri {
+	TODO();
+}
+
+# LDUB @(BP, udisp16), Ri
+:LDUB "@(BP, udisp16)", ri is op12=0x076 & ri {
+	TODO();
+}
+# STUB Ri, @(BP, udisp16)
+:STUB ri, "@(BP, udisp16)" is op12=0x176 & ri {
+	TODO();
+}
+
+# FLD @(BP, udisp18), FRi
+:FLD "@(BP, udisp18)", ri is op12=0x077 & ri {
+	TODO();
+}
+# FST FRi, @(BP, udisp18)
+:FST ri, "@(BP, udisp18)" is op12=0x177 & ri {
+	TODO();
+}
+
+# FLD @Rj, FRi
+:FLD @^rj, ri is op12=0x07C & ri & rj {
+	TODO();
+}
+# FST FRi, @Rj
+:FST ri, @^rj is op12=0x17C & ri & rj {
+	TODO();
+}
+
+# FLD @(R13, Rj), FRi
+:FLD @(rj, AC), ri is op12=0x07E & ri & rj & AC {
+	TODO();
+}
+# FST FRi, @(R13, Rj)
+:FST ri, @(AC, rj) is op12=0x17E & ri & rj & AC {
+	TODO();
+}
+
+
+# LD @R15+, Rs E 07-8 b ---- (R15) --> Rs, R15+=4
+#:LD @SP+, rs is op12=0x078 & rs & SP {
+#    rs = *:4 SP;
+#    SP = SP + 4;
+#}
+
