@@ -1065,6 +1065,16 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
     if (CC != 0) goto REL;
 }
 
+# special case to improve decompiled code
+:BRA REL is op4=0xE & cc=0 & REL {
+	goto REL;
+}
+:BRA^":D" REL is op4=0xF & cc=0 & REL {
+    delayslot(1);
+    goto REL;
+}
+
+
 # ====
 
 # DMOV @dir10, R13 D 08 b ---- (dir10) --> R13
