@@ -1,33 +1,38 @@
 
+# Additional instructions according to
+# "FR81 32-bit microcontroller PROGRAMMING MANUAL"
+# document number CM71-00105-1E (490 pages)
 
-# TODO add float-point registers
+
+attach variables [ fri frj frk ] [ FR0 FR1 FR2 FR3 FR4 FR5 FR6 FR7 FR8 FR9 FR10 FR11 FR12 FR13 FR14 FR15 ];
+
 
 define pcodeop TODO;
 
-label21: lbl is rel20hi ; rel20lo 
-[ lbl = ((rel20hi << 17) | (rel20lo << 1)) + inst_next; ] {
-	export *:4 lbl; 
+Label21: addr is rel20hi ; rel20lo
+[ addr = ((rel20hi << 17) | (rel20lo << 1)) + inst_next; ] {
+	export *:4 addr; 
 }
-# LCALL label21
-:LCALL label21 is op12=0x072... & label21 {
+# LCALL Label21
+:LCALL Label21 is op12=0x072... & Label21 {
 	RP = inst_next;
-	call label21;
+	call Label21;
 }
 # LCALL:D label21
-:LCALL^":D" label21 is op12=0x172... & label21 {
+:LCALL^":D" Label21 is op12=0x172... & Label21 {
     delayslot(1);
 	RP = inst_next + 2;
-	call label21;
+	call Label21;
 }
 
 
 # MOV Rj, FRi
-:MOV rj, ri is op12=0x073 & rj & ri {
-	TODO();
+:MOV ri, fri is op12=0x073 & ri ; fri {
+	fri = ri;
 }
 # MOV FRj, Ri
-:MOV rj, ri is op12=0x173 & rj & ri {
-	TODO();
+:MOV fri, ri is op12=0x173 & ri ; fri {
+	ri = fri;
 }
 
 # LD @(BP, udisp18), Ri
@@ -84,10 +89,140 @@ label21: lbl is rel20hi ; rel20lo
 	TODO();
 }
 
+# FADDs FRk, FRj, FRi
+:FADDs frk, frj, fri is op16=0x07A0 ; fri & frj & frk {
+	TODO();
+}
 
-# LD @R15+, Rs E 07-8 b ---- (R15) --> Rs, R15+=4
-#:LD @SP+, rs is op12=0x078 & rs & SP {
-#    rs = *:4 SP;
-#    SP = SP + 4;
-#}
+# FSUBs FRk, FRj, FRi
+:FSUBs frk, frj, fri is op16=0x07A2 ; fri & frj & frk {
+	TODO();
+}
+
+# FCMPs FRk, FRj, FRi
+:FCMPs frk, frj is op16=0x07A4 ; frj & frk {
+	TODO();
+}
+
+# FMADDs FRk, FRj, FRi
+:FMADDs frk, frj, fri is op16=0x07A5 ; fri & frj & frk {
+	TODO();
+}
+
+# FMSUBs FRk, FRj, FRi
+:FMSUBs frk, frj, fri is op16=0x07A6 ; fri & frj & frk {
+	TODO();
+}
+
+# FMULs FRk, FRj, FRi
+:FMULs frk, frj, fri is op16=0x07A7 ; fri & frj & frk {
+	TODO();
+}
+
+# FiTOs FRj, FRi
+:FMULs frj, fri is op16=0x07A8 ; fri & frj {
+	TODO();
+}
+
+# FsTOi FRj, FRi
+:FMULs frj, fri is op16=0x07A9 ; fri & frj {
+	TODO();
+}
+
+# FDIVs FRk, FRj, FRi
+:FDIVs frk, frj, fri is op16=0x07AA ; fri & frj & frk {
+	TODO();
+}
+
+# FSQRTs FRj, FRi
+:FSQRTs frj, fri is op16=0x07AB ; fri & frj {
+	TODO();
+}
+
+# FABSs FRj, FRi
+:FABSs frj, fri is op16=0x07AC ; fri & frj {
+	TODO();
+}
+
+# FMOVs FRj, FRi (7.78)
+:FMOVs frj, fri is op16=0x07AE ; fri & frj {
+	fri = frj;
+}
+
+# FNEGs FRj, FRi (7.81)
+:FNEGs frj, fri is op16=0x07AF ; fri & frj {
+	fri = 0 f- frj;
+}
+
+
+# FLD @(R14, disp16), FRi (7.72)
+:FLD @(FP, disp16), fri is op14=(0x07D0>>2) & o14shi ; o14lo & fri & FP
+[ disp16 = ((o14shi << 12) | o14lo) * 4; ] {
+	fri = *:4 (FP + disp16);
+}
+# FST FRi, @(R14, disp16) (7.xx)
+:FST fri, @(FP, disp16) is op14=(0x17D0>>2) & o14shi ; o14lo & fri & FP
+[ disp16 = ((o14shi << 12) | o14lo) * 4; ] {
+	TODO();
+}
+
+# FLD @(R15, udisp16), FRi (7.73)
+:FLD @(SP, udisp16), fri is op14=(0x07D4>>2) & o14uhi ; o14lo & fri & SP
+[ udisp16 = ((o14uhi << 12) | o14lo) * 4; ] {
+	fri = *:4 (SP + udisp16);
+}
+# FST FRi, @(R15, udisp16) (7.xx)
+:FST fri, @(SP, udisp16) is op14=(0x17D4>>2) & o14uhi ; o14lo & fri & SP
+[ udisp16 = ((o14uhi << 12) | o14lo) * 4; ] {
+	TODO();
+}
+
+# FLD @R15+, FRi (7.74)
+:FLD @SP+, fri is op14=(0x07D8>>2) ; fri & SP {
+	fri = *:4 SP;
+	SP = SP + 4;
+}
+# FST FRi, @-R15 (7.xx)
+:FST fri, @-SP is op14=(0x17D8>>2) ; fri & SP {
+	SP = SP - 4;
+	*:4 SP = fri;
+}
+
+# FLDM (frlist) (7.76)
+:FLDM "(frlist)" is op14=(0x07DC>>2) ; stmrlist7 {
+	TODO();
+}
+# FSTM (frlist) (7.xx)
+:FSTM "(frlist)" is op14=(0x17DC>>2) ; stmrlist7 {
+	TODO();
+}
+
+FCC: "N"	is fcc=0x0 { local tmp:1 = 0; export tmp; }
+FCC: "U"	is fcc=0x1 { local tmp:1 = FCR_U != 0; export tmp; }
+FCC: "G"	is fcc=0x2 { local tmp:1 = FCR_G != 0; export tmp; }
+FCC: "UG"	is fcc=0x3 { local tmp:1 = (FCR_U | FCR_G) != 0; export tmp; }
+FCC: "L"	is fcc=0x4 { local tmp:1 = FCR_L != 0; export tmp; }
+FCC: "UL"	is fcc=0x5 { local tmp:1 = (FCR_U | FCR_L) != 0; export tmp; }
+FCC: "LG"	is fcc=0x6 { local tmp:1 = (FCR_L | FCR_G) != 0; export tmp; }
+FCC: "NE"	is fcc=0x7 { local tmp:1 = (FCR_L | FCR_G | FCR_U) != 0; export tmp; }
+FCC: "E"	is fcc=0x8 { local tmp:1 = FCR_E != 0; export tmp; }
+FCC: "UE"	is fcc=0x9 { local tmp:1 = (FCR_E | FCR_U) != 0; export tmp; }
+FCC: "GE"	is fcc=0xA { local tmp:1 = (FCR_G | FCR_E) != 0; export tmp; }
+FCC: "UGE"	is fcc=0xB { local tmp:1 = (FCR_U | FCR_G | FCR_E) != 0; export tmp; }
+FCC: "LE"	is fcc=0xC { local tmp:1 = (FCR_L | FCR_E) != 0; export tmp; }
+FCC: "ULE" 	is fcc=0xD { local tmp:1 = (FCR_E | FCR_L | FCR_U) != 0; export tmp; }
+FCC: "O"	is fcc=0xE { local tmp:1 = (FCR_E | FCR_L | FCR_G) != 0; export tmp; }
+FCC: "A"	is fcc=0xF { local tmp:1 = 1; export tmp; }
+
+Label17: addr is i16 [ addr = inst_next + (i16 * 2); ] { export *:1 addr; }
+
+# FBcc label17 (7.65)
+:FB^FCC Label17 is op12=0x07F & FCC ; Label17 {
+    if (FCC) goto Label17;
+}
+# FBcc:D label17 (7.66)
+:FB^FCC^":D" Label17 is op12=0x17F & FCC ; Label17 {
+    delayslot(1);
+    if (FCC) goto Label17;
+}
 
