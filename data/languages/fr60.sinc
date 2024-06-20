@@ -75,6 +75,7 @@ define token instr (16)
     o14shi   = (0,2) signed
     o14uhi   = (0,2) signed
     o14lo    = (4,15)
+    u16      = (0,15)
 @endif
 ;
 
