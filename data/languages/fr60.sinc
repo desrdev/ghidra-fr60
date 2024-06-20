@@ -1,6 +1,7 @@
 
 define token instr (16)
     op16     = (0,15)
+    op14     = (2,15)
     op12     = (4,15)
     op8      = (8,15)
     op7      = (9,15)
@@ -22,8 +23,6 @@ define token instr (16)
     s8       = (0,7) signed
     rel8     = (0,7) signed
     dir8     = (0,7)
-    rel20hi  = (0,3) signed
-    rel20lo  = (0,15)
 
     stmrlist7 = (0,0)
     stmrlist6 = (1,1)
@@ -63,6 +62,20 @@ define token instr (16)
     cri      = (0,3)
     crj      = (4,7)
     copcc    = (9,15)
+
+@ifdef FR81_EXTENSION
+    fri      = (0,3)
+    frj      = (4,7)
+    frk      = (8,11)
+
+    fcc      = (0,3)
+
+    rel20hi  = (0,3) signed
+    rel20lo  = (0,15)
+    o14shi   = (0,2) signed
+    o14uhi   = (0,2) signed
+    o14lo    = (4,15)
+@endif
 ;
 
 define token instr32 (32)
@@ -71,7 +84,11 @@ define token instr32 (32)
 
 attach variables [ ri rj ] [ R0 R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12 AC FP SP ];
 
+@ifndef FR81_EXTENSION
 attach variables [ rs rs4_4 ] [ TBR RP SSP USP MDH MDL _ _ _ _ _ _ _ _ _ _ ];
+@else
+attach variables [ rs rs4_4 ] [ TBR RP SSP USP MDH MDL BP FCR ESR _ _ _ _ _ _ DBR ];
+@endif
 
 # ====
 
