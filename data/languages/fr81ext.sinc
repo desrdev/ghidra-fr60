@@ -6,6 +6,13 @@
 
 attach variables [ fri frj frk ] [ FR0 FR1 FR2 FR3 FR4 FR5 FR6 FR7 FR8 FR9 FR10 FR11 FR12 FR13 FR14 FR15 ];
 
+# Floating point condition code flags
+@define FCR_E "FCR[31,1]"	# equal
+@define FCR_L "FCR[30,1]"	# less than
+@define FCR_G "FCR[29,1]"	# greater than
+@define FCR_U "FCR[28,1]"	# unordered - cannot compare
+
+
 
 define pcodeop TODO;
 
@@ -109,11 +116,11 @@ Label21: addr is rel20hi ; rel20lo
 
 # FCMPs FRk, FRj, FRi (7.67)
 :FCMPs frk, frj is op16=0x07A4 ; frj & frk {
-	FCR_E = frk f== frj;
-	FCR_L = frk f< frj;
-	FCR_G = frk f> frj;
-	FCR_U = 0; # not possible to compare
-	# TODO pack bits into single reg
+	local e:4 = zext(frk f== frj) << 31;
+	local l:4 = zext(frk f< frj) << 30;
+	local g:4 = zext(frk f> frj) << 29;
+	local u:4 = zext(nan(frk) || nan(frj)) << 28;
+	FCR = (FCR & 0x0fffffff) | e | l | g | u;
 }
 
 # FMADDs FRk, FRj, FRi (7.77)
@@ -210,20 +217,20 @@ Label21: addr is rel20hi ; rel20lo
 }
 
 FCC: "N"	is fcc=0x0 { local tmp:1 = 0; export tmp; }
-FCC: "U"	is fcc=0x1 { local tmp:1 = FCR_U != 0; export tmp; }
-FCC: "G"	is fcc=0x2 { local tmp:1 = FCR_G != 0; export tmp; }
-FCC: "UG"	is fcc=0x3 { local tmp:1 = (FCR_U | FCR_G) != 0; export tmp; }
-FCC: "L"	is fcc=0x4 { local tmp:1 = FCR_L != 0; export tmp; }
-FCC: "UL"	is fcc=0x5 { local tmp:1 = (FCR_U | FCR_L) != 0; export tmp; }
-FCC: "LG"	is fcc=0x6 { local tmp:1 = (FCR_L | FCR_G) != 0; export tmp; }
-FCC: "NE"	is fcc=0x7 { local tmp:1 = (FCR_L | FCR_G | FCR_U) != 0; export tmp; }
-FCC: "E"	is fcc=0x8 { local tmp:1 = FCR_E != 0; export tmp; }
-FCC: "UE"	is fcc=0x9 { local tmp:1 = (FCR_E | FCR_U) != 0; export tmp; }
-FCC: "GE"	is fcc=0xA { local tmp:1 = (FCR_G | FCR_E) != 0; export tmp; }
-FCC: "UGE"	is fcc=0xB { local tmp:1 = (FCR_U | FCR_G | FCR_E) != 0; export tmp; }
-FCC: "LE"	is fcc=0xC { local tmp:1 = (FCR_L | FCR_E) != 0; export tmp; }
-FCC: "ULE" 	is fcc=0xD { local tmp:1 = (FCR_E | FCR_L | FCR_U) != 0; export tmp; }
-FCC: "O"	is fcc=0xE { local tmp:1 = (FCR_E | FCR_L | FCR_G) != 0; export tmp; }
+FCC: "U"	is fcc=0x1 { local tmp:1 = $(FCR_U) != 0; export tmp; }
+FCC: "G"	is fcc=0x2 { local tmp:1 = $(FCR_G) != 0; export tmp; }
+FCC: "UG"	is fcc=0x3 { local tmp:1 = ($(FCR_U) | $(FCR_G)) != 0; export tmp; }
+FCC: "L"	is fcc=0x4 { local tmp:1 = $(FCR_L) != 0; export tmp; }
+FCC: "UL"	is fcc=0x5 { local tmp:1 = ($(FCR_U) | $(FCR_L)) != 0; export tmp; }
+FCC: "LG"	is fcc=0x6 { local tmp:1 = ($(FCR_L) | $(FCR_G)) != 0; export tmp; }
+FCC: "NE"	is fcc=0x7 { local tmp:1 = ($(FCR_L) | $(FCR_G) | $(FCR_U)) != 0; export tmp; }
+FCC: "E"	is fcc=0x8 { local tmp:1 = $(FCR_E) != 0; export tmp; }
+FCC: "UE"	is fcc=0x9 { local tmp:1 = ($(FCR_E) | $(FCR_U)) != 0; export tmp; }
+FCC: "GE"	is fcc=0xA { local tmp:1 = ($(FCR_G) | $(FCR_E)) != 0; export tmp; }
+FCC: "UGE"	is fcc=0xB { local tmp:1 = ($(FCR_U) | $(FCR_G) | $(FCR_E)) != 0; export tmp; }
+FCC: "LE"	is fcc=0xC { local tmp:1 = ($(FCR_L) | $(FCR_E)) != 0; export tmp; }
+FCC: "ULE" 	is fcc=0xD { local tmp:1 = ($(FCR_E) | $(FCR_L) | $(FCR_U)) != 0; export tmp; }
+FCC: "O"	is fcc=0xE { local tmp:1 = ($(FCR_E) | $(FCR_L) | $(FCR_G)) != 0; export tmp; }
 FCC: "A"	is fcc=0xF { local tmp:1 = 1; export tmp; }
 
 Label17: addr is i16 [ addr = inst_next + (i16 * 2); ] { export *:1 addr; }
