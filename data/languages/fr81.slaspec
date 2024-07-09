@@ -17,9 +17,6 @@ define register offset=0x80 size=4 [ FR0 FR1 FR2 FR3 FR4 FR5 FR6 FR7 FR8 FR9 FR1
 # these registers are used and then synced when there is PS access
 define register offset=0x100 size=1 [ ILM D1 D0 T S I N Z V C ];
 
-# and same for floating point (FCR register)
-define register offset=0x120 size=1 [ FCR_E FCR_L FCR_G FCR_U ];
-
 
 @define FR81_EXTENSION
 
