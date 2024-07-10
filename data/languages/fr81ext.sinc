@@ -12,9 +12,42 @@ attach variables [ fri frj frk ] [ FR0 FR1 FR2 FR3 FR4 FR5 FR6 FR7 FR8 FR9 FR10 
 @define FCR_G "FCR[29,1]"	# greater than
 @define FCR_U "FCR[28,1]"	# unordered - cannot compare
 
+define token fldm_fstm_list(16)
+    fldm0  = (0,0)
+    fldm1  = (1,1)
+    fldm2  = (2,2)
+    fldm3  = (3,3)
+    fldm4  = (4,4)
+    fldm5  = (5,5)
+    fldm6  = (6,6)
+    fldm7  = (7,7)
+    fldm8  = (8,8)
+    fldm9  = (9,9)
+    fldm10 = (10,10)
+    fldm11 = (11,11)
+    fldm12 = (12,12)
+    fldm13 = (13,13)
+    fldm14 = (14,14)
+    fldm15 = (15,15)
 
+    fstm15 = (0,0)
+    fstm14 = (1,1)
+    fstm13 = (2,2)
+    fstm12 = (3,3)
+    fstm11 = (4,4)
+    fstm10 = (5,5)
+    fstm9  = (6,6)
+    fstm8  = (7,7)
+    fstm7  = (8,8)
+    fstm6  = (9,9)
+    fstm5  = (10,10)
+    fstm4  = (11,11)
+    fstm3  = (12,12)
+    fstm2  = (13,13)
+    fstm1  = (14,14)
+    fstm0  = (15,15)
+;
 
-define pcodeop TODO;
 
 Label21: addr is rel20hi ; rel20lo
 [ addr = ((rel20hi << 17) | (rel20lo << 1)) + inst_next; ] {
@@ -208,12 +241,141 @@ Label21: addr is rel20hi ; rel20lo
 }
 
 # FLDM (frlist) (7.76)
-:FLDM "(frlist)" is op14=(0x07DC>>2) ; stmrlist7 {
-	TODO();
+fldm_fr15:	FR15			is FR15 & fldm15=1							{ FR15 = *:4 SP; SP = SP + 4; }
+fldm_fr15:	""				is 		  fldm15=0							{ }
+
+fldm_fr14:	FR14			is FR14 & fldm_fr15 & fldm14=1 & fldm15=0	{ FR14 = *:4 SP; SP = SP + 4;	build fldm_fr15; }
+fldm_fr14:	FR14,fldm_fr15	is FR14 & fldm_fr15 & fldm14=1 & fldm15=1	{ FR14 = *:4 SP; SP = SP + 4;	build fldm_fr15; }
+fldm_fr14:	     fldm_fr15	is 		  fldm_fr15 & fldm14=0				{ build fldm_fr15; }
+
+fldm_fr13:	FR13			is FR13 & fldm_fr14 & fldm13=1 & fldm14=0	{ FR13 = *:4 SP; SP = SP + 4;	build fldm_fr14; }
+fldm_fr13:	FR13,fldm_fr14	is FR13 & fldm_fr14 & fldm13=1 & fldm14=1	{ FR13 = *:4 SP; SP = SP + 4;	build fldm_fr14; }
+fldm_fr13:	     fldm_fr14	is 		  fldm_fr14 & fldm13=0				{ 								build fldm_fr14; }
+
+fldm_fr12:	FR12			is FR12 & fldm_fr13 & fldm12=1 & fldm13=0	{ FR12 = *:4 SP; SP = SP + 4;	build fldm_fr13; }
+fldm_fr12:	FR12,fldm_fr13	is FR12 & fldm_fr13 & fldm12=1 & fldm13=1	{ FR12 = *:4 SP; SP = SP + 4;	build fldm_fr13; }
+fldm_fr12:	     fldm_fr13	is 		  fldm_fr13 & fldm12=0				{ 								build fldm_fr13; }
+
+fldm_fr11:	FR11			is FR11 & fldm_fr12 & fldm11=1 & fldm12=0	{ FR11 = *:4 SP; SP = SP + 4;	build fldm_fr12; }
+fldm_fr11:	FR11,fldm_fr12	is FR11 & fldm_fr12 & fldm11=1 & fldm12=1	{ FR11 = *:4 SP; SP = SP + 4;	build fldm_fr12; }
+fldm_fr11:	     fldm_fr12	is 		  fldm_fr12 & fldm11=0				{ 								build fldm_fr12; }
+
+fldm_fr10:	FR10			is FR10 & fldm_fr11 & fldm10=1 & fldm11=0	{ FR10 = *:4 SP; SP = SP + 4;	build fldm_fr11; }
+fldm_fr10:	FR10,fldm_fr11	is FR10 & fldm_fr11 & fldm10=1 & fldm11=1	{ FR10 = *:4 SP; SP = SP + 4;	build fldm_fr11; }
+fldm_fr10:	     fldm_fr11	is 		  fldm_fr11 & fldm10=0				{ 								build fldm_fr11; }
+
+fldm_fr9:	FR9				is FR9  & fldm_fr10 & fldm9=1 & fldm10=0	{ FR9 = *:4 SP; SP = SP + 4;	build fldm_fr10; }
+fldm_fr9:	FR9,fldm_fr10	is FR9  & fldm_fr10 & fldm9=1 & fldm10=1	{ FR9 = *:4 SP; SP = SP + 4;	build fldm_fr10; }
+fldm_fr9:	    fldm_fr10	is 		  fldm_fr10 & fldm9=0				{ 								build fldm_fr10; }
+
+fldm_fr8:	FR8				is FR8  & fldm_fr9 & fldm8=1 & fldm9=0		{ FR8 = *:4 SP; SP = SP + 4;	build fldm_fr9; }
+fldm_fr8:	FR8,fldm_fr9	is FR8  & fldm_fr9 & fldm8=1 & fldm9=1		{ FR8 = *:4 SP; SP = SP + 4;	build fldm_fr9; }
+fldm_fr8:	    fldm_fr9	is 		  fldm_fr9 & fldm8=0				{ 								build fldm_fr9; }
+
+fldm_fr7:	FR7				is FR7  & fldm_fr8 & fldm7=1 & fldm8=0		{ FR7 = *:4 SP; SP = SP + 4;	build fldm_fr8; }
+fldm_fr7:	FR7,fldm_fr8	is FR7  & fldm_fr8 & fldm7=1 & fldm8=1		{ FR7 = *:4 SP; SP = SP + 4;	build fldm_fr8; }
+fldm_fr7:	    fldm_fr8	is 		  fldm_fr8 & fldm7=0				{ 								build fldm_fr8; }
+
+fldm_fr6:	FR6				is FR6  & fldm_fr7 & fldm6=1 & fldm7=0		{ FR6 = *:4 SP; SP = SP + 4;	build fldm_fr7; }
+fldm_fr6:	FR6,fldm_fr7	is FR6  & fldm_fr7 & fldm6=1 & fldm7=1		{ FR6 = *:4 SP; SP = SP + 4;	build fldm_fr7; }
+fldm_fr6:	    fldm_fr7	is 		  fldm_fr7 & fldm6=0				{ 								build fldm_fr7; }
+
+fldm_fr5:	FR5				is FR5  & fldm_fr6 & fldm5=1 & fldm6=0		{ FR5 = *:4 SP; SP = SP + 4;	build fldm_fr6; }
+fldm_fr5:	FR5,fldm_fr6	is FR5  & fldm_fr6 & fldm5=1 & fldm6=1		{ FR5 = *:4 SP; SP = SP + 4;	build fldm_fr6; }
+fldm_fr5:	    fldm_fr6	is 		  fldm_fr6 & fldm5=0				{ 								build fldm_fr6; }
+
+fldm_fr4:	FR4				is FR4  & fldm_fr5 & fldm6=1 & fldm5=0		{ FR4 = *:4 SP; SP = SP + 4;	build fldm_fr5; }
+fldm_fr4:	FR4,fldm_fr5	is FR4  & fldm_fr5 & fldm6=1 & fldm5=1		{ FR4 = *:4 SP; SP = SP + 4;	build fldm_fr5; }
+fldm_fr4:	    fldm_fr5	is 		  fldm_fr5 & fldm6=0				{ 								build fldm_fr5; }
+
+fldm_fr3:	FR3				is FR3  & fldm_fr4 & fldm5=1 & fldm4=0		{ FR3 = *:4 SP; SP = SP + 4;	build fldm_fr4; }
+fldm_fr3:	FR3,fldm_fr4	is FR3  & fldm_fr4 & fldm5=1 & fldm4=1		{ FR3 = *:4 SP; SP = SP + 4;	build fldm_fr4; }
+fldm_fr3:	    fldm_fr4	is 		  fldm_fr4 & fldm5=0				{ 								build fldm_fr4; }
+
+fldm_fr2:	FR2				is FR2  & fldm_fr3 & fldm4=1 & fldm3=0		{ FR2 = *:4 SP; SP = SP + 4;	build fldm_fr3; }
+fldm_fr2:	FR2,fldm_fr3	is FR2  & fldm_fr3 & fldm4=1 & fldm3=1		{ FR2 = *:4 SP; SP = SP + 4;	build fldm_fr3; }
+fldm_fr2:	    fldm_fr3	is 		  fldm_fr3 & fldm4=0				{ 								build fldm_fr3; }
+
+fldm_fr1:	FR1				is FR1  & fldm_fr2 & fldm3=1 & fldm2=0		{ FR1 = *:4 SP; SP = SP + 4;	build fldm_fr2; }
+fldm_fr1:	FR1,fldm_fr2	is FR1  & fldm_fr2 & fldm3=1 & fldm2=1		{ FR1 = *:4 SP; SP = SP + 4;	build fldm_fr2; }
+fldm_fr1:	    fldm_fr2	is 		  fldm_fr2 & fldm3=0				{ 								build fldm_fr2; }
+
+fldm_fr0:	FR0				is FR0  & fldm_fr1 & fldm2=1 & fldm1=0		{ FR0 = *:4 SP; SP = SP + 4;	build fldm_fr1; }
+fldm_fr0:	FR0,fldm_fr1	is FR0  & fldm_fr1 & fldm2=1 & fldm1=1		{ FR0 = *:4 SP; SP = SP + 4;	build fldm_fr1; }
+fldm_fr0:	    fldm_fr1	is 		  fldm_fr1 & fldm2=0				{ 								build fldm_fr1; }
+
+:FLDM (fldm_fr0) is op14=(0x07DC>>2) ; fldm_fr0 {
+    build fldm_fr0;
 }
+
+
 # FSTM (frlist) (7.89)
-:FSTM "(frlist)" is op14=(0x17DC>>2) ; stmrlist7 {
-	TODO();
+
+fstm_fr15:	FR15			is FR15 & fstm15=1							{ *:4 SP = FR15; SP = SP - 4; }
+fstm_fr15:	""				is 		  fstm15=0							{ }
+
+fstm_fr14:	FR14			is FR14 & fstm_fr15 & fstm14=1 & fstm15=0	{ build fstm_fr15; *:4 SP = FR14; SP = SP - 4; }
+fstm_fr14:	FR14,fstm_fr15	is FR14 & fstm_fr15 & fstm14=1 & fstm15=1	{ build fstm_fr15; *:4 SP = FR14; SP = SP - 4; }
+fstm_fr14:	     fstm_fr15	is 		  fstm_fr15 & fstm14=0				{ build fstm_fr15; }
+
+fstm_fr13:	FR13			is FR13 & fstm_fr14 & fstm13=1 & fstm14=0	{ build fstm_fr14; *:4 SP = FR13; SP = SP - 4; }
+fstm_fr13:	FR13,fstm_fr14	is FR13 & fstm_fr14 & fstm13=1 & fstm14=1	{ build fstm_fr14; *:4 SP = FR13; SP = SP - 4; }
+fstm_fr13:	     fstm_fr14	is 		  fstm_fr14 & fstm13=0				{ build fstm_fr14; }
+
+fstm_fr12:	FR12			is FR12 & fstm_fr13 & fstm12=1 & fstm13=0	{ build fstm_fr13; *:4 SP = FR12; SP = SP - 4; }
+fstm_fr12:	FR12,fstm_fr13	is FR12 & fstm_fr13 & fstm12=1 & fstm13=1	{ build fstm_fr13; *:4 SP = FR12; SP = SP - 4; }
+fstm_fr12:	     fstm_fr13	is 		  fstm_fr13 & fstm12=0				{ build fstm_fr13; }
+
+fstm_fr11:	FR11			is FR11 & fstm_fr12 & fstm11=1 & fstm12=0	{ build fstm_fr12; *:4 SP = FR11; SP = SP - 4; }
+fstm_fr11:	FR11,fstm_fr12	is FR11 & fstm_fr12 & fstm11=1 & fstm12=1	{ build fstm_fr12; *:4 SP = FR11; SP = SP - 4; }
+fstm_fr11:	     fstm_fr12	is 		  fstm_fr12 & fstm11=0				{ build fstm_fr12; }
+
+fstm_fr10:	FR10			is FR10 & fstm_fr11 & fstm10=1 & fstm11=0	{ build fstm_fr11; *:4 SP = FR10; SP = SP - 4; }
+fstm_fr10:	FR10,fstm_fr11	is FR10 & fstm_fr11 & fstm10=1 & fstm11=1	{ build fstm_fr11; *:4 SP = FR10; SP = SP - 4; }
+fstm_fr10:	     fstm_fr11	is 		  fstm_fr11 & fstm10=0				{ build fstm_fr11; }
+
+fstm_fr9:	FR9				is FR9 & fstm_fr10 & fstm9=1 & fstm10=0		{ build fstm_fr10; *:4 SP = FR9; SP = SP - 4; }
+fstm_fr9:	FR9,fstm_fr10	is FR9 & fstm_fr10 & fstm9=1 & fstm10=1		{ build fstm_fr10; *:4 SP = FR9; SP = SP - 4; }
+fstm_fr9:	    fstm_fr10	is 		 fstm_fr10 & fstm9=0				{ build fstm_fr10; }
+
+fstm_fr8:	FR8				is FR8 & fstm_fr9 & fstm8=1 & fstm9=0		{ build fstm_fr9; *:4 SP = FR8; SP = SP - 4; }
+fstm_fr8:	FR8,fstm_fr9	is FR8 & fstm_fr9 & fstm8=1 & fstm9=1		{ build fstm_fr9; *:4 SP = FR8; SP = SP - 4; }
+fstm_fr8:	    fstm_fr9	is 		 fstm_fr9 & fstm8=0					{ build fstm_fr9; }
+
+fstm_fr7:	FR7				is FR7 & fstm_fr8 & fstm7=1 & fstm8=0		{ build fstm_fr8; *:4 SP = FR7; SP = SP - 4; }
+fstm_fr7:	FR7,fstm_fr8	is FR7 & fstm_fr8 & fstm7=1 & fstm8=1		{ build fstm_fr8; *:4 SP = FR7; SP = SP - 4; }
+fstm_fr7:	    fstm_fr8	is 		 fstm_fr8 & fstm7=0					{ build fstm_fr8; }
+
+fstm_fr6:	FR6				is FR6 & fstm_fr7 & fstm6=1 & fstm7=0		{ build fstm_fr7; *:4 SP = FR6; SP = SP - 4; }
+fstm_fr6:	FR6,fstm_fr7	is FR6 & fstm_fr7 & fstm6=1 & fstm7=1		{ build fstm_fr7; *:4 SP = FR6; SP = SP - 4; }
+fstm_fr6:	    fstm_fr7	is 		 fstm_fr7 & fstm6=0					{ build fstm_fr7; }
+
+fstm_fr5:	FR5				is FR5 & fstm_fr6 & fstm5=1 & fstm6=0		{ build fstm_fr6; *:4 SP = FR5; SP = SP - 4; }
+fstm_fr5:	FR5,fstm_fr6	is FR5 & fstm_fr6 & fstm5=1 & fstm6=1		{ build fstm_fr6; *:4 SP = FR5; SP = SP - 4; }
+fstm_fr5:	    fstm_fr6	is 		 fstm_fr6 & fstm5=0					{ build fstm_fr6; }
+
+fstm_fr4:	FR4				is FR4 & fstm_fr5 & fstm4=1 & fstm5=0		{ build fstm_fr5; *:4 SP = FR4; SP = SP - 4; }
+fstm_fr4:	FR4,fstm_fr5	is FR4 & fstm_fr5 & fstm4=1 & fstm5=1		{ build fstm_fr5; *:4 SP = FR4; SP = SP - 4; }
+fstm_fr4:	    fstm_fr5	is 		 fstm_fr5 & fstm4=0					{ build fstm_fr5; }
+
+fstm_fr3:	FR3				is FR3 & fstm_fr4 & fstm3=1 & fstm4=0		{ build fstm_fr4; *:4 SP = FR3; SP = SP - 4; }
+fstm_fr3:	FR3,fstm_fr4	is FR3 & fstm_fr4 & fstm3=1 & fstm4=1		{ build fstm_fr4; *:4 SP = FR3; SP = SP - 4; }
+fstm_fr3:	    fstm_fr4	is 		 fstm_fr4 & fstm3=0					{ build fstm_fr4; }
+
+fstm_fr2:	FR2				is FR2 & fstm_fr3 & fstm2=1 & fstm3=0		{ build fstm_fr3; *:4 SP = FR2; SP = SP - 4; }
+fstm_fr2:	FR2,fstm_fr3	is FR2 & fstm_fr3 & fstm2=1 & fstm3=1		{ build fstm_fr3; *:4 SP = FR2; SP = SP - 4; }
+fstm_fr2:	    fstm_fr3	is 		 fstm_fr3 & fstm2=0					{ build fstm_fr3; }
+
+fstm_fr1:	FR1				is FR1 & fstm_fr2 & fstm1=1 & fstm2=0		{ build fstm_fr2; *:4 SP = FR1; SP = SP - 4; }
+fstm_fr1:	FR1,fstm_fr2	is FR1 & fstm_fr2 & fstm1=1 & fstm2=1		{ build fstm_fr2; *:4 SP = FR1; SP = SP - 4; }
+fstm_fr1:	    fstm_fr2	is 		 fstm_fr2 & fstm1=0					{ build fstm_fr2; }
+
+fstm_fr0:	FR0				is FR0 & fstm_fr1 & fstm0=1 & fstm1=0		{ build fstm_fr1; *:4 SP = FR0; SP = SP - 4; }
+fstm_fr0:	FR0,fstm_fr1	is FR0 & fstm_fr1 & fstm0=1 & fstm1=1		{ build fstm_fr1; *:4 SP = FR0; SP = SP - 4; }
+fstm_fr0:	    fstm_fr1	is 		 fstm_fr1 & fstm0=0					{ build fstm_fr1; }
+
+:FSTM (fstm_fr0) is op14=(0x17DC>>2) ; fstm_fr0 {
+	build fstm_fr0;
 }
 
 FCC: "N"	is fcc=0x0 { local tmp:1 = 0; export tmp; }
