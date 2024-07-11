@@ -407,3 +407,29 @@ Label17: addr is i16 [ addr = inst_next + (i16 * 2); ] { export *:1 addr; }
     if (FCC) goto Label17;
 }
 
+
+# SRCH0 Ri E 97-C ---- search_zero(Ri) --> Ri
+:SRCH0 ri is op12=0x97c & ri {
+    local tmp:4 = ~ri;
+    ri = 32;
+    if (tmp == 0) goto inst_next;
+    ri = clz(tmp);
+}
+
+# SRCH1 Ri E 97-D ---- search_one(Ri) --> Ri
+:SRCH1 ri is op12=0x97d & ri {
+    local tmp:4 = ri;
+    ri = 32;
+    if (tmp == 0) goto inst_next;
+    ri = clz(tmp);
+}
+
+# SRCHC Ri E 97-E ---- search_change(Ri) --> Ri
+:SRCHC ri is op12=0x97e & ri {
+    local tmp:4 = ri;
+    local neg = tmp s< 0;
+    tmp = (tmp * zext(neg == 0)) + (~tmp * zext(neg != 0));
+    ri = 32;
+    if (tmp == 0) goto inst_next;
+    ri = clz(tmp);
+}
