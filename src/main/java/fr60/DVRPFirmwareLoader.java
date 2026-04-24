@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ public class DVRPFirmwareLoader extends AbstractLibrarySupportLoader {
 	@Override
 	public String getName() {
 
-		// TODO: Name the loader.  This name must match the name of the loader in the .opinion 
+		// TODO: Name the loader.  This name must match the name of the loader in the .opinion
 		// files.
 
 		return "DVRP Firmware Loader (UDM)";
@@ -54,13 +54,14 @@ public class DVRPFirmwareLoader extends AbstractLibrarySupportLoader {
 	@Override
 	public Collection<LoadSpec> findSupportedLoadSpecs(ByteProvider provider) throws IOException {
 		List<LoadSpec> loadSpecs = new ArrayList<>();
-		
+
 		byte[] dvrpHeader = "DVRP".getBytes();
-		
+
 		byte[] fileHeader = provider.readBytes(0, 4);
-		
+
 		if (Arrays.equals(dvrpHeader, fileHeader)) {
-			loadSpecs.add(new LoadSpec(this, 0, new LanguageCompilerSpecPair("fr60:BE:16:default", "fcc911"), true));
+			loadSpecs.add(new LoadSpec(this, 0,
+				new LanguageCompilerSpecPair("fr60:BE:16:default", "fcc911"), true));
 		}
 
 		return loadSpecs;
@@ -71,120 +72,130 @@ public class DVRPFirmwareLoader extends AbstractLibrarySupportLoader {
 			throws CancelledException, IOException {
 		ByteProvider provider = settings.provider();
 		TaskMonitor monitor = settings.monitor();
-		
+
 		BinaryReader reader = new BinaryReader(provider, true).asBigEndian();
 		FlatProgramAPI api = new FlatProgramAPI(program, monitor);
 		Memory mem = program.getMemory();
-		
+
 		int ram_base = 0x10000000;
 		int ram_size = 0x01000000;
-				
+
 		int rom_lower_size = reader.readInt(0x10);
 		int rom_lower_offset = reader.readInt(0x18);
 		int rom_upper_size = reader.readInt(0x24);
 		int rom_upper_offset = reader.readInt(0x30);
 		int rom_entry_point = reader.readInt(0x40);
-		
-		
+
 		byte lowerRomBytes[] = reader.readByteArray(rom_lower_offset, rom_lower_size);
-		byte romUpperBytes[] = reader.readByteArray(rom_upper_offset + rom_lower_offset + 24, rom_upper_size - 24);
-		
+		byte romUpperBytes[] =
+			reader.readByteArray(rom_upper_offset + rom_lower_offset + 24, rom_upper_size - 24);
+
 		// Only 0xF0000 -> 0xDFFFF is accessable on external bus
 		byte accessableLowerBytes[] = Arrays.copyOfRange(lowerRomBytes, 0x40000, rom_lower_size);
 
-        try {
-    		MemoryBlock block = program.getMemory().createInitializedBlock(
-    				"External RAM", 
-    				program.getAddressFactory().getDefaultAddressSpace().getAddress(ram_base), 
-    				ram_size, 
-    				(byte)0x00, 
-    				monitor, 
-    				false
-    		);
-    		
-    		block.setRead(true);
-    		block.setWrite(true);
-    		block.setExecute(true);
-    		
-        	block = mem.createInitializedBlock("ROM Lower", program.getAddressFactory().getDefaultAddressSpace().getAddress(0x40000), 0xA0000, (byte)0x00, monitor, false);
-        	block.setRead(true);
-        	block.setWrite(true);
-        	block.setExecute(true);
-        	
-        	block = mem.createInitializedBlock("Internal ROM", program.getAddressFactory().getDefaultAddressSpace().getAddress(0xFF000), 0x10000, (byte)0x00, monitor, false);
-        	block.setRead(true);
-        	block.setWrite(false);
-        	block.setExecute(true);
+		try {
+			MemoryBlock block = program.getMemory().createInitializedBlock(
+				"External RAM",
+				program.getAddressFactory().getDefaultAddressSpace().getAddress(ram_base),
+				ram_size,
+				(byte) 0x00,
+				monitor,
+				false);
 
-    		// From Data sheet
-        	block = mem.createUninitializedBlock("Byte I/O", api.toAddr(0x0), 0x100, false);
-        	block.setRead(true);
-        	block.setWrite(true);
-        	block.setVolatile(true);
-        	block = mem.createUninitializedBlock("Direct I/O", api.toAddr(0x100), 0x300, false);
-        	block.setRead(true);
-        	block.setWrite(true);
-        	block.setVolatile(true);
-        	block = mem.createUninitializedBlock("I/O", api.toAddr(0x400), 0xFC00, false);
-        	block.setRead(true);
-        	block.setWrite(true);
-        	block.setVolatile(true);
-        	block = mem.createUninitializedBlock("Internal RAM", api.toAddr(0x3F000), 0x1000, false);
-        	block.setRead(true);
-        	block.setWrite(true);
-        	block.setExecute(true);
+			block.setRead(true);
+			block.setWrite(true);
+			block.setExecute(true);
 
-        	
-        	// PSX RE
-        	block = mem.createUninitializedBlock("SPEED", api.toAddr(0x1010000), 0x10000, false);
-        	block.setRead(true);
-        	block.setWrite(true);
-        	block.setVolatile(true);
-        	block = mem.createUninitializedBlock("Unk 16bit", api.toAddr(0x1020000), 0x10000, false);
-        	block.setRead(true);
-        	block.setWrite(true);
-        	block.setVolatile(true);
-        	block = mem.createUninitializedBlock("SPEED 8bit", api.toAddr(0x1040000), 0x20000, false);
-        	block.setRead(true);
-        	block.setWrite(true);
-        	block.setVolatile(true);
-        	block = mem.createUninitializedBlock("ATAH", api.toAddr(0x2400000), 0x400000, false);
-        	block.setRead(true);
-        	block.setWrite(true);
-        	block.setVolatile(true);
-        	block = mem.createUninitializedBlock("ATAL", api.toAddr(0x2000000), 0x400000, false);
-        	block.setRead(true);
-        	block.setWrite(true);
-        	block.setVolatile(true);
-        	block = mem.createUninitializedBlock("CPLD", api.toAddr(0x1070000), 0x10000, false);
-        	block.setRead(true);
-        	block.setWrite(true);
-        	block.setVolatile(true);
-        	
-        	mem.setBytes(api.toAddr(0x40000), accessableLowerBytes);
-        	mem.setBytes(api.toAddr(0x10000000), romUpperBytes);
-        	
-	        	api.addEntryPoint(api.toAddr(rom_entry_point));
-	        	api.disassemble(api.toAddr(rom_entry_point));
-	        	api.createFunction(api.toAddr(rom_entry_point), "_rom_entry");
-		} catch (LockException e) {
+			block = mem.createInitializedBlock("ROM Lower",
+				program.getAddressFactory().getDefaultAddressSpace().getAddress(0x40000),
+				0xA0000, (byte) 0x00, monitor, false);
+			block.setRead(true);
+			block.setWrite(true);
+			block.setExecute(true);
+
+			block = mem.createInitializedBlock("Internal ROM",
+				program.getAddressFactory().getDefaultAddressSpace().getAddress(0xFF000),
+				0x10000, (byte) 0x00, monitor, false);
+			block.setRead(true);
+			block.setWrite(false);
+			block.setExecute(true);
+
+			// From Data sheet
+			block = mem.createUninitializedBlock("Byte I/O", api.toAddr(0x0), 0x100, false);
+			block.setRead(true);
+			block.setWrite(true);
+			block.setVolatile(true);
+			block = mem.createUninitializedBlock("Direct I/O", api.toAddr(0x100), 0x300, false);
+			block.setRead(true);
+			block.setWrite(true);
+			block.setVolatile(true);
+			block = mem.createUninitializedBlock("I/O", api.toAddr(0x400), 0xFC00, false);
+			block.setRead(true);
+			block.setWrite(true);
+			block.setVolatile(true);
+			block =
+				mem.createUninitializedBlock("Internal RAM", api.toAddr(0x3F000), 0x1000, false);
+			block.setRead(true);
+			block.setWrite(true);
+			block.setExecute(true);
+
+			// PSX RE
+			block = mem.createUninitializedBlock("SPEED", api.toAddr(0x1010000), 0x10000, false);
+			block.setRead(true);
+			block.setWrite(true);
+			block.setVolatile(true);
+			block =
+				mem.createUninitializedBlock("Unk 16bit", api.toAddr(0x1020000), 0x10000, false);
+			block.setRead(true);
+			block.setWrite(true);
+			block.setVolatile(true);
+			block =
+				mem.createUninitializedBlock("SPEED 8bit", api.toAddr(0x1040000), 0x20000, false);
+			block.setRead(true);
+			block.setWrite(true);
+			block.setVolatile(true);
+			block = mem.createUninitializedBlock("ATAH", api.toAddr(0x2400000), 0x400000, false);
+			block.setRead(true);
+			block.setWrite(true);
+			block.setVolatile(true);
+			block = mem.createUninitializedBlock("ATAL", api.toAddr(0x2000000), 0x400000, false);
+			block.setRead(true);
+			block.setWrite(true);
+			block.setVolatile(true);
+			block = mem.createUninitializedBlock("CPLD", api.toAddr(0x1070000), 0x10000, false);
+			block.setRead(true);
+			block.setWrite(true);
+			block.setVolatile(true);
+
+			mem.setBytes(api.toAddr(0x40000), accessableLowerBytes);
+			mem.setBytes(api.toAddr(0x10000000), romUpperBytes);
+
+			api.addEntryPoint(api.toAddr(rom_entry_point));
+			api.disassemble(api.toAddr(rom_entry_point));
+			api.createFunction(api.toAddr(rom_entry_point), "_rom_entry");
+		}
+		catch (LockException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (MemoryConflictException e) {
+		}
+		catch (MemoryConflictException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (AddressOverflowException e) {
+		}
+		catch (AddressOverflowException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (MemoryAccessException e) {
+		}
+		catch (MemoryAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static class MB91302AMemRegion {
 		String name;
 		int addr;
@@ -192,7 +203,9 @@ public class DVRPFirmwareLoader extends AbstractLibrarySupportLoader {
 		boolean read;
 		boolean write;
 		boolean execute;
-		private MB91302AMemRegion(String name, int addr, int size, boolean read, boolean write, boolean execute) {
+
+		private MB91302AMemRegion(String name, int addr, int size, boolean read, boolean write,
+				boolean execute) {
 			this.name = name;
 			this.addr = addr;
 			this.size = size;
@@ -200,6 +213,5 @@ public class DVRPFirmwareLoader extends AbstractLibrarySupportLoader {
 			this.write = write;
 			this.execute = execute;
 		}
-	
 	}
 }
