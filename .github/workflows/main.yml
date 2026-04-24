@@ -25,15 +25,13 @@ jobs:
       uses: gradle/actions/setup-gradle@v3
 
     - name: Install Ghidra ${{ matrix.ghidra }}
-      uses: antoniovazquezblanco/setup-ghidra@v2.0.3
+      uses: antoniovazquezblanco/setup-ghidra@v2.1.1
       with:
         auth_token: ${{ secrets.GITHUB_TOKEN }}
         version: ${{ matrix.ghidra }}
 
     - name: Build
-      run: |
-        "$GHIDRA_INSTALL_DIR/support/gradle/gradlew" buildExtension \
-          -PGHIDRA_INSTALL_DIR="$GHIDRA_INSTALL_DIR"
+      run: gradle buildExtension -PGHIDRA_INSTALL_DIR=${{ env.GHIDRA_INSTALL_DIR }}
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
