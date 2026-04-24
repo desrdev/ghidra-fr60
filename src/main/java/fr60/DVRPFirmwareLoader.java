@@ -16,16 +16,13 @@
 package fr60;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
-import ghidra.app.util.Option;
 import ghidra.app.util.bin.BinaryReader;
 import ghidra.app.util.bin.ByteProvider;
-import ghidra.app.util.importer.MessageLog;
 import ghidra.app.util.opinion.AbstractLibrarySupportLoader;
 import ghidra.app.util.opinion.LoadSpec;
-import ghidra.framework.model.DomainObject;
+import ghidra.app.util.opinion.Loader.ImporterSettings;
 import ghidra.framework.store.LockException;
 import ghidra.program.flatapi.FlatProgramAPI;
 import ghidra.program.model.address.AddressOverflowException;
@@ -70,9 +67,10 @@ public class DVRPFirmwareLoader extends AbstractLibrarySupportLoader {
 	}
 
 	@Override
-	protected void load(ByteProvider provider, LoadSpec loadSpec, List<Option> options,
-			Program program, TaskMonitor monitor, MessageLog log)
+	protected void load(Program program, ImporterSettings settings)
 			throws CancelledException, IOException {
+		ByteProvider provider = settings.provider();
+		TaskMonitor monitor = settings.monitor();
 		
 		BinaryReader reader = new BinaryReader(provider, true).asBigEndian();
 		FlatProgramAPI api = new FlatProgramAPI(program, monitor);
@@ -166,9 +164,9 @@ public class DVRPFirmwareLoader extends AbstractLibrarySupportLoader {
         	mem.setBytes(api.toAddr(0x40000), accessableLowerBytes);
         	mem.setBytes(api.toAddr(0x10000000), romUpperBytes);
         	
-        	api.addEntryPoint(api.toAddr(rom_entry_point));
-        	api.disassemble(api.toAddr(rom_entry_point));
-        	api.createFunction(api.toAddr(rom_entry_point), "_rom_entry");
+	        	api.addEntryPoint(api.toAddr(rom_entry_point));
+	        	api.disassemble(api.toAddr(rom_entry_point));
+	        	api.createFunction(api.toAddr(rom_entry_point), "_rom_entry");
 		} catch (LockException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -178,9 +176,6 @@ public class DVRPFirmwareLoader extends AbstractLibrarySupportLoader {
 		} catch (AddressOverflowException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (CancelledException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -188,27 +183,6 @@ public class DVRPFirmwareLoader extends AbstractLibrarySupportLoader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public List<Option> getDefaultOptions(ByteProvider provider, LoadSpec loadSpec,
-			DomainObject domainObject, boolean isLoadIntoProgram) {
-		List<Option> list =
-			super.getDefaultOptions(provider, loadSpec, domainObject, isLoadIntoProgram);
-
-		// TODO: If this loader has custom options, add them to 'list'
-		list.add(new Option("Option name goes here", "Default option value goes here"));
-
-		return list;
-	}
-
-	@Override
-	public String validateOptions(ByteProvider provider, LoadSpec loadSpec, List<Option> options, Program program) {
-
-		// TODO: If this loader has custom options, validate them here.  Not all options require
-		// validation.
-
-		return super.validateOptions(provider, loadSpec, options, program);
 	}
 	
 	private static class MB91302AMemRegion {
