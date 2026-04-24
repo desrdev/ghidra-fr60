@@ -8,9 +8,12 @@ There is no reason why this plugin cannot be used with other processors from thi
 functionality may be unimplemented, specifically the Co-Processor logic is completely stubbed out in this plugin.
 
 ## Building
-This project requires Gradle 7+ and OpenJDK 11. It has only been tested on Ghidra 10.1.2.
+This project is tested on Ghidra 12.0.4 and requires Java 21. Use the Gradle wrapper bundled with
+the target Ghidra install so the build matches Ghidra's required Gradle version.
 ```shell
-gradle -PGHIDRA_INSTALL_DIR=/path/to/ghidra buildExtension
+export GHIDRA_INSTALL_DIR=/path/to/ghidra_12.0.4_PUBLIC
+"$GHIDRA_INSTALL_DIR/support/gradle/gradlew" buildExtension \
+  -PGHIDRA_INSTALL_DIR="$GHIDRA_INSTALL_DIR"
 ```
 
 ## Installing
