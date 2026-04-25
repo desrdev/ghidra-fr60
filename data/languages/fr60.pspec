@@ -211,261 +211,261 @@
 
     <!-- Interrupt Vector Table -->
     <symbol name="Reset" address="ram:ffffc" entry="true" type="code_ptr"/>
-    <symbol name="Mode vector" address="ram:ffff8" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffff4" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffff0" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:fffec" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:fffe8" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:fffe4" entry="true" type="code_ptr"/>
-    <symbol name="No-coprocessor trap" address="ram:fffe0" entry="true" type="code_ptr"/>
-    <symbol name="Coprocessor error trap" address="ram:fffdc" entry="true" type="code_ptr"/>
-    <symbol name="INTE instruction" address="ram:fffd8" entry="true" type="code_ptr"/>
-    <symbol name="Instruction break exception" address="ram:fffd4" entry="true" type="code_ptr"/>
-    <symbol name="Operand break trap" address="ram:fffd0" entry="true" type="code_ptr"/>
-    <symbol name="Step trace trap" address="ram:fffcc" entry="true" type="code_ptr"/>
-    <symbol name="NMI request (tool)" address="ram:fffc8" entry="true" type="code_ptr"/>
-    <symbol name="Undefined instruction exception" address="ram:fffc4" entry="true" type="code_ptr"/>
-    <symbol name="NMI request" address="ram:fffc0" entry="true" type="code_ptr"/>
-    <symbol name="External Interrupt 0" address="ram:fffbc" entry="true" type="code_ptr"/>
-    <symbol name="External Interrupt 1" address="ram:fffb8" entry="true" type="code_ptr"/>
-    <symbol name="External Interrupt 2" address="ram:fffb4" entry="true" type="code_ptr"/>
-    <symbol name="External Interrupt 3" address="ram:fffb0" entry="true" type="code_ptr"/>
-    <symbol name="External Interrupt 4" address="ram:fffac" entry="true" type="code_ptr"/>
-    <symbol name="External Interrupt 5" address="ram:fffa8" entry="true" type="code_ptr"/>
-    <symbol name="External Interrupt 6" address="ram:fffa4" entry="true" type="code_ptr"/>
-    <symbol name="External Interrupt 7" address="ram:fffa0" entry="true" type="code_ptr"/>
-    <symbol name="Reload Timer 0" address="ram:fff9c" entry="true" type="code_ptr"/>
-    <symbol name="Reload Timer 1" address="ram:fff98" entry="true" type="code_ptr"/>
-    <symbol name="Reload Timer 2" address="ram:fff94" entry="true" type="code_ptr"/>
-    <symbol name="UART0 (reception completed)" address="ram:fff90" entry="true" type="code_ptr"/>
-    <symbol name="UART1 (reception completed)" address="ram:fff8c" entry="true" type="code_ptr"/>
-    <symbol name="UART2 (reception completed)" address="ram:fff88" entry="true" type="code_ptr"/>
-    <symbol name="UART0 (transmission completed)" address="ram:fff84" entry="true" type="code_ptr"/>
-    <symbol name="UART1 (transmission completed)" address="ram:fff80" entry="true" type="code_ptr"/>
-    <symbol name="UART2 (transmission completed)" address="ram:fff7c" entry="true" type="code_ptr"/>
-    <symbol name="DMAC0 (end, error)" address="ram:fff78" entry="true" type="code_ptr"/>
-    <symbol name="DMAC1 (end, error)" address="ram:fff74" entry="true" type="code_ptr"/>
-    <symbol name="DMAC2 (end, error)" address="ram:fff70" entry="true" type="code_ptr"/>
-    <symbol name="DMAC3 (end, error)" address="ram:fff6c" entry="true" type="code_ptr"/>
-    <symbol name="DMAC4 (end, error)" address="ram:fff68" entry="true" type="code_ptr"/>
-    <symbol name="A/D" address="ram:fff64" entry="true" type="code_ptr"/>
+    <symbol name="Mode_vector" address="ram:ffff8" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffff4" address="ram:ffff4" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffff0" address="ram:ffff0" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_fffec" address="ram:fffec" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_fffe8" address="ram:fffe8" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_fffe4" address="ram:fffe4" entry="true" type="code_ptr"/>
+    <symbol name="No_coprocessor_trap" address="ram:fffe0" entry="true" type="code_ptr"/>
+    <symbol name="Coprocessor_error_trap" address="ram:fffdc" entry="true" type="code_ptr"/>
+    <symbol name="INTE_instruction" address="ram:fffd8" entry="true" type="code_ptr"/>
+    <symbol name="Instruction_break_exception" address="ram:fffd4" entry="true" type="code_ptr"/>
+    <symbol name="Operand_break_trap" address="ram:fffd0" entry="true" type="code_ptr"/>
+    <symbol name="Step_trace_trap" address="ram:fffcc" entry="true" type="code_ptr"/>
+    <symbol name="NMI_request_tool" address="ram:fffc8" entry="true" type="code_ptr"/>
+    <symbol name="Undefined_instruction_exception" address="ram:fffc4" entry="true" type="code_ptr"/>
+    <symbol name="NMI_request" address="ram:fffc0" entry="true" type="code_ptr"/>
+    <symbol name="External_Interrupt_0" address="ram:fffbc" entry="true" type="code_ptr"/>
+    <symbol name="External_Interrupt_1" address="ram:fffb8" entry="true" type="code_ptr"/>
+    <symbol name="External_Interrupt_2" address="ram:fffb4" entry="true" type="code_ptr"/>
+    <symbol name="External_Interrupt_3" address="ram:fffb0" entry="true" type="code_ptr"/>
+    <symbol name="External_Interrupt_4" address="ram:fffac" entry="true" type="code_ptr"/>
+    <symbol name="External_Interrupt_5" address="ram:fffa8" entry="true" type="code_ptr"/>
+    <symbol name="External_Interrupt_6" address="ram:fffa4" entry="true" type="code_ptr"/>
+    <symbol name="External_Interrupt_7" address="ram:fffa0" entry="true" type="code_ptr"/>
+    <symbol name="Reload_Timer_0" address="ram:fff9c" entry="true" type="code_ptr"/>
+    <symbol name="Reload_Timer_1" address="ram:fff98" entry="true" type="code_ptr"/>
+    <symbol name="Reload_Timer_2" address="ram:fff94" entry="true" type="code_ptr"/>
+    <symbol name="UART0_reception_completed" address="ram:fff90" entry="true" type="code_ptr"/>
+    <symbol name="UART1_reception_completed" address="ram:fff8c" entry="true" type="code_ptr"/>
+    <symbol name="UART2_reception_completed" address="ram:fff88" entry="true" type="code_ptr"/>
+    <symbol name="UART0_transmission_completed" address="ram:fff84" entry="true" type="code_ptr"/>
+    <symbol name="UART1_transmission_completed" address="ram:fff80" entry="true" type="code_ptr"/>
+    <symbol name="UART2_transmission_completed" address="ram:fff7c" entry="true" type="code_ptr"/>
+    <symbol name="DMAC0_end_error" address="ram:fff78" entry="true" type="code_ptr"/>
+    <symbol name="DMAC1_end_error" address="ram:fff74" entry="true" type="code_ptr"/>
+    <symbol name="DMAC2_end_error" address="ram:fff70" entry="true" type="code_ptr"/>
+    <symbol name="DMAC3_end_error" address="ram:fff6c" entry="true" type="code_ptr"/>
+    <symbol name="DMAC4_end_error" address="ram:fff68" entry="true" type="code_ptr"/>
+    <symbol name="A_D" address="ram:fff64" entry="true" type="code_ptr"/>
     <symbol name="PPG0" address="ram:fff60" entry="true" type="code_ptr"/>
     <symbol name="PPG1" address="ram:fff5c" entry="true" type="code_ptr"/>
     <symbol name="PPG2" address="ram:fff58" entry="true" type="code_ptr"/>
     <symbol name="PPG3" address="ram:fff54" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:fff50" entry="true" type="code_ptr"/>
-    <symbol name="U-TIMER0" address="ram:fff4c" entry="true" type="code_ptr"/>
-    <symbol name="U-TIMER1" address="ram:fff48" entry="true" type="code_ptr"/>
-    <symbol name="U-TIMER2" address="ram:fff44" entry="true" type="code_ptr"/>
-    <symbol name="Time-base timer overflow" address="ram:fff40" entry="true" type="code_ptr"/>
-    <symbol name="I2C I/F0" address="ram:fff3c" entry="true" type="code_ptr"/>
-    <symbol name="I2C I/F1" address="ram:fff38" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:fff34" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:fff30" entry="true" type="code_ptr"/>
-    <symbol name="16-bit free run timer" address="ram:fff2c" entry="true" type="code_ptr"/>
-    <symbol name="ICU0 (fetch)" address="ram:fff28" entry="true" type="code_ptr"/>
-    <symbol name="ICU1 (fetch)" address="ram:fff24" entry="true" type="code_ptr"/>
-    <symbol name="ICU2 (fetch)" address="ram:fff20" entry="true" type="code_ptr"/>
-    <symbol name="ICU3 (fetch)" address="ram:fff1c" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:fff18" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:fff14" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:fff10" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:fff0c" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:fff08" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:fff04" entry="true" type="code_ptr"/>
-    <symbol name="Delayed interrupt source bit" address="ram:fff00" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system (used in REALOS)" address="ram:ffefc" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system (used in REALOS)" address="ram:ffef8" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffef4" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffef0" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffeec" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffee8" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffee4" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffee0" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffedc" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffed8" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffed4" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffed0" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffecc" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffec8" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffec4" entry="true" type="code_ptr"/>
-    <symbol name="Reserved for system" address="ram:ffec0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:50" address="ram:ffebc" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:51" address="ram:ffeb8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:52" address="ram:ffeb4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:53" address="ram:ffeb0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:54" address="ram:ffeac" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:55" address="ram:ffea8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:56" address="ram:ffea4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:57" address="ram:ffea0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:58" address="ram:ffe9c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:59" address="ram:ffe98" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:5a" address="ram:ffe94" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:5b" address="ram:ffe90" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:5c" address="ram:ffe8c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:5d" address="ram:ffe88" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:5e" address="ram:ffe84" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:5f" address="ram:ffe80" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:60" address="ram:ffe7c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:61" address="ram:ffe78" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:62" address="ram:ffe74" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:63" address="ram:ffe70" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:64" address="ram:ffe6c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:65" address="ram:ffe68" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:66" address="ram:ffe64" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:67" address="ram:ffe60" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:68" address="ram:ffe5c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:69" address="ram:ffe58" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:6a" address="ram:ffe54" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:6b" address="ram:ffe50" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:6c" address="ram:ffe4c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:6d" address="ram:ffe48" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:6e" address="ram:ffe44" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:6f" address="ram:ffe40" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:70" address="ram:ffe3c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:71" address="ram:ffe38" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:72" address="ram:ffe34" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:73" address="ram:ffe30" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:74" address="ram:ffe2c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:75" address="ram:ffe28" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:76" address="ram:ffe24" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:77" address="ram:ffe20" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:78" address="ram:ffe1c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:79" address="ram:ffe18" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:7a" address="ram:ffe14" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:7b" address="ram:ffe10" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:7c" address="ram:ffe0c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:7d" address="ram:ffe08" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:7e" address="ram:ffe04" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:7f" address="ram:ffe00" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:80" address="ram:ffdfc" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:81" address="ram:ffdf8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:82" address="ram:ffdf4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:83" address="ram:ffdf0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:84" address="ram:ffdec" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:85" address="ram:ffde8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:86" address="ram:ffde4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:87" address="ram:ffde0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:88" address="ram:ffddc" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:89" address="ram:ffdd8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:8a" address="ram:ffdd4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:8b" address="ram:ffdd0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:8c" address="ram:ffdcc" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:8d" address="ram:ffdc8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:8e" address="ram:ffdc4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:8f" address="ram:ffdc0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:90" address="ram:ffdbc" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:91" address="ram:ffdb8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:92" address="ram:ffdb4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:93" address="ram:ffdb0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:94" address="ram:ffdac" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:95" address="ram:ffda8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:96" address="ram:ffda4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:97" address="ram:ffda0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:98" address="ram:ffd9c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:99" address="ram:ffd98" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:9a" address="ram:ffd94" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:9b" address="ram:ffd90" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:9c" address="ram:ffd8c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:9d" address="ram:ffd88" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:9e" address="ram:ffd84" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:9f" address="ram:ffd80" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:a0" address="ram:ffd7c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:a1" address="ram:ffd78" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:a2" address="ram:ffd74" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:a3" address="ram:ffd70" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:a4" address="ram:ffd6c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:a5" address="ram:ffd68" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:a6" address="ram:ffd64" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:a7" address="ram:ffd60" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:a8" address="ram:ffd5c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:a9" address="ram:ffd58" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:aa" address="ram:ffd54" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ab" address="ram:ffd50" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ac" address="ram:ffd4c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ad" address="ram:ffd48" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ae" address="ram:ffd44" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:af" address="ram:ffd40" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:b0" address="ram:ffd3c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:b1" address="ram:ffd38" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:b2" address="ram:ffd34" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:b3" address="ram:ffd30" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:b4" address="ram:ffd2c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:b5" address="ram:ffd28" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:b6" address="ram:ffd24" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:b7" address="ram:ffd20" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:b8" address="ram:ffd1c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:b9" address="ram:ffd18" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ba" address="ram:ffd14" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:bb" address="ram:ffd10" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:bc" address="ram:ffd0c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:bd" address="ram:ffd08" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:be" address="ram:ffd04" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:bf" address="ram:ffd00" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:c0" address="ram:ffcfc" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:c1" address="ram:ffcf8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:c2" address="ram:ffcf4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:c3" address="ram:ffcf0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:c4" address="ram:ffcec" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:c5" address="ram:ffce8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:c6" address="ram:ffce4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:c7" address="ram:ffce0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:c8" address="ram:ffcdc" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:c9" address="ram:ffcd8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ca" address="ram:ffcd4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:cb" address="ram:ffcd0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:cc" address="ram:ffccc" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:cd" address="ram:ffcc8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ce" address="ram:ffcc4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:cf" address="ram:ffcc0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:d0" address="ram:ffcbc" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:d1" address="ram:ffcb8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:d2" address="ram:ffcb4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:d3" address="ram:ffcb0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:d4" address="ram:ffcac" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:d5" address="ram:ffca8" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:d6" address="ram:ffca4" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:d7" address="ram:ffca0" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:d8" address="ram:ffc9c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:d9" address="ram:ffc98" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:da" address="ram:ffc94" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:db" address="ram:ffc90" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:dc" address="ram:ffc8c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:dd" address="ram:ffc88" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:de" address="ram:ffc84" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:df" address="ram:ffc80" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:e0" address="ram:ffc7c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:e1" address="ram:ffc78" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:e2" address="ram:ffc74" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:e3" address="ram:ffc70" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:e4" address="ram:ffc6c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:e5" address="ram:ffc68" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:e6" address="ram:ffc64" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:e7" address="ram:ffc60" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:e8" address="ram:ffc5c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:e9" address="ram:ffc58" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ea" address="ram:ffc54" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:eb" address="ram:ffc50" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ec" address="ram:ffc4c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ed" address="ram:ffc48" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ee" address="ram:ffc44" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ef" address="ram:ffc40" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:f0" address="ram:ffc3c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:f1" address="ram:ffc38" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:f2" address="ram:ffc34" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:f3" address="ram:ffc30" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:f4" address="ram:ffc2c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:f5" address="ram:ffc28" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:f6" address="ram:ffc24" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:f7" address="ram:ffc20" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:f8" address="ram:ffc1c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:f9" address="ram:ffc18" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:fa" address="ram:ffc14" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:fb" address="ram:ffc10" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:fc" address="ram:ffc0c" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:fd" address="ram:ffc08" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:fe" address="ram:ffc04" entry="true" type="code_ptr"/>
-    <symbol name="INT ram:ff" address="ram:ffc00" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_fff50" address="ram:fff50" entry="true" type="code_ptr"/>
+    <symbol name="U_TIMER0" address="ram:fff4c" entry="true" type="code_ptr"/>
+    <symbol name="U_TIMER1" address="ram:fff48" entry="true" type="code_ptr"/>
+    <symbol name="U_TIMER2" address="ram:fff44" entry="true" type="code_ptr"/>
+    <symbol name="Time_base_timer_overflow" address="ram:fff40" entry="true" type="code_ptr"/>
+    <symbol name="I2C_IF0" address="ram:fff3c" entry="true" type="code_ptr"/>
+    <symbol name="I2C_IF1" address="ram:fff38" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_fff34" address="ram:fff34" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_fff30" address="ram:fff30" entry="true" type="code_ptr"/>
+    <symbol name="Free_run_timer_16bit" address="ram:fff2c" entry="true" type="code_ptr"/>
+    <symbol name="ICU0_fetch" address="ram:fff28" entry="true" type="code_ptr"/>
+    <symbol name="ICU1_fetch" address="ram:fff24" entry="true" type="code_ptr"/>
+    <symbol name="ICU2_fetch" address="ram:fff20" entry="true" type="code_ptr"/>
+    <symbol name="ICU3_fetch" address="ram:fff1c" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_fff18" address="ram:fff18" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_fff14" address="ram:fff14" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_fff10" address="ram:fff10" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_fff0c" address="ram:fff0c" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_fff08" address="ram:fff08" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_fff04" address="ram:fff04" entry="true" type="code_ptr"/>
+    <symbol name="Delayed_interrupt_source_bit" address="ram:fff00" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_REALOS_ffefc" address="ram:ffefc" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_REALOS_ffef8" address="ram:ffef8" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffef4" address="ram:ffef4" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffef0" address="ram:ffef0" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffeec" address="ram:ffeec" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffee8" address="ram:ffee8" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffee4" address="ram:ffee4" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffee0" address="ram:ffee0" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffedc" address="ram:ffedc" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffed8" address="ram:ffed8" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffed4" address="ram:ffed4" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffed0" address="ram:ffed0" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffecc" address="ram:ffecc" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffec8" address="ram:ffec8" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffec4" address="ram:ffec4" entry="true" type="code_ptr"/>
+    <symbol name="Reserved_for_system_ffec0" address="ram:ffec0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_50" address="ram:ffebc" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_51" address="ram:ffeb8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_52" address="ram:ffeb4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_53" address="ram:ffeb0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_54" address="ram:ffeac" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_55" address="ram:ffea8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_56" address="ram:ffea4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_57" address="ram:ffea0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_58" address="ram:ffe9c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_59" address="ram:ffe98" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_5a" address="ram:ffe94" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_5b" address="ram:ffe90" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_5c" address="ram:ffe8c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_5d" address="ram:ffe88" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_5e" address="ram:ffe84" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_5f" address="ram:ffe80" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_60" address="ram:ffe7c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_61" address="ram:ffe78" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_62" address="ram:ffe74" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_63" address="ram:ffe70" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_64" address="ram:ffe6c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_65" address="ram:ffe68" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_66" address="ram:ffe64" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_67" address="ram:ffe60" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_68" address="ram:ffe5c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_69" address="ram:ffe58" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_6a" address="ram:ffe54" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_6b" address="ram:ffe50" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_6c" address="ram:ffe4c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_6d" address="ram:ffe48" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_6e" address="ram:ffe44" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_6f" address="ram:ffe40" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_70" address="ram:ffe3c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_71" address="ram:ffe38" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_72" address="ram:ffe34" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_73" address="ram:ffe30" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_74" address="ram:ffe2c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_75" address="ram:ffe28" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_76" address="ram:ffe24" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_77" address="ram:ffe20" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_78" address="ram:ffe1c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_79" address="ram:ffe18" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_7a" address="ram:ffe14" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_7b" address="ram:ffe10" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_7c" address="ram:ffe0c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_7d" address="ram:ffe08" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_7e" address="ram:ffe04" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_7f" address="ram:ffe00" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_80" address="ram:ffdfc" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_81" address="ram:ffdf8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_82" address="ram:ffdf4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_83" address="ram:ffdf0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_84" address="ram:ffdec" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_85" address="ram:ffde8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_86" address="ram:ffde4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_87" address="ram:ffde0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_88" address="ram:ffddc" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_89" address="ram:ffdd8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_8a" address="ram:ffdd4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_8b" address="ram:ffdd0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_8c" address="ram:ffdcc" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_8d" address="ram:ffdc8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_8e" address="ram:ffdc4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_8f" address="ram:ffdc0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_90" address="ram:ffdbc" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_91" address="ram:ffdb8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_92" address="ram:ffdb4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_93" address="ram:ffdb0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_94" address="ram:ffdac" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_95" address="ram:ffda8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_96" address="ram:ffda4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_97" address="ram:ffda0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_98" address="ram:ffd9c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_99" address="ram:ffd98" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_9a" address="ram:ffd94" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_9b" address="ram:ffd90" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_9c" address="ram:ffd8c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_9d" address="ram:ffd88" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_9e" address="ram:ffd84" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_9f" address="ram:ffd80" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_a0" address="ram:ffd7c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_a1" address="ram:ffd78" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_a2" address="ram:ffd74" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_a3" address="ram:ffd70" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_a4" address="ram:ffd6c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_a5" address="ram:ffd68" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_a6" address="ram:ffd64" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_a7" address="ram:ffd60" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_a8" address="ram:ffd5c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_a9" address="ram:ffd58" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_aa" address="ram:ffd54" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ab" address="ram:ffd50" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ac" address="ram:ffd4c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ad" address="ram:ffd48" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ae" address="ram:ffd44" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_af" address="ram:ffd40" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_b0" address="ram:ffd3c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_b1" address="ram:ffd38" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_b2" address="ram:ffd34" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_b3" address="ram:ffd30" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_b4" address="ram:ffd2c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_b5" address="ram:ffd28" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_b6" address="ram:ffd24" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_b7" address="ram:ffd20" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_b8" address="ram:ffd1c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_b9" address="ram:ffd18" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ba" address="ram:ffd14" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_bb" address="ram:ffd10" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_bc" address="ram:ffd0c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_bd" address="ram:ffd08" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_be" address="ram:ffd04" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_bf" address="ram:ffd00" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_c0" address="ram:ffcfc" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_c1" address="ram:ffcf8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_c2" address="ram:ffcf4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_c3" address="ram:ffcf0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_c4" address="ram:ffcec" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_c5" address="ram:ffce8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_c6" address="ram:ffce4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_c7" address="ram:ffce0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_c8" address="ram:ffcdc" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_c9" address="ram:ffcd8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ca" address="ram:ffcd4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_cb" address="ram:ffcd0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_cc" address="ram:ffccc" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_cd" address="ram:ffcc8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ce" address="ram:ffcc4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_cf" address="ram:ffcc0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_d0" address="ram:ffcbc" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_d1" address="ram:ffcb8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_d2" address="ram:ffcb4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_d3" address="ram:ffcb0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_d4" address="ram:ffcac" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_d5" address="ram:ffca8" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_d6" address="ram:ffca4" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_d7" address="ram:ffca0" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_d8" address="ram:ffc9c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_d9" address="ram:ffc98" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_da" address="ram:ffc94" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_db" address="ram:ffc90" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_dc" address="ram:ffc8c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_dd" address="ram:ffc88" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_de" address="ram:ffc84" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_df" address="ram:ffc80" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_e0" address="ram:ffc7c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_e1" address="ram:ffc78" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_e2" address="ram:ffc74" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_e3" address="ram:ffc70" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_e4" address="ram:ffc6c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_e5" address="ram:ffc68" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_e6" address="ram:ffc64" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_e7" address="ram:ffc60" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_e8" address="ram:ffc5c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_e9" address="ram:ffc58" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ea" address="ram:ffc54" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_eb" address="ram:ffc50" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ec" address="ram:ffc4c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ed" address="ram:ffc48" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ee" address="ram:ffc44" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ef" address="ram:ffc40" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_f0" address="ram:ffc3c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_f1" address="ram:ffc38" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_f2" address="ram:ffc34" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_f3" address="ram:ffc30" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_f4" address="ram:ffc2c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_f5" address="ram:ffc28" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_f6" address="ram:ffc24" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_f7" address="ram:ffc20" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_f8" address="ram:ffc1c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_f9" address="ram:ffc18" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_fa" address="ram:ffc14" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_fb" address="ram:ffc10" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_fc" address="ram:ffc0c" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_fd" address="ram:ffc08" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_fe" address="ram:ffc04" entry="true" type="code_ptr"/>
+    <symbol name="INT_ram_ff" address="ram:ffc00" entry="true" type="code_ptr"/>
 
     <!-- A/D Converter -->
     <symbol name="ADCS" address="ram:7A"/>

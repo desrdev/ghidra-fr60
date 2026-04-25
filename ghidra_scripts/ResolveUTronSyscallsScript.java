@@ -34,8 +34,8 @@ import ghidra.app.util.opinion.ElfLoader;
 import ghidra.framework.Application;
 import ghidra.program.model.address.*;
 import ghidra.program.model.data.DataTypeManager;
-import ghidra.program.model.lang.BasicCompilerSpec;
 import ghidra.program.model.lang.Register;
+import ghidra.program.model.lang.SpaceNames;
 import ghidra.program.model.listing.*;
 import ghidra.program.model.mem.MemoryAccessException;
 import ghidra.program.model.pcode.PcodeOp;
@@ -118,7 +118,7 @@ public class ResolveUTronSyscallsScript extends GhidraScript {
 				return;
 			}
 			Address startAddr = currentProgram.getAddressFactory().getAddressSpace(
-				BasicCompilerSpec.OTHER_SPACE_NAME).getAddress(0x0L);
+				SpaceNames.OTHER_SPACE_NAME).getAddress(0x0L);
 			AddUninitializedMemoryBlockCmd cmd = new AddUninitializedMemoryBlockCmd(
 				SYSCALL_SPACE_NAME, null, this.getClass().getName(), startAddr,
 				SYSCALL_SPACE_LENGTH, true, true, true, false, true);
@@ -271,8 +271,8 @@ public class ResolveUTronSyscallsScript extends GhidraScript {
 		Register syscallReg = program.getLanguage().getRegister(syscallRegister);
 		for (Function func : funcsToCalls.keySet()) {
 			Address start = func.getEntryPoint();
-			ContextEvaluator eval = new ConstantPropagationContextEvaluator(true);
-			SymbolicPropogator symEval = new SymbolicPropogator(program);
+			ContextEvaluator eval = new ConstantPropagationContextEvaluator(tMonitor, true);
+			SymbolicPropogator symEval = new SymbolicPropogator(program, true);
 			symEval.flowConstants(start, func.getBody(), eval, true, tMonitor);
 			for (Address callSite : funcsToCalls.get(func)) {
 				Value val = symEval.getRegisterValue(callSite, syscallReg);
