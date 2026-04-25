@@ -20,8 +20,9 @@ export GHIDRA_INSTALL_DIR=/path/to/ghidra_12.0.4_PUBLIC
 Builds are distributed on the [RELEASES](https://github.com/desrdev/ghidra-fr60/releases) page. These can be installed
 directly into Ghidra by selecting `File -> Install Extensions` from the main Ghidra UI.
 
-The installation includes support for the FR60 instruction set, as well as a file loader that will detect DVRP fimrware
-and automatically setup the memory space for the firmware by reading the header.
+The installation includes support for the FR60 instruction set, as well as a file loader that can detect DVRP UDM
+containers and raw flash images. The loader parses the image headers and automatically maps the firmware into the
+expected FR60 memory ranges.
 
 The decompiler will also automatically identify function calls that align with the Fujitsu C/C++ compiler's output,
 however given hand rolled assembly was commonly used, not all functions will be correctly identified.
@@ -29,5 +30,8 @@ however given hand rolled assembly was commonly used, not all functions will be 
 There is also an included script, `ResolveUTronSyscalls`, which will scan the application and identify the standard Fujitsu μTron syscalls,
 automatically naming these syscalls. The function definition of each syscall is defined in the Fujitsu documentation
 [HERE](https://www.fujitsu.com/downloads/MICRO/fma/pdfmcu/resofrke-cm71-00321-3e.pdf).
+
+For systems where the internal mask ROM has been dumped separately, the included `LoadInternalMaskRomScript` script can
+write that raw dump into the existing `Internal ROM` block at `0x000ff000`.
 
 Would be great to have a way to automatically load these function signatures with this script, contributions welcome!

@@ -16,7 +16,11 @@
 package fr60;
 
 import java.io.IOException;
-import java.util.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import ghidra.app.util.bin.BinaryReader;
 import ghidra.app.util.bin.ByteProvider;
@@ -36,32 +40,43 @@ import ghidra.util.exception.CancelledException;
 import ghidra.util.task.TaskMonitor;
 
 /**
- * TODO: Provide class-level documentation that describes what this loader does.
+ * Loads DVRP UDM containers and raw flash images into the FR60 memory map.
  */
 public class DVRPFirmwareLoader extends AbstractLibrarySupportLoader {
 
-	private MB91302AMemRegion[] MEM_REGIONS;
+	private static final byte[] UDM_MAGIC = "DVRP".getBytes(StandardCharsets.US_ASCII);
+	private static final long RAW_FLASH_MAGIC = 0x46d271a4L;
+	private static final long FIRMWARE_HEADER_MAGIC = 0x84271fb1L;
+
+	private static final LanguageCompilerSpecPair LANGUAGE_COMPILER_SPEC =
+		new LanguageCompilerSpecPair("fr60:BE:16:default", "fcc911");
+
+	private static final long FLASH_BASE = 0x00400000L;
+	private static final long EXTERNAL_RAM_BASE = 0x10000000L;
+	private static final long EXTERNAL_RAM_SIZE = 0x01000000L;
+
+	private static final long ROM_LOWER_BASE = 0x00040000L;
+	private static final int ROM_LOWER_VISIBLE_OFFSET = 0x00040000;
+	private static final int ROM_LOWER_VISIBLE_SIZE = 0x000a0000;
+	private static final int ROM_LOWER_VISIBLE_END =
+		ROM_LOWER_VISIBLE_OFFSET + ROM_LOWER_VISIBLE_SIZE;
+	private static final long INTERNAL_ROM_BASE = 0x000ff000L;
+	private static final long INTERNAL_ROM_SIZE = 0x00010000L;
+
+	private static final int FLASH_HEADER_SIZE = 0x20;
+	private static final int FIRMWARE_HEADER_SIZE = 0x18;
 
 	@Override
 	public String getName() {
-
-		// TODO: Name the loader.  This name must match the name of the loader in the .opinion
-		// files.
-
-		return "DVRP Firmware Loader (UDM)";
+		return "DVRP Firmware Loader";
 	}
 
 	@Override
 	public Collection<LoadSpec> findSupportedLoadSpecs(ByteProvider provider) throws IOException {
 		List<LoadSpec> loadSpecs = new ArrayList<>();
 
-		byte[] dvrpHeader = "DVRP".getBytes();
-
-		byte[] fileHeader = provider.readBytes(0, 4);
-
-		if (Arrays.equals(dvrpHeader, fileHeader)) {
-			loadSpecs.add(new LoadSpec(this, 0,
-				new LanguageCompilerSpecPair("fr60:BE:16:default", "fcc911"), true));
+		if (isUdm(provider) || tryReadRawFlashImage(provider) != null) {
+			loadSpecs.add(new LoadSpec(this, 0, LANGUAGE_COMPILER_SPEC, true));
 		}
 
 		return loadSpecs;
@@ -72,146 +87,349 @@ public class DVRPFirmwareLoader extends AbstractLibrarySupportLoader {
 			throws CancelledException, IOException {
 		ByteProvider provider = settings.provider();
 		TaskMonitor monitor = settings.monitor();
-
-		BinaryReader reader = new BinaryReader(provider, true).asBigEndian();
 		FlatProgramAPI api = new FlatProgramAPI(program, monitor);
 		Memory mem = program.getMemory();
 
-		int ram_base = 0x10000000;
-		int ram_size = 0x01000000;
-
-		int rom_lower_size = reader.readInt(0x10);
-		int rom_lower_offset = reader.readInt(0x18);
-		int rom_upper_size = reader.readInt(0x24);
-		int rom_upper_offset = reader.readInt(0x30);
-		int rom_entry_point = reader.readInt(0x40);
-
-		byte lowerRomBytes[] = reader.readByteArray(rom_lower_offset, rom_lower_size);
-		byte romUpperBytes[] =
-			reader.readByteArray(rom_upper_offset + rom_lower_offset + 24, rom_upper_size - 24);
-
-		// Only 0xF0000 -> 0xDFFFF is accessable on external bus
-		byte accessableLowerBytes[] = Arrays.copyOfRange(lowerRomBytes, 0x40000, rom_lower_size);
-
 		try {
-			MemoryBlock block = program.getMemory().createInitializedBlock(
-				"External RAM",
-				program.getAddressFactory().getDefaultAddressSpace().getAddress(ram_base),
-				ram_size,
-				(byte) 0x00,
-				monitor,
-				false);
+			if (isUdm(provider)) {
+				loadUdm(program, provider, api, mem, monitor);
+				return;
+			}
 
-			block.setRead(true);
-			block.setWrite(true);
-			block.setExecute(true);
+			RawFlashImage rawFlashImage = tryReadRawFlashImage(provider);
+			if (rawFlashImage != null) {
+				loadRawFlash(program, provider, rawFlashImage, api, mem, monitor);
+				return;
+			}
 
-			block = mem.createInitializedBlock("ROM Lower",
-				program.getAddressFactory().getDefaultAddressSpace().getAddress(0x40000),
-				0xA0000, (byte) 0x00, monitor, false);
-			block.setRead(true);
-			block.setWrite(true);
-			block.setExecute(true);
-
-			block = mem.createInitializedBlock("Internal ROM",
-				program.getAddressFactory().getDefaultAddressSpace().getAddress(0xFF000),
-				0x10000, (byte) 0x00, monitor, false);
-			block.setRead(true);
-			block.setWrite(false);
-			block.setExecute(true);
-
-			// From Data sheet
-			block = mem.createUninitializedBlock("Byte I/O", api.toAddr(0x0), 0x100, false);
-			block.setRead(true);
-			block.setWrite(true);
-			block.setVolatile(true);
-			block = mem.createUninitializedBlock("Direct I/O", api.toAddr(0x100), 0x300, false);
-			block.setRead(true);
-			block.setWrite(true);
-			block.setVolatile(true);
-			block = mem.createUninitializedBlock("I/O", api.toAddr(0x400), 0xFC00, false);
-			block.setRead(true);
-			block.setWrite(true);
-			block.setVolatile(true);
-			block =
-				mem.createUninitializedBlock("Internal RAM", api.toAddr(0x3F000), 0x1000, false);
-			block.setRead(true);
-			block.setWrite(true);
-			block.setExecute(true);
-
-			// PSX RE
-			block = mem.createUninitializedBlock("SPEED", api.toAddr(0x1010000), 0x10000, false);
-			block.setRead(true);
-			block.setWrite(true);
-			block.setVolatile(true);
-			block =
-				mem.createUninitializedBlock("Unk 16bit", api.toAddr(0x1020000), 0x10000, false);
-			block.setRead(true);
-			block.setWrite(true);
-			block.setVolatile(true);
-			block =
-				mem.createUninitializedBlock("SPEED 8bit", api.toAddr(0x1040000), 0x20000, false);
-			block.setRead(true);
-			block.setWrite(true);
-			block.setVolatile(true);
-			block = mem.createUninitializedBlock("ATAH", api.toAddr(0x2400000), 0x400000, false);
-			block.setRead(true);
-			block.setWrite(true);
-			block.setVolatile(true);
-			block = mem.createUninitializedBlock("ATAL", api.toAddr(0x2000000), 0x400000, false);
-			block.setRead(true);
-			block.setWrite(true);
-			block.setVolatile(true);
-			block = mem.createUninitializedBlock("CPLD", api.toAddr(0x1070000), 0x10000, false);
-			block.setRead(true);
-			block.setWrite(true);
-			block.setVolatile(true);
-
-			mem.setBytes(api.toAddr(0x40000), accessableLowerBytes);
-			mem.setBytes(api.toAddr(0x10000000), romUpperBytes);
-
-			api.addEntryPoint(api.toAddr(rom_entry_point));
-			api.disassemble(api.toAddr(rom_entry_point));
-			api.createFunction(api.toAddr(rom_entry_point), "_rom_entry");
+			throw new IOException("Unsupported DVRP image format");
 		}
 		catch (LockException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOException("Failed to create DVRP memory map", e);
 		}
 		catch (MemoryConflictException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOException("DVRP memory block layout overlaps existing memory", e);
 		}
 		catch (AddressOverflowException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOException("DVRP memory map contains an invalid address", e);
 		}
 		catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOException("DVRP image contains invalid address data", e);
 		}
 		catch (MemoryAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOException("Failed to write DVRP image bytes into memory", e);
 		}
 	}
 
-	private static class MB91302AMemRegion {
-		String name;
-		int addr;
-		int size;
-		boolean read;
-		boolean write;
-		boolean execute;
+	private boolean isUdm(ByteProvider provider) throws IOException {
+		if (provider.length() < UDM_MAGIC.length) {
+			return false;
+		}
+		return Arrays.equals(UDM_MAGIC, provider.readBytes(0, UDM_MAGIC.length));
+	}
 
-		private MB91302AMemRegion(String name, int addr, int size, boolean read, boolean write,
-				boolean execute) {
-			this.name = name;
-			this.addr = addr;
-			this.size = size;
-			this.read = read;
-			this.write = write;
-			this.execute = execute;
+	private void loadUdm(Program program, ByteProvider provider, FlatProgramAPI api, Memory mem,
+			TaskMonitor monitor)
+			throws IOException, LockException, MemoryConflictException, AddressOverflowException,
+			MemoryAccessException, CancelledException {
+		BinaryReader reader = new BinaryReader(provider, false);
+
+		long romLowerSize = reader.readUnsignedInt(0x10);
+		long romLowerOffset = reader.readUnsignedInt(0x18);
+		long romUpperSize = reader.readUnsignedInt(0x24);
+		long romUpperOffset = reader.readUnsignedInt(0x30);
+		long romEntryPoint = reader.readUnsignedInt(0x40);
+
+		byte[] lowerRomBytes = readBytes(reader, romLowerOffset, romLowerSize, "UDM lower ROM");
+		if (lowerRomBytes.length < ROM_LOWER_VISIBLE_END) {
+			throw new IOException("UDM lower ROM is too small to populate the visible ROM window");
+		}
+
+		if (romUpperSize < FIRMWARE_HEADER_SIZE) {
+			throw new IOException("UDM upper ROM size is smaller than a firmware header");
+		}
+
+		byte[] romUpperBytes = readBytes(reader,
+			romUpperOffset + romLowerOffset + FIRMWARE_HEADER_SIZE,
+			romUpperSize - FIRMWARE_HEADER_SIZE, "UDM upper ROM payload");
+		byte[] visibleLowerBytes =
+			Arrays.copyOfRange(lowerRomBytes, ROM_LOWER_VISIBLE_OFFSET, ROM_LOWER_VISIBLE_END);
+
+		createHardwareBlocks(mem, api, monitor);
+		createUdmRomBlocks(mem, api, monitor);
+
+		mem.setBytes(api.toAddr(ROM_LOWER_BASE), visibleLowerBytes);
+		mem.setBytes(api.toAddr(EXTERNAL_RAM_BASE), romUpperBytes);
+
+		markEntryPoint(api, romEntryPoint, "_rom_entry");
+	}
+
+	private RawFlashImage tryReadRawFlashImage(ByteProvider provider) throws IOException {
+		if (provider.length() < FLASH_HEADER_SIZE) {
+			return null;
+		}
+
+		BinaryReader reader = new BinaryReader(provider, false);
+		DvrpFlashHeader flashHeader = readFlashHeader(reader);
+		if (flashHeader.magic != RAW_FLASH_MAGIC) {
+			return null;
+		}
+
+		long firmAOffset = toFlashFileOffset(flashHeader.firmAPtr, provider.length(), "firmA");
+		DvrpFirmwareHeader firmAHeader = readFirmwareHeader(reader, firmAOffset, "firmA");
+		validateExternalRamRange(firmAHeader.copyToAddr, firmAHeader.copySize,
+			"firmA payload destination");
+
+		return new RawFlashImage(flashHeader, firmAHeader, firmAOffset);
+	}
+
+	private void loadRawFlash(Program program, ByteProvider provider, RawFlashImage rawFlashImage,
+			FlatProgramAPI api, Memory mem, TaskMonitor monitor)
+			throws IOException, LockException, MemoryConflictException, AddressOverflowException,
+			MemoryAccessException, CancelledException {
+		createHardwareBlocks(mem, api, monitor);
+		createFlashBlock(mem, api, monitor, provider.length());
+
+		byte[] flashBytes = readProviderBytes(provider, 0, provider.length(), "raw flash image");
+		mem.setBytes(api.toAddr(FLASH_BASE), flashBytes);
+
+		long firmAPayloadOffset = rawFlashImage.firmAOffset + rawFlashImage.firmAHeader.headerLen;
+		byte[] firmABytes = readProviderBytes(provider, firmAPayloadOffset,
+			rawFlashImage.firmAHeader.copySize, "firmA payload");
+		mem.setBytes(api.toAddr(rawFlashImage.firmAHeader.copyToAddr), firmABytes);
+
+		markEntryPoint(api, rawFlashImage.firmAHeader.entryPoint, "_firmA_entry");
+	}
+
+	private DvrpFlashHeader readFlashHeader(BinaryReader reader) throws IOException {
+		validateRange(reader, 0, FLASH_HEADER_SIZE, "raw flash header");
+
+		return new DvrpFlashHeader(
+			reader.readUnsignedInt(0x00),
+			reader.readUnsignedInt(0x04),
+			reader.readUnsignedShort(0x08),
+			reader.readUnsignedShort(0x0a),
+			reader.readUnsignedShort(0x0c),
+			reader.readUnsignedShort(0x0e),
+			reader.readUnsignedInt(0x10),
+			reader.readUnsignedInt(0x14),
+			reader.readUnsignedInt(0x18),
+			reader.readUnsignedInt(0x1c));
+	}
+
+	private DvrpFirmwareHeader readFirmwareHeader(BinaryReader reader, long headerOffset,
+			String description) throws IOException {
+		validateRange(reader, headerOffset, FIRMWARE_HEADER_SIZE, description + " header");
+
+		long magic = reader.readUnsignedInt(headerOffset + 0x00);
+		if (magic != FIRMWARE_HEADER_MAGIC) {
+			throw new IOException(description + " header magic mismatch");
+		}
+
+		long headerLen = reader.readUnsignedInt(headerOffset + 0x04);
+		long copyToAddr = reader.readUnsignedInt(headerOffset + 0x08);
+		long copySize = reader.readUnsignedInt(headerOffset + 0x0c);
+		long checksum = reader.readUnsignedInt(headerOffset + 0x10);
+		long entryPoint = reader.readUnsignedInt(headerOffset + 0x14);
+
+		if (headerLen < FIRMWARE_HEADER_SIZE) {
+			throw new IOException(description + " header length is too small");
+		}
+
+		validateRange(reader, headerOffset + headerLen, copySize, description + " payload");
+
+		return new DvrpFirmwareHeader(magic, headerLen, copyToAddr, copySize, checksum,
+			entryPoint);
+	}
+
+	private long toFlashFileOffset(long flashAddress, long fileLength, String description)
+			throws IOException {
+		if (flashAddress < FLASH_BASE) {
+			throw new IOException(description + " pointer is below the flash base");
+		}
+
+		long fileOffset = flashAddress - FLASH_BASE;
+		if (fileOffset >= fileLength) {
+			throw new IOException(description + " pointer is outside the flash image");
+		}
+
+		return fileOffset;
+	}
+
+	private void validateExternalRamRange(long address, long size, String description)
+			throws IOException {
+		long end = address + size;
+		if (end < address || address < EXTERNAL_RAM_BASE ||
+				end > EXTERNAL_RAM_BASE + EXTERNAL_RAM_SIZE) {
+			throw new IOException(description + " does not fit in external RAM");
+		}
+	}
+
+	private void validateRange(BinaryReader reader, long offset, long size, String description)
+			throws IOException {
+		int length = toInt(size, description);
+		if (!reader.isValidRange(offset, length)) {
+			throw new IOException(description + " is outside the image");
+		}
+	}
+
+	private byte[] readBytes(BinaryReader reader, long offset, long size, String description)
+			throws IOException {
+		validateRange(reader, offset, size, description);
+		return reader.readByteArray(offset, toInt(size, description));
+	}
+
+	private byte[] readProviderBytes(ByteProvider provider, long offset, long size,
+			String description) throws IOException {
+		int length = toInt(size, description);
+		if (offset < 0 || offset + length > provider.length()) {
+			throw new IOException(description + " is outside the image");
+		}
+		return provider.readBytes(offset, length);
+	}
+
+	private int toInt(long value, String description) throws IOException {
+		if (value < 0 || value > Integer.MAX_VALUE) {
+			throw new IOException(description + " exceeds Java array limits");
+		}
+		return (int) value;
+	}
+
+	private void createHardwareBlocks(Memory mem, FlatProgramAPI api, TaskMonitor monitor)
+			throws LockException, MemoryConflictException, AddressOverflowException,
+			CancelledException {
+		MemoryBlock block = createInitializedBlock(mem, api, monitor, "External RAM",
+			EXTERNAL_RAM_BASE, EXTERNAL_RAM_SIZE, true, true, true, false);
+		block = createInitializedBlock(mem, api, monitor, "Internal ROM", INTERNAL_ROM_BASE,
+			INTERNAL_ROM_SIZE, true, false, true, false);
+
+		block = createUninitializedBlock(mem, api, "Byte I/O", 0x00000000L, 0x100, true, true,
+			false, true);
+		block = createUninitializedBlock(mem, api, "Direct I/O", 0x00000100L, 0x300, true, true,
+			false, true);
+		block = createUninitializedBlock(mem, api, "I/O", 0x00000400L, 0xfc00, true, true,
+			false, true);
+		block = createUninitializedBlock(mem, api, "Internal RAM", 0x0003f000L, 0x1000, true,
+			true, true, false);
+
+		block = createUninitializedBlock(mem, api, "SPEED", 0x01010000L, 0x10000, true, true,
+			false, true);
+		block = createUninitializedBlock(mem, api, "Unk 16bit", 0x01020000L, 0x10000, true,
+			true, false, true);
+		block = createUninitializedBlock(mem, api, "SPEED 8bit", 0x01040000L, 0x20000, true,
+			true, false, true);
+		block = createUninitializedBlock(mem, api, "CPLD", 0x01070000L, 0x10000, true, true,
+			false, true);
+		block = createUninitializedBlock(mem, api, "ATAL", 0x02000000L, 0x400000, true, true,
+			false, true);
+		createUninitializedBlock(mem, api, "ATAH", 0x02400000L, 0x400000, true, true, false,
+			true);
+	}
+
+	private void createUdmRomBlocks(Memory mem, FlatProgramAPI api, TaskMonitor monitor)
+			throws LockException, MemoryConflictException, AddressOverflowException,
+			CancelledException {
+		createInitializedBlock(mem, api, monitor, "ROM Lower", ROM_LOWER_BASE,
+			ROM_LOWER_VISIBLE_SIZE, true, false, true, false);
+	}
+
+	private void createFlashBlock(Memory mem, FlatProgramAPI api, TaskMonitor monitor,
+			long flashSize)
+			throws LockException, MemoryConflictException, AddressOverflowException,
+			CancelledException {
+		createInitializedBlock(mem, api, monitor, "Flash ROM", FLASH_BASE, flashSize, true,
+			false, true, false);
+	}
+
+	private MemoryBlock createInitializedBlock(Memory mem, FlatProgramAPI api, TaskMonitor monitor,
+			String name, long address, long size, boolean read, boolean write, boolean execute,
+			boolean isVolatile)
+			throws LockException, MemoryConflictException, AddressOverflowException,
+			CancelledException {
+		MemoryBlock block = mem.createInitializedBlock(name, api.toAddr(address), size, (byte) 0x00,
+			monitor, false);
+		block.setRead(read);
+		block.setWrite(write);
+		block.setExecute(execute);
+		block.setVolatile(isVolatile);
+		return block;
+	}
+
+	private MemoryBlock createUninitializedBlock(Memory mem, FlatProgramAPI api, String name,
+			long address, long size, boolean read, boolean write, boolean execute,
+			boolean isVolatile)
+			throws LockException, MemoryConflictException, AddressOverflowException {
+		MemoryBlock block = mem.createUninitializedBlock(name, api.toAddr(address), size, false);
+		block.setRead(read);
+		block.setWrite(write);
+		block.setExecute(execute);
+		block.setVolatile(isVolatile);
+		return block;
+	}
+
+	private void markEntryPoint(FlatProgramAPI api, long entryPoint, String functionName)
+			throws CancelledException {
+		api.addEntryPoint(api.toAddr(entryPoint));
+		api.disassemble(api.toAddr(entryPoint));
+		api.createFunction(api.toAddr(entryPoint), functionName);
+	}
+
+	private static class DvrpFlashHeader {
+		private final long magic;
+		private final long asr;
+		private final int awr;
+		private final int mcra;
+		private final int rcr;
+		private final int iowr;
+		private final long firmAPtr;
+		private final long firmAMetaPtr;
+		private final long firmBPtr;
+		private final long firmBMetaPtr;
+
+		private DvrpFlashHeader(long magic, long asr, int awr, int mcra, int rcr, int iowr,
+				long firmAPtr, long firmAMetaPtr, long firmBPtr, long firmBMetaPtr) {
+			this.magic = magic;
+			this.asr = asr;
+			this.awr = awr;
+			this.mcra = mcra;
+			this.rcr = rcr;
+			this.iowr = iowr;
+			this.firmAPtr = firmAPtr;
+			this.firmAMetaPtr = firmAMetaPtr;
+			this.firmBPtr = firmBPtr;
+			this.firmBMetaPtr = firmBMetaPtr;
+		}
+	}
+
+	private static class DvrpFirmwareHeader {
+		private final long magic;
+		private final long headerLen;
+		private final long copyToAddr;
+		private final long copySize;
+		private final long checksum;
+		private final long entryPoint;
+
+		private DvrpFirmwareHeader(long magic, long headerLen, long copyToAddr, long copySize,
+				long checksum, long entryPoint) {
+			this.magic = magic;
+			this.headerLen = headerLen;
+			this.copyToAddr = copyToAddr;
+			this.copySize = copySize;
+			this.checksum = checksum;
+			this.entryPoint = entryPoint;
+		}
+	}
+
+	private static class RawFlashImage {
+		private final DvrpFlashHeader flashHeader;
+		private final DvrpFirmwareHeader firmAHeader;
+		private final long firmAOffset;
+
+		private RawFlashImage(DvrpFlashHeader flashHeader, DvrpFirmwareHeader firmAHeader,
+				long firmAOffset) {
+			this.flashHeader = flashHeader;
+			this.firmAHeader = firmAHeader;
+			this.firmAOffset = firmAOffset;
 		}
 	}
 }
