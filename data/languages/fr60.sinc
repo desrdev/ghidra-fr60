@@ -346,6 +346,11 @@ CC: "LS" is cc=0xE { local tmp:1 = ((C | Z) != 0); export tmp; }
 CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 
 
+# minus extension: higher bits are complemented by adding '1'
+# Magic bit flip used to get positive value
+neg4: -val is u4 [ val = (u4 ^ 0xf) + 1; ] { local res:4 = 0xfffffff0 | u4; export res; }
+
+
 # ====
 
 # ADD Rj, Ri A A6 1 CCCC Ri + Rj --> Ri
@@ -369,10 +374,10 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
     ri = res;
 }
 
-# ADD2 #u4, Ri C A5 1 CCCC Ri + extu(i4) --> Ri  (minus extension)
-:ADD2 #i4, ri is op8=0xa5 & i4 & ri {
-    local res:4 = ri + i4;
-    addFlags(res, ri, i4);
+# ADD2 #u4, Ri C A5 1 CCCC Ri + extn(i4) --> Ri  (minus extension)
+:ADD2 #neg4, ri is op8=0xa5 & neg4 & ri {
+    local res:4 = ri + neg4;
+    addFlags(res, ri, neg4);
     ri = res;
 }
 
@@ -398,9 +403,9 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
     ri = ri + u4;
 }
 
-# ADDN2 #u4, Ri C A1 1 ---- Ri + extu(i4) --> Ri (minux extension)
-:ADDN2 #i4, ri is op8=0xa1 & i4 & ri {
-    ri = ri + i4;
+# ADDN2 #u4, Ri C A1 1 ---- Ri + extn(i4) --> Ri (minus extension)
+:ADDN2 #neg4, ri is op8=0xa1 & neg4 & ri {
+    ri = ri + neg4;
 }
 
 # ====
@@ -444,10 +449,10 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
     subFlags(res, ri, u4);
 }
 
-# CMP2 #u4, Ri C A9 1 CCCC Ri - extu(i4) Minus extension
-:CMP2 #i4, ri is op8=0xa9 & i4 & ri {
-    res:4 = ri - i4;
-    subFlags(res, ri, i4);
+# CMP2 #u4, Ri C A9 1 CCCC Ri - extn(i4) Minus extension
+:CMP2 #neg4, ri is op8=0xa9 & neg4 & ri {
+    local res:4 = ri - neg4;
+    subFlags(res, ri, neg4);
 }
 
 # ====
