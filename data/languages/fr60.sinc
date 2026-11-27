@@ -370,9 +370,12 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 }
 
 # ADD2 #u4, Ri C A5 1 CCCC Ri + extu(i4) --> Ri  (minus extension)
-:ADD2 #i4, ri is op8=0xa5 & i4 & ri {
-    local res:4 = ri + i4;
-    addFlags(res, ri, i4);
+# FR "minus extension": value = u4 - 16 (-16..-1). Field i4 (signed) was wrong for 0..7.
+mi4: val is u4 [ val = u4 - 16; ] { export *[const]:4 val; }
+
+:ADD2 #mi4, ri is op8=0xa5 & mi4 & ri {
+    local res:4 = ri + mi4;
+    addFlags(res, ri, mi4);
     ri = res;
 }
 
@@ -399,8 +402,8 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 }
 
 # ADDN2 #u4, Ri C A1 1 ---- Ri + extu(i4) --> Ri (minux extension)
-:ADDN2 #i4, ri is op8=0xa1 & i4 & ri {
-    ri = ri + i4;
+:ADDN2 #mi4, ri is op8=0xa1 & mi4 & ri {
+    ri = ri + mi4;
 }
 
 # ====
@@ -445,9 +448,9 @@ CC: "HI" is cc=0xF { local tmp:1 = ((C | Z) == 0); export tmp; }
 }
 
 # CMP2 #u4, Ri C A9 1 CCCC Ri - extu(i4) Minus extension
-:CMP2 #i4, ri is op8=0xa9 & i4 & ri {
-    res:4 = ri - i4;
-    subFlags(res, ri, i4);
+:CMP2 #mi4, ri is op8=0xa9 & mi4 & ri {
+    res:4 = ri - mi4;
+    subFlags(res, ri, mi4);
 }
 
 # ====
